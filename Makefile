@@ -1,6 +1,7 @@
 SHELL = /bin/bash
 
-pkg_name = mlx-im
+coverage_percentage = 20
+pkg_name = mlxim
 src_pkg = src/$(pkg_name)
 
 .PHONY: all install clean check test full coverage
@@ -32,16 +33,15 @@ clean:
 	-rm -rf .ruff_cache
 	-find . -not -path "./.git/*" -name '.benchmarks' -exec rm -rf {} \;
 	-find tests -depth -type d -empty -delete
+
 check:
 	ruff check --diff .
 	black --check --diff .
-	docformatter --check --diff src tests
 	mypy .
 
 format:
 	ruff check --show-fixes .
 	black .
-	docformatter --in-place src tests
 	mypy .
 
 test:

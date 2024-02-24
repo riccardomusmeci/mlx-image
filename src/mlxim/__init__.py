@@ -14,9 +14,7 @@ def _read_version() -> str:
         return version(pkg)
 
     except PackageNotFoundError as e:
-        logger.warning(
-            "Failed version retrieval using importlib.metadata. Trying with pyproject.toml"
-        )
+        logger.warning("Failed version retrieval using importlib.metadata. Trying with pyproject.toml")
 
         # For development. It works in local mode
         pyproject_file = Path(__file__).absolute().parents[2] / "pyproject.toml"
@@ -24,9 +22,7 @@ def _read_version() -> str:
         try:
             with pyproject_file.open() as fp:
                 pyproject = fp.read()
-                match = re.search(
-                    r"version\s*=\s*[\"'](\d+\.\d+\.*\d*)[\"']", pyproject
-                )
+                match = re.search(r"version\s*=\s*[\"'](\d+\.\d+\.*\d*)[\"']", pyproject)
                 version_from_toml = ""
                 if match is not None:
                     version_from_toml = match.group(1)
