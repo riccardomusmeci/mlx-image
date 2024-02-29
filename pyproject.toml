@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlxim"
-version = "0.0.1"
+version = "0.1.0"
 description = "Apple mlx image models library"
 authors = ["Riccardo Musmeci <riccardomusmeci92@gmail.com>"]
 readme = "README.md"
@@ -19,6 +19,7 @@ torchvision = "0.15"
 transformers = "4.36.2"
 opencv-python = "*"
 Pillow = "*"
+matplotlib = "*"
 
 # dev dependencies
 black = { version = "23.3.0", optional = true, extras = ["jupyter"] }
