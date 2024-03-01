@@ -82,7 +82,7 @@ class ImageFolderDataset(Dataset):
                     raise FileExistsError(f"Folder {label_dir} is empty.")
 
         if self.verbose:
-            print("> [INFO] ImageFolderDataset sanity check OK")
+            print("> [INFO] dataset sanity check OK")
 
     def _load_samples(self) -> Tuple[List[str], List[int]]:
         """Load samples and targets.
