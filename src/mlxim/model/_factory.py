@@ -11,7 +11,7 @@ def create_model(
     weights: bool = True,
     num_classes: int = 1000,
     strict: bool = False,
-    verbose: bool = True,
+    verbose: bool = False,
     **kwargs: Dict[str, Any],
 ) -> nn.Module:
     """Create model.
@@ -21,7 +21,7 @@ def create_model(
         weights (bool, optional): if True, downloads weights from HF. If a path loads weights from the given path. Defaults to True.
         num_classes (int, optional): number of classes. Defaults to 1000.
         strict (bool, optional): if True, raises an error if some weights are not loaded. Defaults to False.
-        verbose (bool, optional): if True, prints information during loading. Defaults to True.
+        verbose (bool, optional): if True, prints information during loading. Defaults to False.
 
     Raises:
         ValueError: if model_name is not available
