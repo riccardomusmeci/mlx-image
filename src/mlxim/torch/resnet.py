@@ -34,9 +34,11 @@ def resnet_to_mlx(model_name: str, pth_ckpt_path: str, verbose: bool = False) ->
             if verbose:
                 print(f"Transposing {k} from {pth_resnet_weights[pth_k].shape} to {v.shape}")
             pth_v = pth_resnet_weights[pth_k]
-            v = pth_v.transpose(0, 2, 3, 1)
+            if pth_v.transpose(0, 2, 3, 1).shape == v.shape:
+                v = pth_v.transpose(0, 2, 3, 1)
+            else:
+                print(f"[ERROR] {k} - mlx={v.shape} - torch={pth_v.shape}")
         else:
             v = pth_resnet_weights[pth_k]
         mlx_weights[k] = v
-
     return mlx_weights
