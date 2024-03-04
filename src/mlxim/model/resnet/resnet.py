@@ -5,7 +5,7 @@ import mlx.core as mx
 import mlx.nn as nn
 from mlx.utils import tree_flatten
 
-from ...layers import AdaptiveAvgPool2d
+from ..layers import AdaptiveAvgPool2d
 
 
 def conv3x3(in_planes: int, out_planes: int, stride: int = 1, dilation: int = 1) -> nn.Conv2d:
@@ -20,7 +20,6 @@ def conv3x3(in_planes: int, out_planes: int, stride: int = 1, dilation: int = 1)
     Returns:
         nn.Conv2d: 3x3 convolution
     """
-    # TODO: remove groups as param
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=dilation, bias=False)
 
 
@@ -169,8 +168,9 @@ class Bottleneck(nn.Module):
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-
+        print(out.shape)
         out = self.conv2(out)
+        print(out.shape)
         out = self.bn2(out)
         out = self.relu(out)
 
