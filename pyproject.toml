@@ -10,7 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python="^3.10"
-mlx = "0.3.0"
+mlx = "*"
 torch = "2.0"
 numpy = "1.26.2"
 tqdm = "*"
@@ -20,6 +20,7 @@ transformers = "4.36.2"
 opencv-python = "*"
 Pillow = "*"
 matplotlib = "*"
+albumentations = "*"
 
 # dev dependencies
 black = { version = "23.3.0", optional = true, extras = ["jupyter"] }
@@ -88,7 +89,9 @@ exclude = [
   "lib",
   "local/_meta.py",
   "local/convert.py",
-  "local/test_hf.py"
+  "local/test_hf.py",
+  "src/mlxim/model/layers",
+  "src/mlxim/model/regnet",
 ]
 #per-file-ignores = {}
 
@@ -182,7 +185,9 @@ exclude = [
   'lib',
   '.cicd',
   "tests",
-  "local"
+  "local",
+  "src/mlxim/model/regnet",
+  "src/mlxim/model/resnet",
 ]
 # enables PEP 420 style namespace packages.
 namespace_packages = true

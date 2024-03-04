@@ -1,3 +1,4 @@
+import json
 import os
 import random
 from pathlib import Path
@@ -7,50 +8,98 @@ import mlx.core as mx
 import numpy as np
 
 from ..io import read_rgb
-from ._base import Dataset
+from ._base import EXTENSIONS, Dataset
 
 
-class ImageFolderDataset(Dataset):
-    """Image Classification Dataset init (image folder dataset)
+class FolderDataset(Dataset):
+    """FolderDataset is used to load images from a folder
 
     Args:
         root_dir (str): data dir
-        class_map (Dict[int, Union[str, List[str]]], optional): class map {e.g. {0: 'class_a', 1: ['class_b', 'class_c']}}
-        max_samples_per_class (int, optional): max number of samples for each class in the dataset. Defaults to None.
         transform (Callable, optional): set of data transformations. Defaults to None.
+        engine (str, optional): image processing engine (pil or cv2). Defaults to "pil".
         verbose (bool, optional): verbose mode. Defaults to True.
-
-    Raises:
-        e: if some error occurs while checking dataset structure
     """
 
-    EXTENSIONS = (
-        "jpg",
-        "jpeg",
-        "png",
-        "ppm",
-        "bmp",
-        "pgm",
-        "tif",
-        "tiff",
-        "webp",
-    )
+    def __init__(
+        self, root_dir: Union[Path, str], transform: Optional[Callable], engine: str = "pil", verbose: bool = True
+    ) -> None:
+        super().__init__()
+        assert os.path.exists(root_dir), f"Folder with images {root_dir} does not exist."
+        self.root_dir = root_dir
+        self.images = [
+            os.path.join(self.root_dir, f) for f in os.listdir(self.root_dir) if f.split(".")[-1].lower() in EXTENSIONS
+        ]
+        self.transform = transform
+        self.engine = engine
+        if verbose:
+            self.stats()
+
+    def stats(self) -> None:
+        """Print dataset stats"""
+        print(" ------- FolderDataset stats -------")
+        print(f"> root_dir: {self.root_dir}")
+        print(f"> num_images: {len(self.images)}")
+        print(" -------------------------------------")
+
+    def __getitem__(self, index: int) -> mx.array:
+        """Return image at index
+
+        Args:
+            index (int): image index
+
+        Returns:
+            mx.array: image
+        """
+        img_path = self.images[index]
+        img = read_rgb(img_path, engine=self.engine)
+
+        if self.transform is not None:
+            img = self.transform(img)
+
+        img = mx.array(img)
+
+        return img
+
+    def __len__(self) -> int:
+        """Return number of samples in the dataset.
+
+        Returns:
+            int: number of samples in the dataset
+        """
+        return len(self.images)
+
+
+class LabelFolderDataset(Dataset):
+    """LabelFolderDataset is used to load images from a label folder structure.
+
+    Args:
+        root_dir (Union[Path, str]): data directory
+        class_map (Union[Dict[int, Union[str, List[str]]], str, Path]): class map {e.g. {0: 'class_a', 1: ['class_b', 'class_c']}}
+        transform (Optional[Callable], optional): set of data transformations. Defaults to None.
+        engine (str, optional): image processing engine (pil or cv2). Defaults to "pil".
+        verbose (bool, optional): verbose mode. Defaults to True.
+    """
 
     def __init__(
         self,
         root_dir: Union[Path, str],
-        class_map: Dict[int, Union[str, List[str]]],
+        class_map: Union[Dict[int, Union[str, List[str]]], str, Path],
         transform: Optional[Callable] = None,
         engine: str = "pil",
         verbose: bool = True,
     ) -> None:
         super().__init__()
 
-        assert isinstance(class_map, dict), "class_map must be a dict (e.g. {0: [car, trunk], 1: airplane})"
+        if not isinstance(class_map, dict):
+            with open(class_map) as f:
+                self.class_map = json.load(f)
+        else:
+            self.class_map = class_map
         self.verbose = verbose
         # checking structure
         try:
-            self._sanity_check(root_dir=root_dir, class_map=class_map)
+            self._sanity_check(root_dir=root_dir)
         except Exception as e:
             raise e
         self.root_dir = root_dir
@@ -60,18 +109,17 @@ class ImageFolderDataset(Dataset):
         self.transform = transform
         self.stats()
 
-    def _sanity_check(self, root_dir: Union[Path, str], class_map: Dict[int, Union[str, List[str]]]) -> None:
+    def _sanity_check(self, root_dir: Union[Path, str]) -> None:
         """Check dataset structure.
 
         Args:
             root_dir (Union[Path, str]): data directory
-            class_map (Dict[int, Union[str, List[str]]]): class map {e.g. {0: 'class_a', 1: ['class_b', 'class_c']}}
 
         Raises:
             FileNotFoundError: if the data folder is not right based on the structure in class_map
             FileExistsError: if some label does not have images in its folder
         """
-        for _k, labels in class_map.items():
+        for _k, labels in self.class_map.items():
             if not isinstance(labels, list):
                 labels = [labels]
             for l in labels:
@@ -99,9 +147,7 @@ class ImageFolderDataset(Dataset):
             for label in labels:
                 label_dir = os.path.join(self.root_dir, label)
                 c_images += [
-                    os.path.join(label_dir, f)
-                    for f in os.listdir(label_dir)
-                    if f.split(".")[-1].lower() in self.EXTENSIONS
+                    os.path.join(label_dir, f) for f in os.listdir(label_dir) if f.split(".")[-1].lower() in EXTENSIONS
                 ]
             c_targets += [c] * len(c_images)
             paths += c_images
@@ -111,6 +157,7 @@ class ImageFolderDataset(Dataset):
 
     def stats(self) -> None:
         """Print stats of the dataset."""
+        print(" ------- LabelFolderDataset stats -------")
         unique, counts = np.unique(self.targets, return_counts=True)
         num_samples = len(self.targets)
         for k in range(len(unique)):

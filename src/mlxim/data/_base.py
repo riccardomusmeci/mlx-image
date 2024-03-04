@@ -1,5 +1,17 @@
 from typing import Any
 
+EXTENSIONS = (
+    "jpg",
+    "jpeg",
+    "png",
+    "ppm",
+    "bmp",
+    "pgm",
+    "tif",
+    "tiff",
+    "webp",
+)
+
 
 class Dataset:
     r"""An abstract class representing a :class:`Dataset`."""

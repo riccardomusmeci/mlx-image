@@ -1,2 +1,2 @@
-from .image_folder import ImageFolderDataset
+from .folder import FolderDataset, LabelFolderDataset
 from .loader import DataLoader

@@ -14,11 +14,12 @@ class DataLoader:
     """custom DataLoader (similar to PyTorch but easier to read).
 
     Args:
-        dataset: the custom Dataset class
-        batch_size: the batch size. Defaults to 1.
-        shuffle: whether to shuffle the dataset. Defaults to False.
-        num_workers: the number of worker threads. Defaults to 0.
-        collate_fn: the collate function to be used. Defaults to _default_collate_fn.
+        dataset (Dataset): the dataset to be loaded.
+        batch_size (int): the batch size. Defaults to 1.
+        shuffle (bool): whether to shuffle the dataset. Defaults to False.
+        num_workers (int): the number of worker threads to use. Defaults to 0.
+        collate_fn (Callable): the function to use to collate the data. Defaults to _default_collate_fn.
+        drop_last (bool): whether to drop the last batch if it's smaller than the batch size. Defaults to False.
     """
 
     def __init__(
@@ -28,15 +29,17 @@ class DataLoader:
         shuffle: bool = False,
         num_workers: int = 0,
         collate_fn: Callable = _default_collate_fn,
+        drop_last: bool = False,  # Add drop_last argument
     ):
         self.dataset = dataset
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.num_workers = num_workers
+        self.num_workers = num_workers + 1 if num_workers == 0 else num_workers
         self.data_queue = Queue()  # type: ignore
         self.index_queue = Queue()  # type: ignore
         self.stop_token = object()
         self.collate_fn = collate_fn
+        self.drop_last = drop_last  # Store drop_last
 
         self.indices = list(range(len(self.dataset)))
         if self.shuffle:
@@ -50,7 +53,6 @@ class DataLoader:
             t.start()
 
     def _process_data(self) -> None:
-        """Process the data and put it into the data queue."""
         while True:
             index = self.index_queue.get()
             if index is self.stop_token:
@@ -59,11 +61,6 @@ class DataLoader:
             self.data_queue.put(data)
 
     def __iter__(self) -> Any:
-        """Iterate over the DataLoader.
-
-        Yields:
-            Any: the batch of data
-        """
         self.batch_indices = []  # type: ignore
         self.start_workers()
 
@@ -75,9 +72,16 @@ class DataLoader:
                 yield self.collate_fn([self.data_queue.get() for _ in self.batch_indices])
                 self.batch_indices = []
 
+        if not self.drop_last and len(self.batch_indices) > 0:
+            # If drop_last is False and there are remaining indices, process them as the last batch
+            yield self.collate_fn([self.data_queue.get() for _ in self.batch_indices])
+
         # Add stop tokens to stop the worker threads
         for _ in range(self.num_workers):
             self.index_queue.put(self.stop_token)
 
     def __len__(self) -> int:
-        return len(self.indices) // self.batch_size
+        if self.drop_last:
+            return len(self.indices) // self.batch_size
+        else:
+            return (len(self.indices) + self.batch_size - 1) // self.batch_size
