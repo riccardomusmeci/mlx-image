@@ -20,7 +20,7 @@ def read_rgb(file_path: Union[str, Path], engine: str = "pil") -> np.array:  # t
     Returns:
         np.array: image
     """
-    if engine not in ["pil", "cv2"]:
+    if engine.lower() not in ["pil", "cv2"]:
         print(f"[WARNING] Loading image engine {engine} is not supported. Using PIL instead.")
         engine = "pil"
 
