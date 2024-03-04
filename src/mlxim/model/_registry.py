@@ -9,6 +9,12 @@ from .resnet import (
     wide_resnet101_2,
 )
 
+# TODO: waiting for groups and dilation support
+# from .regnet import (
+#     regnet_x_400mf,
+#     regnet_configs
+# )
+
 MODEL_ENTRYPOINT = {
     "resnet18": resnet18,
     "resnet34": resnet34,
@@ -17,6 +23,11 @@ MODEL_ENTRYPOINT = {
     "resnet152": resnet152,
     "wide_resnet50_2": wide_resnet50_2,
     "wide_resnet101_2": wide_resnet101_2,
+    # TODO: waiting for groups and dilation support
+    # "resnext50_32x4d": resnext50_32x4d,
+    # "resnext101_32x8d": resnext101_32x8d,
+    # "resnext101_64x4d": resnext101_64x4d,
+    # "regnet_x_400mf": regnet_x_400mf
 }
 
 MODEL_CONFIG = {
@@ -27,4 +38,9 @@ MODEL_CONFIG = {
     "resnet152": resnet_configs["resnet152"],
     "wide_resnet50_2": resnet_configs["wide_resnet50_2"],
     "wide_resnet101_2": resnet_configs["wide_resnet101_2"],
+    # TODO: waiting for groups and dilation support
+    # "resnext50_32x4d": resnet_configs["resnext50_32x4d"],
+    # "resnext101_32x8d": resnet_configs["resnext101_32x8d"],
+    # "resnext101_64x4d": resnet_configs["resnext101_64x4d"],
+    # "regnet_x_400mf": regnet_configs["regnet_x_400mf"]
 }
