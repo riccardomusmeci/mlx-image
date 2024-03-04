@@ -11,7 +11,7 @@ from ._utils import _default_collate_fn
 
 # TODO: must be improved: add sampler support and other features
 class DataLoader:
-    """custom DataLoader (similar to PyTorch but easier to read).
+    """Custom DataLoader (similar to PyTorch but easier to read).
 
     Args:
         dataset (Dataset): the dataset to be loaded.
@@ -29,7 +29,7 @@ class DataLoader:
         shuffle: bool = False,
         num_workers: int = 0,
         collate_fn: Callable = _default_collate_fn,
-        drop_last: bool = False,  # Add drop_last argument
+        drop_last: bool = False,
     ):
         self.dataset = dataset
         self.batch_size = batch_size
@@ -39,7 +39,7 @@ class DataLoader:
         self.index_queue = Queue()  # type: ignore
         self.stop_token = object()
         self.collate_fn = collate_fn
-        self.drop_last = drop_last  # Store drop_last
+        self.drop_last = drop_last
 
         self.indices = list(range(len(self.dataset)))
         if self.shuffle:
