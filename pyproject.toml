@@ -21,6 +21,7 @@ opencv-python = "*"
 Pillow = "*"
 matplotlib = "*"
 albumentations = "*"
+types-pyyaml = "^6.0.12.12"
 
 # dev dependencies
 black = { version = "23.3.0", optional = true, extras = ["jupyter"] }
