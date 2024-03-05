@@ -58,7 +58,7 @@ class ValidationResults:
             "acc@1": [round(acc_1, 5)],
             "acc@5": [round(acc_5, 5)],
             "hf_weights": [hf_weights],
-            "throughput": [throughput],
+            "throughput (img/sec)": [round(throughput, 3)],
             "param_count": [param_count],
             "img_size": [img_size],
             "crop_pct": [crop_pct],
@@ -72,5 +72,5 @@ class ValidationResults:
     def save(self) -> None:
         """Save the results to a csv file."""
         print(f"Saving csv results to {self.path}")
-        self.results.sort_values(by="acc@1", ascending=False)
+        self.results = self.results.sort_values(by="acc@1", ascending=False)
         self.results.to_csv(self.path, index=False)
