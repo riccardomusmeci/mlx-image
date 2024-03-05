@@ -17,6 +17,8 @@ pip install .
 ```
 
 ## **Models**
+Models weights are available on [`mlx-vision`](https://huggingface.co/mlx-vision) space on HuggingFace.
+
 To create a model with weights:
 ```python
 from mlxim.model import create_model
@@ -80,6 +82,10 @@ for epoch in range(10):
 ## **Validation**
 
 The `validation.py` script is run every time a pth model is converted to mlx and it's used to check if the model performs similarly to the original one on ImageNet-1K.
+
+I use the configuration file `config/validation.yaml` to set the parameters for the validation script.
+
+You can download the ImageNet-1K validation set from mlx-vision space on HuggingFace at this [link](https://huggingface.co/datasets/mlx-vision/imagenet-1k).
 
 ## **Similarity to PyTorch**
 `mlx-im` tries to be as close as possible to PyTorch:
