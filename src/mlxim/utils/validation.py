@@ -29,6 +29,7 @@ class ValidationResults:
         crop_pct: float,
         interpolation: str,
         apple_silicon: str,
+        engine: str,
         hf_weights: Optional[str] = None,
     ) -> None:
         """Update the results dataframe with new results.
@@ -43,6 +44,7 @@ class ValidationResults:
             crop_pct (float): crop percentage
             interpolation (str): interpolation method
             apple_silicon (str): Apple Silicon name (e.g. m1_pro, m1_max, etc.)
+            engine (str): engine used for the dataset to load the images
             hf_weights (str, optional): if None, it will be fetched from the model config. Defaults to None.
         """
 
@@ -53,14 +55,15 @@ class ValidationResults:
 
         new_row = {
             "model": [model_name],
-            "acc@1": [acc_1],
-            "acc@5": [acc_5],
+            "acc@1": [round(acc_1, 5)],
+            "acc@5": [round(acc_5, 5)],
             "hf_weights": [hf_weights],
             "throughput": [throughput],
             "param_count": [param_count],
             "img_size": [img_size],
             "crop_pct": [crop_pct],
             "interpolation": [interpolation],
+            "engine": [engine],
             "apple_silicon": [apple_silicon],
         }
         new_data = pd.DataFrame(new_row)
@@ -69,4 +72,5 @@ class ValidationResults:
     def save(self) -> None:
         """Save the results to a csv file."""
         print(f"Saving csv results to {self.path}")
+        self.results.sort_values(by="acc@1", ascending=False)
         self.results.to_csv(self.path, index=False)

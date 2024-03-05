@@ -6,6 +6,13 @@ from ._registry import MODEL_ENTRYPOINT
 from ._utils import download_from_hf, load_weights
 
 
+def list_models() -> None:
+    """List all available image models."""
+    print("Available models:")
+    for model_name in list(MODEL_ENTRYPOINT.keys()):
+        print(f"\t- {model_name}")
+
+
 def create_model(
     model_name: str,
     weights: bool = True,
@@ -14,7 +21,22 @@ def create_model(
     verbose: bool = False,
     **kwargs: Dict[str, Any],
 ) -> nn.Module:
-    """Create model.
+    """Create an image model.
+
+    Example:
+
+    ```
+    >>> from mlxim.model import create_model
+
+    >>> # Create a Phi2 model with no pretrained weights.
+    >>> model = create_model('resnet18')
+
+    >>> # Create a resnet18 model with pretrained weights from HF.
+    >>> model = create_model('resnet18', weights=True)
+
+    >>> # Create a resnet18 model with custom weights.
+    >>> model = create_model('resnet18', weights="path/to/weights.npz")
+    ```
 
     Args:
         model_name (str): model name
