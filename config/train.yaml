@@ -1,0 +1,47 @@
+
+output: PATH/TO/OUTPUT/DIR                                # output directory for the training experiment
+seed: 42                                                  # seed for reproducibility
+
+# in data_dir you must have train+val dir
+data_dir: PATH/TO/DATA/DIR                                # path to the dataset directory
+
+dataset:                                                  ###### dataset configuration ######
+  class_map: {                                            # class map for the dataset (it can also be a json file)
+      0: "class_a",
+      1: ["class_b", "class_c"],
+      2: ["class_d"],
+  }
+  engine: pil                                             # image processing engine (pil or cv2)
+
+model:
+  model_name: resnet18                                    # model name
+  weights: true                                           # use pretrained weights
+
+trainer:                                                  ###### trainer configuration ######
+  loss_fn_args: {                                         # loss function arguments
+    'label_smoothing': 0.0
+  }
+  log_every: 0.05                                         # log every n steps
+  top_k: [1, 5]                                           # which top-k accuracy to compute
+
+loader:                                                   ###### loader configuration ######
+  batch_size: 32                                          # batch size
+  num_workers: 8                                          # number of workers
+  drop_last: false                                        # drop last batch
+  shuffle: true                                           # shuffle the dataset
+
+transform:                                                ###### transform configuration ######
+  img_size: 224                                           # image size
+  scale: null                                             # scale
+  ratio: null                                             # aspect ratio
+  crop_mode: center                                       # crop mode
+  crop_pct: 0.875                                         # crop percentage
+  hflip: 0.5                                              # horizontal flip
+  vflip: 0.0                                              # vertical flip
+  color_jitter: 0.4                                       # color jitter
+  auto_augment: null                                      # auto augment
+  interpolation: bilinear                                 # interpolation
+
+model_checkpoint:                                         ###### model checkpoint configuration ######
+  monitor: "val_acc@1"                                    # monitor metric
+  mode: "max"                                             # mode (max or min)

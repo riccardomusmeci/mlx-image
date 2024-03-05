@@ -1,0 +1,32 @@
+
+output: PATH/TO/OUTPUT/DIR                              # output directory for the validation experiment
+apple_silicon: m1_pro                                   # apple silicon (m1, m1_pro, m1_max, m2_pro, etc.)
+
+dataset:                                                ###### dataset configuration ######
+  root_dir: PATH/TO/DATA/VAL/DIR                        # path to the dataset directory (folders with images)
+  class_map: {                                          # class map for the dataset (it can also be a json file)
+      0: "class_a",
+      1: ["class_b", "class_c"],
+      2: ["class_d"],
+  }
+  engine: pil                                           # image processing engine (pil or cv2)
+  verbose: false                                        # print dataset info
+
+transform:                                              ###### transform configuration ######
+  train: false                                          # train mode
+  img_size: 224                                         # image size
+  crop_pct: 1                                           # crop percentage
+  interpolation: bilinear                               # interpolation
+
+model:                                                  ###### model configuration ######
+  model_name: resnet18                                  # model name
+  weights: true                                         # use pretrained weights (can be a path to a checkpoint)
+
+loader:                                                 ###### loader configuration ######
+  batch_size: 32                                        # batch size
+  num_workers: 8                                        # number of workers
+  shuffle: false                                        # shuffle the dataset
+  drop_last: false                                      # drop last batch
+
+metric:                                                 ###### metric configuration ######
+  top_k: [1, 5]                                         # which top-k accuracy to compute
