@@ -94,6 +94,7 @@ class LabelFolderDataset(Dataset):
         if not isinstance(class_map, dict):
             with open(class_map) as f:
                 self.class_map = json.load(f)
+                self.class_map = {int(k): v for k, v in self.class_map.items()}
         else:
             self.class_map = class_map
         self.verbose = verbose
@@ -103,11 +104,11 @@ class LabelFolderDataset(Dataset):
         except Exception as e:
             raise e
         self.root_dir = root_dir
-        self.class_map = class_map
         self.engine = engine
         self.images, self.targets = self._load_samples()
         self.transform = transform
-        self.stats()
+        if verbose:
+            self.stats()
 
     def _sanity_check(self, root_dir: Union[Path, str]) -> None:
         """Check dataset structure.
@@ -149,7 +150,7 @@ class LabelFolderDataset(Dataset):
                 c_images += [
                     os.path.join(label_dir, f) for f in os.listdir(label_dir) if f.split(".")[-1].lower() in EXTENSIONS
                 ]
-            c_targets += [c] * len(c_images)
+            c_targets += [int(c)] * len(c_images)
             paths += c_images
             targets += c_targets
 
