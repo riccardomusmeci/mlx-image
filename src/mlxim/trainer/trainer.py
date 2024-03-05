@@ -27,6 +27,7 @@ class Trainer:
         device (mx.DeviceType, optional): device to be used. Defaults to mx.gpu.
         max_epochs (int, optional): maximum number of epochs. Defaults to 10.
         model_checkpoint (Optional[ModelCheckpoint], optional): model checkpoint. Defaults to None.
+        top_k (Tuple[int, int], optional): top k accuracy. Defaults to (1, 5).
     """
 
     def __init__(
@@ -41,6 +42,7 @@ class Trainer:
         device: mx.DeviceType = mx.gpu,
         max_epochs: int = 10,
         model_checkpoint: Optional[ModelCheckpoint] = None,
+        top_k: Tuple[int, int] = (1, 5),
     ) -> None:
         mx.set_default_device(device)  # type: ignore
 
@@ -52,11 +54,10 @@ class Trainer:
         self.val_loader = val_loader
         self.log_every = int(log_every * len(self.train_loader))
         self.max_epochs = max_epochs
-
         self.model_checkpoint = model_checkpoint
-
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
+        self.top_k = top_k
+        self.train_acc = Accuracy(top_k=top_k)
+        self.val_acc = Accuracy(top_k=top_k)
 
         # things to update
         self.state = [self.model.state, self.optimizer.state]
@@ -91,14 +92,14 @@ class Trainer:
         self.val_acc.update(logits, target)
         return loss
 
-    def train_epoch(self) -> Tuple[float, float, float]:
+    def train_epoch(self) -> Tuple[float, Dict, float]:
         """Train the model for a single epoch.
 
         Args:
             epoch (int): current epoch
 
         Returns:
-            Tuple[float, float, float]: mean loss, accuracy, mean throughput
+            Tuple[float, Dict, float]: mean loss, accuracy dict, mean throughput
         """
         self.model.train()
         epoch_loss = []
@@ -123,7 +124,7 @@ class Trainer:
                             f"> iter=[{batch_idx}/{len(self.train_loader)}]",
                             f"train_loss={np.mean(epoch_loss[-1]):.3f}",
                             f"train_throughput={np.mean(throughput[-1]):.2f} images/second",
-                            f"lr={self.optimizer.state['learning_rate']}",
+                            f"lr={self.optimizer.state['learning_rate'].item():.5f}",
                         ]
                     )
                 )
@@ -132,7 +133,7 @@ class Trainer:
         self.train_acc.reset()
         return np.mean(epoch_loss), epoch_acc, np.mean(throughput)
 
-    def val_epoch(self) -> Tuple[float, float, float]:
+    def val_epoch(self) -> Tuple[float, Dict, float]:
         """Run the validation step for a single epoch.
 
         Returns:
@@ -162,19 +163,21 @@ class Trainer:
             train_loss, train_acc, train_throughput = self.train_epoch()
             toc = time.perf_counter()
             print(
-                f"> epoch_time={toc-tic:.2f}s | train_loss={train_loss:.3f} | train_acc={train_acc:.3f} | train_throughput={train_throughput:.2f} images/second"
+                f"> epoch_time={toc-tic:.2f}s | train_loss={train_loss:.3f} | train_acc={train_acc} | train_throughput={train_throughput:.2f} images/second"
             )
 
             if self.val_loader is not None:
                 print("running validation...")
                 val_loss, val_acc, val_throughput = self.val_epoch()
                 print(
-                    f"> val_loss={val_loss:.3f} | val_acc={val_acc:.3f} | val_throughput={val_throughput:.2f} images/second"
+                    f"> val_loss={val_loss:.3f} | val_acc={val_acc} | val_throughput={val_throughput:.2f} images/second"
                 )
 
                 if self.model_checkpoint:
                     self.model_checkpoint.step(
-                        epoch=epoch, metrics={"val_loss": val_loss, "val_acc": val_acc}, weights=get_weights(self.model)
+                        epoch=epoch,
+                        metrics={"val_loss": val_loss, "val_acc": val_acc[f"acc@{min(self.top_k)}"]},
+                        weights=get_weights(self.model),
                     )
                     if self.model_checkpoint.patience_over:
                         print("\n*******************\n")
@@ -184,7 +187,7 @@ class Trainer:
                 if self.model_checkpoint:
                     self.model_checkpoint.step(
                         epoch=epoch,
-                        metrics={"train_loss": train_loss, "train_acc": train_acc},
+                        metrics={"train_loss": train_loss, "train_acc": train_acc[f"acc@{min(self.top_k)}"]},
                         weights=get_weights(self.model),
                     )
                     if self.model_checkpoint.patience_over:
