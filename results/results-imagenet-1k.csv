@@ -1,9 +1,9 @@
-model,acc@1,acc@5,hf_weights,throughput,param_count,img_size,crop_pct,interpolation,engine,apple_silicon
-resnet18,0.64343,0.85721,mlx-vision/resnet18-mlxim/resnet18-IMAGENET1K_V1-mlx.npz,31504.280978080093,11699112,224,1,bilinear,cv2,m1_pro
-resnet18,0.64353,0.85725,mlx-vision/resnet18-mlxim/resnet18-IMAGENET1K_V1-mlx.npz,30571.62234551868,11699112,224,1,bilinear,pil,m1_pro
-resnet34,0.69064,0.88848,mlx-vision/resnet34-mlxim/resnet34-IMAGENET1K-mlx.npz,18795.39028611261,21814696,224,1,bilinear,pil,m1_pro
-resnet34,0.69056,0.88846,mlx-vision/resnet34-mlxim/resnet34-IMAGENET1K-mlx.npz,18405.23822008693,21814696,224,1,bilinear,cv2,m1_pro
-resnet50,0.78137,0.9407,mlx-vision/resnet50-mlxim/resnet50-IMAGENET1K_V2-mlx.npz,13020.243179843514,25610152,224,1,bilinear,cv2,m1_pro
-resnet50,0.78143,0.9407,mlx-vision/resnet50-mlxim/resnet50-IMAGENET1K_V2-mlx.npz,13379.713270205377,25610152,224,1,bilinear,pil,m1_pro
-resnet101,0.79916,0.9486,mlx-vision/resnet101-mlxim/resnet101-IMAGENET1K_V2-mlx.npz,7147.106311738095,44654504,224,1,bilinear,pil,m1_pro
-resnet101,0.79916,0.9486,mlx-vision/resnet101-mlxim/resnet101-IMAGENET1K_V2-mlx.npz,7091.7702485675545,44654504,224,1,bilinear,cv2,m1_pro
+model,acc@1,acc@5,hf_weights,throughput (img/sec),param_count,img_size,crop_pct,interpolation,engine,apple_silicon
+resnet18,0.64343,0.85721,mlx-vision/resnet18-mlxim/resnet18-IMAGENET1K_V1-mlx.npz,31504.280,11699112,224,1,bilinear,cv2,m1_pro
+resnet18,0.64353,0.85725,mlx-vision/resnet18-mlxim/resnet18-IMAGENET1K_V1-mlx.npz,30571.622,11699112,224,1,bilinear,pil,m1_pro
+resnet34,0.69064,0.88848,mlx-vision/resnet34-mlxim/resnet34-IMAGENET1K-mlx.npz,18795.390,21814696,224,1,bilinear,pil,m1_pro
+resnet34,0.69056,0.88846,mlx-vision/resnet34-mlxim/resnet34-IMAGENET1K-mlx.npz,18405.238,21814696,224,1,bilinear,cv2,m1_pro
+resnet50,0.78137,0.9407,mlx-vision/resnet50-mlxim/resnet50-IMAGENET1K_V2-mlx.npz,13020.243,25610152,224,1,bilinear,cv2,m1_pro
+resnet50,0.78143,0.9407,mlx-vision/resnet50-mlxim/resnet50-IMAGENET1K_V2-mlx.npz,13379.713,25610152,224,1,bilinear,pil,m1_pro
+resnet101,0.79916,0.9486,mlx-vision/resnet101-mlxim/resnet101-IMAGENET1K_V2-mlx.npz,7147.106,44654504,224,1,bilinear,pil,m1_pro
+resnet101,0.79916,0.9486,mlx-vision/resnet101-mlxim/resnet101-IMAGENET1K_V2-mlx.npz,7091.7702,44654504,224,1,bilinear,cv2,m1_pro
