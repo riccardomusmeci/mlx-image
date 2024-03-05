@@ -4,6 +4,7 @@ from typing import Any, Callable, List, Optional, Type, Union
 import mlx.core as mx
 import mlx.nn as nn
 from mlx.utils import tree_flatten
+from torchvision.models import resnet18
 
 from ..layers import AdaptiveAvgPool2d
 
@@ -168,9 +169,7 @@ class Bottleneck(nn.Module):
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-        print(out.shape)
         out = self.conv2(out)
-        print(out.shape)
         out = self.bn2(out)
         out = self.relu(out)
 

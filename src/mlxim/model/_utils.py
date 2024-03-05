@@ -9,6 +9,11 @@ from mlx.utils import tree_flatten, tree_unflatten
 from ._registry import MODEL_CONFIG
 
 
+def num_params(model: nn.Module) -> int:
+    nparams = sum(x.size for k, x in tree_flatten(model.parameters()))
+    return nparams
+
+
 def get_weights(model: nn.Module) -> dict:
     """Return the model weights dict.
 
