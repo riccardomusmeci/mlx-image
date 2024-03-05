@@ -162,21 +162,35 @@ class Trainer:
             tic = time.perf_counter()
             train_loss, train_acc, train_throughput = self.train_epoch()
             toc = time.perf_counter()
+            print("training recap:")
             print(
-                f"> epoch_time={toc-tic:.2f}s | train_loss={train_loss:.3f} | train_acc={train_acc} | train_throughput={train_throughput:.2f} images/second"
+                "> "
+                + " | ".join(
+                    [
+                        f"epoch_time={toc-tic:.2f}s",
+                        f"train_loss={train_loss:.3f}",
+                        f"train_throughput={train_throughput:.2f} images/second",
+                    ]
+                    + [f"train_acc@{k}={train_acc[f'acc@{k}']}" for k in self.top_k]
+                )
             )
 
             if self.val_loader is not None:
                 print("running validation...")
                 val_loss, val_acc, val_throughput = self.val_epoch()
                 print(
-                    f"> val_loss={val_loss:.3f} | val_acc={val_acc} | val_throughput={val_throughput:.2f} images/second"
+                    "> "
+                    + " | ".join(
+                        [f"val_loss={val_loss:.3f}", f"val_throughput={val_throughput:.2f} images/second"]
+                        + [f"val_acc@{k}={val_acc[f'acc@{k}']}" for k in self.top_k]
+                    )
                 )
 
                 if self.model_checkpoint:
+                    val_metrics = {"val_loss": val_loss} | {f"val_acc@{k}": val_acc[f"acc@{k}"] for k in self.top_k}
                     self.model_checkpoint.step(
                         epoch=epoch,
-                        metrics={"val_loss": val_loss, "val_acc": val_acc[f"acc@{min(self.top_k)}"]},
+                        metrics=val_metrics,
                         weights=get_weights(self.model),
                     )
                     if self.model_checkpoint.patience_over:
@@ -185,9 +199,12 @@ class Trainer:
                         quit()
             else:
                 if self.model_checkpoint:
+                    train_metrics = {"train_loss": train_loss} | {
+                        f"train_acc@{k}": train_acc[f"acc@{k}"] for k in self.top_k
+                    }
                     self.model_checkpoint.step(
                         epoch=epoch,
-                        metrics={"train_loss": train_loss, "train_acc": train_acc[f"acc@{min(self.top_k)}"]},
+                        metrics=train_metrics,
                         weights=get_weights(self.model),
                     )
                     if self.model_checkpoint.patience_over:

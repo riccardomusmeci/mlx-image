@@ -20,7 +20,7 @@ class ModelCheckpoint:
     ) -> None:
         assert mode in ["max", "min"], f"Mode {mode} not supported. Choose between max or min."
         self.output_dir = os.path.join(output_dir, "checkpoints")
-        os.makedirs(self.output_dir)
+        os.makedirs(self.output_dir, exist_ok=True)
         self.monitor = monitor
         self.history: List[Tuple[float, int]] = []  # each el is a Tuple of (val, epoch)
         self.save_top_k = save_top_k
@@ -144,7 +144,6 @@ class ModelCheckpoint:
             metrics (Dict[str, float]): validation metrics
             weights (Dict): model state dict
         """
-
         self._update_history(val=metrics[self.monitor], epoch=epoch)
 
         # it means one of best models just added
