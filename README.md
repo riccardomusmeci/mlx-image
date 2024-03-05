@@ -7,7 +7,7 @@ Apple MLX framework is a great tool to run machine learning models on Apple Sili
 
 This repository is meant to convert image models from timm/torchvision to Apple MLX framework. The weights are just converted from .pth to .npz and the models **are not trained again**.
 
-I don't have enough compute power (and time) to train all the models from scratch (someone buy me a maxed-out Mac, please).
+I don't have enough compute power (and time) to train all the models from scratch (**someone buy me a maxed-out Mac, please**).
 
 ## **How to install**
 ```
