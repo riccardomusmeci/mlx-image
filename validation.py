@@ -55,6 +55,7 @@ if __name__ == "__main__":
     print("Validation result:")
     print(f"Avg. time per batch: {avg_time_batch:.4f} s")
     print(f"Avg. throughput: {avg_throughput:.4f} images/s")
+    print("Accuracy:")
     print(accuracy)
 
     output_dir = os.path.join(config["output"], config["model"]["model_name"], now())
@@ -70,6 +71,7 @@ if __name__ == "__main__":
         crop_pct=config["transform"]["crop_pct"],
         interpolation=config["transform"]["interpolation"],
         apple_silicon=config["apple_silicon"],
+        engine=config["dataset"]["engine"],
     )
     results.save()
 
