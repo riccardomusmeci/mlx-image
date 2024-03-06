@@ -29,6 +29,10 @@ if __name__ == "__main__":
 
     config = load_config(args.config)
 
+    print("Validation setup:")
+    print(f"> Model: {config['model']['model_name']}")
+    print(f"> Transform: {config['transform']}")
+
     dataset = LabelFolderDataset(transform=ImageNetTransform(**config["transform"]), **config["dataset"])
 
     loader = DataLoader(dataset=dataset, **config["loader"])
@@ -37,24 +41,14 @@ if __name__ == "__main__":
     model.eval()
 
     accuracy = Accuracy(**config["metric"])
-    val_time = []
-    throughput = []
     for _i, batch in tqdm(enumerate(loader), total=len(loader)):
-        tic = time.time()
         x, target = batch
         logits = model(x)
-        toc = time.time()
         accuracy.update(logits, target)
-        val_time.append(toc - tic)
-        throughput.append(x.shape[0] / (toc - tic))
 
     acc = accuracy.compute()
-    avg_time_batch = sum(val_time) / len(val_time)
-    avg_throughput = sum(throughput) / len(throughput)
 
     print("Validation result:")
-    print(f"Avg. time per batch: {avg_time_batch:.4f} s")
-    print(f"Avg. throughput: {avg_throughput:.4f} images/s")
     print("Accuracy:")
     print(accuracy)
 
@@ -65,12 +59,10 @@ if __name__ == "__main__":
         model_name=config["model"]["model_name"],
         acc_1=acc["acc@1"],
         acc_5=acc["acc@5"],
-        throughput=avg_throughput,
         param_count=num_params(model),
         img_size=config["transform"]["img_size"],
         crop_pct=config["transform"]["crop_pct"],
         interpolation=config["transform"]["interpolation"],
-        apple_silicon=config["apple_silicon"],
         engine=config["dataset"]["engine"],
     )
     results.save()
@@ -81,10 +73,6 @@ if __name__ == "__main__":
     # save accuracy dict to file
     with open(os.path.join(output_dir, "metrics.json"), "w") as f:
         json.dump(accuracy.as_dict(), f, indent=4)
-
-    with open(os.path.join(output_dir, "stats.txt"), "w") as f:
-        f.write(f"average_time_per_batch (s): {avg_time_batch}\n")
-        f.write(f"average_throughput (images/s): {avg_throughput}\n")
 
     # copy config file
     copy2(args.config, output_dir)

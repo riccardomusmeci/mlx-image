@@ -23,12 +23,10 @@ class ValidationResults:
         model_name: str,
         acc_1: float,
         acc_5: float,
-        throughput: float,
         param_count: float,
         img_size: int,
         crop_pct: float,
         interpolation: str,
-        apple_silicon: str,
         engine: str,
         hf_weights: Optional[str] = None,
     ) -> None:
@@ -38,12 +36,10 @@ class ValidationResults:
             model_name (str): model name
             acc_1 (float): accuracy@1
             acc_5 (float): accuracy@5
-            throughput (float): model throughput
             param_count (float): number of model parameters
             img_size (int): image size
             crop_pct (float): crop percentage
             interpolation (str): interpolation method
-            apple_silicon (str): Apple Silicon name (e.g. m1_pro, m1_max, etc.)
             engine (str): engine used for the dataset to load the images
             hf_weights (str, optional): if None, it will be fetched from the model config. Defaults to None.
         """
@@ -58,13 +54,11 @@ class ValidationResults:
             "acc@1": [round(acc_1, 5)],
             "acc@5": [round(acc_5, 5)],
             "hf_weights": [hf_weights],
-            "throughput (img/sec)": [round(throughput, 3)],
             "param_count": [param_count],
             "img_size": [img_size],
             "crop_pct": [crop_pct],
             "interpolation": [interpolation],
             "engine": [engine],
-            "apple_silicon": [apple_silicon],
         }
         new_data = pd.DataFrame(new_row)
         self.results = pd.concat([self.results, new_data], ignore_index=True)
