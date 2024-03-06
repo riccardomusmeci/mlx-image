@@ -4,7 +4,6 @@ from typing import Any, Callable, List, Optional, Type, Union
 import mlx.core as mx
 import mlx.nn as nn
 from mlx.utils import tree_flatten
-from torchvision.models import resnet18
 
 from ..layers import AdaptiveAvgPool2d
 

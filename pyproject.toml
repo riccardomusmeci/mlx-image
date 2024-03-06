@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlx-image"
-version = "0.1.0"
+version = "0.1.1"
 description = "Apple mlx image models library"
 authors = ["Riccardo Musmeci <riccardomusmeci92@gmail.com>"]
 readme = "README.md"
@@ -21,6 +21,7 @@ pandas = "*"
 matplotlib = "*"
 albumentations = "*"
 types-pyyaml = "^6.0.12.12"
+huggingface_hub = "*"
 
 # dev dependencies
 black = { version = "23.3.0", optional = true, extras = ["jupyter"] }
