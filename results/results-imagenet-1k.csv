@@ -1,10 +1,15 @@
-model,acc@1,acc@5,hf_weights,throughput (img/sec),param_count,img_size,crop_pct,interpolation,engine,apple_silicon
-resnet152,0.8062,0.95048,mlx-vision/resnet152-mlxim/resnet152-IMAGENET1K_V2-mlx.npz,4708.679,60344232,224,1,bilinear,cv2,m1_pro
-resnet101,0.79916,0.9486,mlx-vision/resnet101-mlxim/resnet101-IMAGENET1K_V2-mlx.npz,7147.106,44654504,224,1,bilinear,pil,m1_pro
-resnet101,0.79916,0.9486,mlx-vision/resnet101-mlxim/resnet101-IMAGENET1K_V2-mlx.npz,7091.7702,44654504,224,1,bilinear,cv2,m1_pro
-resnet50,0.78143,0.9407,mlx-vision/resnet50-mlxim/resnet50-IMAGENET1K_V2-mlx.npz,13379.713,25610152,224,1,bilinear,pil,m1_pro
-resnet50,0.78137,0.9407,mlx-vision/resnet50-mlxim/resnet50-IMAGENET1K_V2-mlx.npz,13020.243,25610152,224,1,bilinear,cv2,m1_pro
-resnet34,0.69064,0.88848,mlx-vision/resnet34-mlxim/resnet34-IMAGENET1K-mlx.npz,18795.39,21814696,224,1,bilinear,pil,m1_pro
-resnet34,0.69056,0.88846,mlx-vision/resnet34-mlxim/resnet34-IMAGENET1K-mlx.npz,18405.238,21814696,224,1,bilinear,cv2,m1_pro
-resnet18,0.64353,0.85725,mlx-vision/resnet18-mlxim/resnet18-IMAGENET1K_V1-mlx.npz,30571.622,11699112,224,1,bilinear,pil,m1_pro
-resnet18,0.64343,0.85721,mlx-vision/resnet18-mlxim/resnet18-IMAGENET1K_V1-mlx.npz,31504.28,11699112,224,1,bilinear,cv2,m1_pro
+model,acc@1,acc@5,hf_weights,param_count,img_size,crop_pct,interpolation,engine
+vit_base_patch16_384.swag_e2e,0.85667,0.97657,mlx-vision/vit_base_patch16_384-mlxim/vit_base_patch16_384-IMAGENET1K_SWAG_E2E-mlx.npz,86859496,384,1,bicubic,pil
+vit_large_patch16_224.swag_lin,0.85325,0.97449,mlx-vision/vit_large_patch16_224-mlxim/vit_large_patch16_224-IMAGENET1K_SWAG_LINEAR-mlx.npz,304326632,224,1,bicubic,pil
+vit_base_patch16_224.swag_lin,0.81904,0.96169,mlx-vision/vit_base_patch16_224-mlxim/vit_base_patch16_224-IMAGENET1K_SWAG_LINEAR_V1-mlx.npz,86567656,224,1,bicubic,pil
+wide_resnet101_2,0.80948,0.95222,mlx-vision/wide_resnet101_2-mlxim/wide_resnet101_2-IMAGENET1K_V2-mlx.npz,127024552,224,1,bilinear,pil
+vit_base_patch16_224,0.80634,0.95012,mlx-vision/vit_base_patch16_224-mlxim/vit_base_patch16_224-IMAGENET1K_V1-mlx.npz,86567656,224,1,bicubic,pil
+resnet152,0.80624,0.95048,mlx-vision/resnet152-mlxim/resnet152-IMAGENET1K_V2-mlx.npz,60344232,224,1,bilinear,pil
+resnet101,0.79916,0.9486,mlx-vision/resnet101-mlxim/resnet101-IMAGENET1K_V2-mlx.npz,44654504,224,1,bilinear,pil
+wide_resnet50_2,0.79635,0.94678,mlx-vision/wide_resnet50_2-mlxim/wide_resnet50_2-IMAGENET1K_V2-mlx.npz,68951464,224,1,bilinear,pil
+vit_large_patch16_224,0.79343,0.94272,mlx-vision/vit_large_patch16_224-mlxim/vit_large_patch16_224-IMAGENET1K-mlx.npz,304326632,224,1,bicubic,pil
+resnet50,0.78143,0.9407,mlx-vision/resnet50-mlxim/resnet50-IMAGENET1K_V2-mlx.npz,25610152,224,1,bilinear,pil
+vit_base_patch32_224,0.7423,0.91401,mlx-vision/vit_base_patch32_224-mlxim/vit_base_patch32_224-IMAGENET1K-mlx.npz,88224232,224,1,bicubic,pil
+vit_base_patch32_224,0.73401,0.90973,mlx-vision/vit_base_patch32_224-mlxim/vit_base_patch32_224-IMAGENET1K_V1-mlx.npz,88224232,224,1,bilinear,pil
+resnet34,0.69064,0.88848,mlx-vision/resnet34-mlxim/resnet34-IMAGENET1K-mlx.npz,21814696,224,1,bilinear,pil
+resnet18,0.64353,0.85725,mlx-vision/resnet18-mlxim/resnet18-IMAGENET1K_V1-mlx.npz,11699112,224,1,bilinear,pil
