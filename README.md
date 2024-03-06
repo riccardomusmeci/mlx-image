@@ -104,8 +104,6 @@ If you love coding and want to contribute, follow the instructions in [CONTRIBUT
 
 [ ] inference script (similar to train/validation)
 
-[ ] add CONTRIBUTING.md
-
 [ ] SwinTransformer
 
 [ ] DenseNet
