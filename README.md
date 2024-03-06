@@ -1,4 +1,4 @@
-# **mlx-im**
+# **mlxim**
 Image models based on [Apple MLX framework](https://github.com/ml-explore/mlx) for Apple Silicon machines.
 
 ## **Why? 💡**
@@ -11,9 +11,7 @@ I don't have enough compute power (and time) to train all the models from scratc
 
 ## **How to install**
 ```
-git clone https://github.com/riccardomusmeci/mlx-im
-cd mlx-im
-pip install .
+pip install mlx-image
 ```
 
 ## **Models**
@@ -106,9 +104,14 @@ If you love coding and want to contribute, feel free to open a PR.
 
 [ ] inference script (similar to train/validation)
 
-[ ] make package pip installable
-
 [ ] add CONTRIBUTING.md
+
+[ ] SwinTransformer
+
+[ ] DenseNet
+
+[ ] MobileNet
+
 
 ## Contact
 
