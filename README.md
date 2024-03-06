@@ -96,7 +96,7 @@ This is a work in progress, so any help is appreciated.
 
 I am working on it in my spare time, so I can't guarantee frequent updates.
 
-If you love coding and want to contribute, feel free to open a PR.
+If you love coding and want to contribute, follow the instructions in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## **To-Do**
 
@@ -115,4 +115,4 @@ If you love coding and want to contribute, feel free to open a PR.
 
 ## Contact
 
-If you have any questions, please email `riccardomusmeci92@gmail.com`
+If you have any questions, please email `riccardomusmeci92@gmail.com`.
