@@ -102,8 +102,6 @@ If you love coding and want to contribute, feel free to open a PR.
 
 ## **To-Do**
 
-[ ] add ViT
-
 [ ] add register_model (similar to timm)
 
 [ ] inference script (similar to train/validation)
