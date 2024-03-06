@@ -17,11 +17,10 @@ class HFWeights:
 
 @dataclass
 class Transform:
-    crop: int
-    resize: int = 256
+    img_size: int
+    crop_pct: float = 1.0
     mean: Tuple[float, ...] = (0.485, 0.456, 0.406)
     std: Tuple[float, ...] = (0.229, 0.224, 0.225)
-    # TODO: check if choice over selected items is possible
     interpolation: str = "bilinear"
 
 

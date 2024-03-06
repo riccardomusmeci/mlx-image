@@ -62,7 +62,7 @@ line-length = 120
 fix = true
 # Enable Pyflakes `E` and `F` codes by default.
 select = ["B", "C", "E", "F", "W", "I001", "I002", "D101", "D102"]
-ignore = ["E501", "D103", "F401", "C901", "B905", "E741"]
+ignore = ["E501", "D103", "F401", "C901", "B905", "E741", "F403"]
 
 # Exclude a variety of commonly ignored directories.
 exclude = [

@@ -58,7 +58,7 @@ def create_model(
 
     if isinstance(weights, bool) and weights is True:
         weights_path = download_from_hf(model_name)
-        model = load_weights(model, weights_path, strict=strict, verbose=verbose)  # type: ignore
+        model = load_weights(model, weights_path, strict=strict, verbose=verbose)
     elif isinstance(weights, str):
         model = load_weights(model, weights, strict=strict, verbose=verbose)  # type: ignore
 

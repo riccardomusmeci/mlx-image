@@ -7,7 +7,7 @@ import mlx.core as mx
 import mlx.nn as nn
 import numpy as np
 
-from ..layers._ops import _make_divisible
+from ..layers.utils import _make_divisible
 from ..layers.misc import Conv2dNormActivation, SqueezeExcitation
 from ..layers.pool import AdaptiveAvgPool2d
 

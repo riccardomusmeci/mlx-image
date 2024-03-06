@@ -3,38 +3,38 @@ from .resnet import BasicBlock, Bottleneck, ResNet
 
 resnet_configs = {
     "resnet18": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.69758, accuracy_at_5=0.89078),
-        transform=Transform(crop=224),
+        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.64353, accuracy_at_5=0.85725),
+        transform=Transform(img_size=224),
         weights=HFWeights(repo_id="mlx-vision/resnet18-mlxim", filename="resnet18-IMAGENET1K_V1-mlx.npz"),
     ),
     "resnet34": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.73314, accuracy_at_5=0.91420),
-        transform=Transform(crop=224),
+        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.69064, accuracy_at_5=0.88848),
+        transform=Transform(img_size=224),
         weights=HFWeights(repo_id="mlx-vision/resnet34-mlxim", filename="resnet34-IMAGENET1K-mlx.npz"),
     ),
     "resnet50": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.80858, accuracy_at_5=0.94258),
-        transform=Transform(crop=224, resize=232),
+        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.78143, accuracy_at_5=0.9407),
+        transform=Transform(img_size=224),
         weights=HFWeights(repo_id="mlx-vision/resnet50-mlxim", filename="resnet50-IMAGENET1K_V2-mlx.npz"),
     ),
     "resnet101": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.81886, accuracy_at_5=0.95780),
-        transform=Transform(crop=224, resize=232),
+        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.79916, accuracy_at_5=0.9486),
+        transform=Transform(img_size=224),
         weights=HFWeights(repo_id="mlx-vision/resnet101-mlxim", filename="resnet101-IMAGENET1K_V2-mlx.npz"),
     ),
     "resnet152": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.82284, accuracy_at_5=0.96002),
-        transform=Transform(crop=224, resize=232),
+        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.80624, accuracy_at_5=0.950482),
+        transform=Transform(img_size=224),
         weights=HFWeights(repo_id="mlx-vision/resnet152-mlxim", filename="resnet152-IMAGENET1K_V2-mlx.npz"),
     ),
     "wide_resnet50_2": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.81602, accuracy_at_5=0.95758),
-        transform=Transform(crop=224, resize=232),
+        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.79635, accuracy_at_5=0.94678),
+        transform=Transform(img_size=224),
         weights=HFWeights(repo_id="mlx-vision/wide_resnet50_2-mlxim", filename="wide_resnet50_2-IMAGENET1K_V2-mlx.npz"),
     ),
     "wide_resnet101_2": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.82510, accuracy_at_5=0.96020),
-        transform=Transform(crop=224, resize=232),
+        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.80948, accuracy_at_5=0.95222),
+        transform=Transform(img_size=224),
         weights=HFWeights(
             repo_id="mlx-vision/wide_resnet101_2-mlxim", filename="wide_resnet101_2-IMAGENET1K_V2-mlx.npz"
         ),
