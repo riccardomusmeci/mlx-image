@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mlxim"
+name = "mlx-image"
 version = "0.1.0"
 description = "Apple mlx image models library"
 authors = ["Riccardo Musmeci <riccardomusmeci92@gmail.com>"]
@@ -15,10 +15,9 @@ torch = "2.0"
 numpy = "1.26.2"
 tqdm = "*"
 safetensors = "*"
-torchvision = "0.15"
-transformers = "4.36.2"
 opencv-python = "*"
 Pillow = "*"
+pandas = "*"
 matplotlib = "*"
 albumentations = "*"
 types-pyyaml = "^6.0.12.12"
