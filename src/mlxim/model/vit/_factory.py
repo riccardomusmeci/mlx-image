@@ -56,7 +56,7 @@ vit_configs = {
         transform=Transform(img_size=512, interpolation="bicubic"),
         weights=HFWeights(
             repo_id="mlx-vision/vit_large_patch16_512-mlxim",
-            filename="vit_large_patch16_512-IMAGENET1K_SWAG_E2E-mlx.npz",
+            filename="vit_large_patch16_512.swag_e2e-IMAGENET1K_SWAG_E2E-mlx.npz",
         ),
     ),
     "vit_huge_patch14_224": ModelConfig(
