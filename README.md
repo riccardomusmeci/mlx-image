@@ -42,8 +42,7 @@ list_models()
 Go to [results-imagenet-1k.csv](results/results-imagenet-1k.csv) to check every model converted and its performance on ImageNet-1K with different settings.
 
 ## **Train**
-
-Training with `mlx-im` is similar to PyTorch, thanks to some tools in it. Here's an example of how to train a model with `mlx-im`:
+Training is similar to PyTorch, thanks to some tools `mlx-im` provides. Here's an example of how to train a model with `mlx-im`:
 
 ```python
 import mlx.nn as nn
@@ -87,10 +86,11 @@ I use the configuration file `config/validation.yaml` to set the parameters for 
 
 You can download the ImageNet-1K validation set from mlx-vision space on HuggingFace at this [link](https://huggingface.co/datasets/mlx-vision/imagenet-1k).
 
-## **Similarity to PyTorch**
+## **Similarity to PyTorch and other familiar tools**
 `mlx-im` tries to be as close as possible to PyTorch:
 - `DataLoader` -> you can define your own `collate_fn` and also use `num_workers` to speed up the data loading
 - `Dataset` -> `mlx-im` already supports `LabelFolderDataset` (the good and old PyTorch `ImageFolder`) and `FolderDataset` (a generic folder with images in it)
+- `ModelCheckpoint` -> keeps track of the best model and saves it to disk (similar to PyTorchLightning) and it also suggests early stopping
 
 ## **Contributing**
 
