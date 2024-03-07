@@ -1,4 +1,6 @@
 model,acc@1,acc@5,hf_weights,param_count,img_size,crop_pct,interpolation,engine
+vit_large_patch16_512.swag_e2e,0.88476,0.98612,mlx-vision/vit_large_patch16_512-mlxim/vit_large_patch16_512.swag_e2e-IMAGENET1K_SWAG_E2E-mlx.npz,305174504,512,1,bicubic,pil
+vit_huge_patch14_224,0.86052,0.97715,mlx-vision/vit_huge_patch14_224-mlxim/vit_huge_patch14_224-IMAGENET1K_SWAG_LINEAR-mlx.npz,632045800,224,1,bicubic,pil
 vit_base_patch16_384.swag_e2e,0.85667,0.97657,mlx-vision/vit_base_patch16_384-mlxim/vit_base_patch16_384-IMAGENET1K_SWAG_E2E-mlx.npz,86859496,384,1,bicubic,pil
 vit_large_patch16_224.swag_lin,0.85325,0.97449,mlx-vision/vit_large_patch16_224-mlxim/vit_large_patch16_224-IMAGENET1K_SWAG_LINEAR-mlx.npz,304326632,224,1,bicubic,pil
 wide_resnet101_2,0.82274,0.95975,mlx-vision/wide_resnet101_2-mlxim/wide_resnet101_2-IMAGENET1K_V2-mlx.npz,127024552,224,1,bicubic,pil
