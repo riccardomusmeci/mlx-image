@@ -16,8 +16,8 @@ MODEL_ENTRYPOINT = {
     "vit_large_patch16_224": vit_large_patch16_224,
     "vit_large_patch16_224.swag_lin": vit_large_patch16_224,
     "vit_large_patch16_512.swag_e2e": vit_large_patch16_512,
-    "vit_huge_patch14_224": vit_huge_patch14_224,
-    "vit_huge_patch14_518": vit_huge_patch14_518,
+    "vit_huge_patch14_224.swag_lin": vit_huge_patch14_224,
+    "vit_huge_patch14_518.swag_e2e": vit_huge_patch14_518,
 }
 
 MODEL_CONFIG = {
@@ -35,6 +35,6 @@ MODEL_CONFIG = {
     "vit_large_patch16_224": vit_configs["vit_large_patch16_224"],
     "vit_large_patch16_224.swag_lin": vit_configs["vit_large_patch16_224.swag_lin"],
     "vit_large_patch16_512.swag_e2e": vit_configs["vit_large_patch16_512.swag_e2e"],
-    "vit_huge_patch14_224": vit_configs["vit_huge_patch14_224"],
-    "vit_huge_patch14_518": vit_configs["vit_huge_patch14_518"],
+    "vit_huge_patch14_224.swag_lin": vit_configs["vit_huge_patch14_224.swag_lin"],
+    "vit_huge_patch14_518.swag_e2e": vit_configs["vit_huge_patch14_518.swag_e2e"],
 }

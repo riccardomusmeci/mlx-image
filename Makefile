@@ -1,8 +1,5 @@
 SHELL = /bin/bash
 
-coverage_percentage = 20
-pkg_name = mlxim
-src_pkg = src/$(pkg_name)
 
 .PHONY: all install clean check test full coverage
 all:
@@ -15,23 +12,15 @@ install:
 	make full
 
 clean:
-	-rm -rf htmlcov
-	-rm -rf .benchmarks
 	-rm -rf .mypy_cache
 	-rm -rf .pytest_cache
-	-rm -rf docs/_build
-	-rm -rf docs/source/_autosummary
-	-rm -rf prof
-	-rm -rf build
 	-rm -rf .eggs
 	-rm -rf dist
 	-rm -rf *.egg-info
 	-find . -not -path "./.git/*" -name logs -exec rm -rf {} \;
 	-rm -rf logs
 	-rm -rf tests/logs
-	-rm .coverage
 	-rm -rf .ruff_cache
-	-find . -not -path "./.git/*" -name '.benchmarks' -exec rm -rf {} \;
 	-find tests -depth -type d -empty -delete
 
 check:
