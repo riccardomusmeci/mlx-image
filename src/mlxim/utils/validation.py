@@ -4,8 +4,6 @@ from typing import Optional
 
 import pandas as pd
 
-from ..model._registry import MODEL_CONFIG
-
 
 class ValidationResults:
     """Class to store and update validation results for models.
@@ -44,16 +42,10 @@ class ValidationResults:
             hf_weights (str, optional): if None, it will be fetched from the model config. Defaults to None.
         """
 
-        if hf_weights is None:
-            hf_weights = os.path.join(
-                MODEL_CONFIG[model_name].weights.repo_id, MODEL_CONFIG[model_name].weights.filename
-            )
-
         new_row = {
             "model": [model_name],
             "acc@1": [round(acc_1, 5)],
             "acc@5": [round(acc_5, 5)],
-            "hf_weights": [hf_weights],
             "param_count": [param_count],
             "img_size": [img_size],
             "crop_pct": [crop_pct],
