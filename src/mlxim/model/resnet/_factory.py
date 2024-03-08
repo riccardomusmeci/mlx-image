@@ -5,58 +5,60 @@ resnet_configs = {
     "resnet18": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.64353, accuracy_at_5=0.85725),
         transform=Transform(img_size=224),
-        weights=HFWeights(repo_id="mlx-vision/resnet18-mlxim", filename="resnet18-IMAGENET1K_V1-mlx.npz"),
+        weights=HFWeights(repo_id="mlx-vision/resnet18-mlxim", filename="resnet18-IMAGENET1K_V1-mlx.safetensors"),
     ),
     "resnet34": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.69064, accuracy_at_5=0.88848),
         transform=Transform(img_size=224),
-        weights=HFWeights(repo_id="mlx-vision/resnet34-mlxim", filename="resnet34-IMAGENET1K-mlx.npz"),
+        weights=HFWeights(repo_id="mlx-vision/resnet34-mlxim", filename="resnet34-IMAGENET1K-mlx.safetensors"),
     ),
     "resnet50": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.78143, accuracy_at_5=0.9407),
         transform=Transform(img_size=224),
-        weights=HFWeights(repo_id="mlx-vision/resnet50-mlxim", filename="resnet50-IMAGENET1K_V2-mlx.npz"),
+        weights=HFWeights(repo_id="mlx-vision/resnet50-mlxim", filename="resnet50-IMAGENET1K_V2-mlx.safetensors"),
     ),
     "resnet101": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.79916, accuracy_at_5=0.9486),
         transform=Transform(img_size=224),
-        weights=HFWeights(repo_id="mlx-vision/resnet101-mlxim", filename="resnet101-IMAGENET1K_V2-mlx.npz"),
+        weights=HFWeights(repo_id="mlx-vision/resnet101-mlxim", filename="resnet101-IMAGENET1K_V2-mlx.safetensors"),
     ),
     "resnet152": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.80624, accuracy_at_5=0.950482),
         transform=Transform(img_size=224),
-        weights=HFWeights(repo_id="mlx-vision/resnet152-mlxim", filename="resnet152-IMAGENET1K_V2-mlx.npz"),
+        weights=HFWeights(repo_id="mlx-vision/resnet152-mlxim", filename="resnet152-IMAGENET1K_V2-mlx.safetensors"),
     ),
     "wide_resnet50_2": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.79635, accuracy_at_5=0.94678),
         transform=Transform(img_size=224),
-        weights=HFWeights(repo_id="mlx-vision/wide_resnet50_2-mlxim", filename="wide_resnet50_2-IMAGENET1K_V2-mlx.npz"),
+        weights=HFWeights(
+            repo_id="mlx-vision/wide_resnet50_2-mlxim", filename="wide_resnet50_2-IMAGENET1K_V2-mlx.safetensors"
+        ),
     ),
     "wide_resnet101_2": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.80948, accuracy_at_5=0.95222),
         transform=Transform(img_size=224),
         weights=HFWeights(
-            repo_id="mlx-vision/wide_resnet101_2-mlxim", filename="wide_resnet101_2-IMAGENET1K_V2-mlx.npz"
+            repo_id="mlx-vision/wide_resnet101_2-mlxim", filename="wide_resnet101_2-IMAGENET1K_V2-mlx.safetensors"
         ),
     ),
     # TODO: waiting for groups and dilation support
     # "resnext50_32x4d": ModelConfig(
     #     metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.81198, accuracy_at_5=0.95340),
     #     transform=Transform(crop=224, resize=232),
-    #     weights=HFWeights(repo_id="mlx-vision/resnext50_32x4d-mlxim", filename="resnext50_32x4d-IMAGENET1K_V2-mlx.npz")
+    #     weights=HFWeights(repo_id="mlx-vision/resnext50_32x4d-mlxim", filename="resnext50_32x4d-IMAGENET1K_V2-mlx.safetensors")
     # ),
     # "resnext101_32x8d": ModelConfig(
     #     metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.82834, accuracy_at_5=0.96228),
     #     transform=Transform(crop=224, resize=232),
     #     weights=HFWeights(
-    #         repo_id="mlx-vision/resnext101_32x8d-mlxim", filename="resnext101_32x8d-IMAGENET1K_V2-mlx.npz"
+    #         repo_id="mlx-vision/resnext101_32x8d-mlxim", filename="resnext101_32x8d-IMAGENET1K_V2-mlx.safetensors"
     #     ),
     # ),
     # "resnext101_64x4d": ModelConfig(
     #     metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.83246, accuracy_at_5=0.96454),
     #     transform=Transform(crop=224, resize=232),
     #     weights=HFWeights(
-    #         repo_id="mlx-vision/resnext101_64x4d-mlxim", filename="resnext101_64x4d-IMAGENET1K_V1-mlx.npz"
+    #         repo_id="mlx-vision/resnext101_64x4d-mlxim", filename="resnext101_64x4d-IMAGENET1K_V1-mlx.safetensors"
     #     ),
     # )
 }
