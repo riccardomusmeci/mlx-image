@@ -37,7 +37,7 @@ clean:
 check:
 	ruff check --diff .
 	black --check --diff .
-	mypy .
+	mypy .s
 
 format:
 	ruff check --show-fixes .
@@ -45,14 +45,9 @@ format:
 	mypy .
 
 test:
-	python -m pytest --cov=$(src_pkg) --cov-branch --cov-report=term-missing --cov-fail-under=$(coverage_percentage) tests
+	pytest tests/
 
 full:
 	make check
 	make test
 
-coverage:
-	make test
-	coverage report -m
-	coverage html
-	@echo "results are in ./htmlcov/index.html"

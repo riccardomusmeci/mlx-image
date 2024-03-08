@@ -5,7 +5,7 @@ Image models based on [Apple MLX framework](https://github.com/ml-explore/mlx) f
 
 Apple MLX framework is a great tool to run machine learning models on Apple Silicon machines.
 
-This repository is meant to convert image models from timm/torchvision to Apple MLX framework. The weights are just converted from .pth to .npz and the models **are not trained again**.
+This repository is meant to convert image models from timm/torchvision to Apple MLX framework. The weights are just converted from .pth to .npz/.safetensors and the models **are not trained again**.
 
 I don't have enough compute power (and time) to train all the models from scratch (**someone buy me a maxed-out Mac, please**).
 
