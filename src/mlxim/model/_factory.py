@@ -64,9 +64,9 @@ def create_model(
         repo_id = "/".join(hf_weights_split[:-1])
         filename = hf_weights_split[-1]
         weights_path = download_from_hf(
-            model_name=model_name, 
-            repo_id=repo_id, 
-            filename=filename, 
+            model_name=model_name,
+            repo_id=repo_id,
+            filename=filename,
         )
         model = load_weights(model, weights_path, strict=strict, verbose=verbose)
     elif isinstance(weights, str):

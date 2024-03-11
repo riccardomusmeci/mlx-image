@@ -54,10 +54,10 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     """
 
     assert os.path.exists(weights), f"Weights path {weights} does not exist."
-    
+
     if verbose:
         print(f"\n> Loading weights from {weights}")
-        
+
     pretrained_weights = dict(list(mx.load(weights).items()))
     # create a torch-like state dict { layer_name: weights }
     model_weights = dict(tree_flatten(model.parameters()))
@@ -114,7 +114,7 @@ def download_from_hf(model_name: str, repo_id: Optional[str] = None, filename: O
     Returns:
         str: path to downloaded weights
     """
-    
+
     if repo_id is None and filename is None:
         repo_id = MODEL_CONFIG[model_name].weights.repo_id
         filename = MODEL_CONFIG[model_name].weights.filename
