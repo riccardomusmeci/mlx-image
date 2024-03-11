@@ -1,4 +1,5 @@
 model,acc@1,acc@5,param_count,img_size,crop_pct,interpolation,engine
+vit_huge_patch14_518.swag_e2e,0.89119,0.98854,633470440,518,1,bilinear,pil
 vit_large_patch16_512.swag_e2e,0.88476,0.98612,305174504,512,1,bicubic,pil
 vit_huge_patch14_224,0.86052,0.97715,632045800,224,1,bicubic,pil
 vit_base_patch16_384.swag_e2e,0.85667,0.97657,86859496,384,1,bicubic,pil
