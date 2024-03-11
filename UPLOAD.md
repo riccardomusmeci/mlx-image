@@ -7,6 +7,12 @@ pip install --user --upgrade build
 pip install --user --upgrade twine
 ```
 
+Clean the build directory:
+
+```
+make clean
+```
+
 Generate the source distribution and wheel:
 
 ```
