@@ -35,7 +35,8 @@ def save_weights(weights: Dict[str, mx.array], output_path: str) -> None:
         output_path (str): path to save weights
     """
     output_dir = os.path.dirname(output_path)
-    os.makedirs(output_dir, exist_ok=True)
+    if len(output_dir) > 0:
+        os.makedirs(output_dir, exist_ok=True)
     mx.savez(output_path, **weights)
 
 
@@ -51,8 +52,11 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     Returns:
         nn.Module: an nn.Module with loaded weights
     """
-
-    assert os.path.exists(weights), f"Weights path {weights} does not exist."
+    
+    if weights.startswith("hf://"):
+        weights = download_from_hf(weights)
+    else:
+        assert os.path.exists(weights), f"Weights path {weights} does not exist."
 
     if verbose:
         print(f"\n> Loading weights from {weights}")
