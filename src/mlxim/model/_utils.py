@@ -52,15 +52,12 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     Returns:
         nn.Module: an nn.Module with loaded weights
     """
-    
-    if weights.startswith("hf://"):
-        weights = download_from_hf(weights)
-    else:
-        assert os.path.exists(weights), f"Weights path {weights} does not exist."
 
+    assert os.path.exists(weights), f"Weights path {weights} does not exist."
+    
     if verbose:
         print(f"\n> Loading weights from {weights}")
-
+        
     pretrained_weights = dict(list(mx.load(weights).items()))
     # create a torch-like state dict { layer_name: weights }
     model_weights = dict(tree_flatten(model.parameters()))
@@ -108,7 +105,7 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     return model
 
 
-def download_from_hf(model_name: str) -> str:
+def download_from_hf(model_name: str, repo_id: Optional[str] = None, filename: Optional[str] = None) -> str:
     """Download weights from HuggingFace Hub.
 
     Args:
@@ -117,12 +114,14 @@ def download_from_hf(model_name: str) -> str:
     Returns:
         str: path to downloaded weights
     """
-    try:
+    
+    if repo_id is None and filename is None:
         repo_id = MODEL_CONFIG[model_name].weights.repo_id
         filename = MODEL_CONFIG[model_name].weights.filename
+    try:
         weights_path = hf_hub_download(repo_id=repo_id, repo_type="model", filename=filename)
     except Exception as e:
-        print(f"[ERROR] Downloading weights from HuggingFace Hub failed: {e}.")
+        print(f"[ERROR] Downloading weights from HuggingFace Hub failed for {model_name}: {e}.")
         quit()
 
     return weights_path

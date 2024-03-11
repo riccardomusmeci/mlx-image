@@ -40,7 +40,7 @@ def create_model(
 
     Args:
         model_name (str): model name
-        weights (bool, optional): if True, downloads weights from HF. If a path loads weights from the given path. Defaults to True.
+        weights (bool, optional): if True, downloads weights from HF. If starts with "hf://", downloads weights from HF. If str, loads weights from the given path. Defaults to True.
         num_classes (int, optional): number of classes. Defaults to 1000.
         strict (bool, optional): if True, raises an error if some weights are not loaded. Defaults to False.
         verbose (bool, optional): if True, prints information during loading. Defaults to False.
@@ -59,7 +59,19 @@ def create_model(
     if isinstance(weights, bool) and weights is True:
         weights_path = download_from_hf(model_name)
         model = load_weights(model, weights_path, strict=strict, verbose=verbose)
+    elif isinstance(weights, str) and weights.startswith("hf://"):
+        hf_weights_split = weights.replace("hf://", "").split("/")
+        repo_id = "/".join(hf_weights_split[:-1])
+        filename = hf_weights_split[-1]
+        weights_path = download_from_hf(
+            model_name=model_name, 
+            repo_id=repo_id, 
+            filename=filename, 
+        )
+        model = load_weights(model, weights_path, strict=strict, verbose=verbose)
     elif isinstance(weights, str):
         model = load_weights(model, weights, strict=strict, verbose=verbose)  # type: ignore
+    else:
+        raise ValueError(f"Invalid weights type: {type(weights)}")
 
     return model
