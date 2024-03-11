@@ -10,36 +10,46 @@ This repository is meant to convert image models from timm/torchvision to Apple 
 I don't have enough compute power (and time) to train all the models from scratch (**someone buy me a maxed-out Mac, please**).
 
 ## **How to install**
+
 ```
 pip install mlx-image
 ```
 
 ## **Models**
-Models weights are available on [`mlx-vision`](https://huggingface.co/mlx-vision) space on HuggingFace.
 
-To create a model with weights:
+Model weights are available on the [`mlx-vision`](https://huggingface.co/mlx-vision) community on HuggingFace.
+
+To load a model with pre-trained weights:
 ```python
 from mlxim.model import create_model
 
-# loading weights from HuggingFace
-model = create_model("resnet18")
+# loading weights from HuggingFace (https://huggingface.co/mlx-vision/resnet18-mlxim)
+model = create_model("resnet18") # pretrained weights loaded from HF
+
+# loading weights from another HuggingFace model
+model = create_model("resnet18", weights="hf://repo_id/filename")
 
 # loading weights from local file
-model = create_model("resnet18", weights="path/to/weights.npz")
+model = create_model("resnet18", weights="path/to/resnet18/model.safetensors")
 ```
 
 To list all available models:
+
 ```python
 from mlxim.model import list_models
 list_models()
 ```
 > [!WARNING]
-> As of today (2024-03-05) mlx does not support nn.Conv2d with `group` or `dilation` greater than 1 (e.g. `resnext`, `regnet`, `efficientnet`).
+> As of today (2024-03-08) mlx does not support `group` param for nn.Conv2d. Therefore, architectures such as `resnext`, `regnet` or `efficientnet` are not yet supported in `mlxim`.
 
 ## **ImageNet-1K Results**
+
 Go to [results-imagenet-1k.csv](results/results-imagenet-1k.csv) to check every model converted and its performance on ImageNet-1K with different settings.
 
-## **Train**
+> **TL;DR** performance is comparable to the original models from PyTorch implementations.
+
+## **Training**
+
 Training is similar to PyTorch, thanks to some tools `mlx-im` provides. Here's an example of how to train a model with `mlx-im`:
 
 ```python
@@ -85,10 +95,11 @@ I use the configuration file `config/validation.yaml` to set the parameters for 
 You can download the ImageNet-1K validation set from mlx-vision space on HuggingFace at this [link](https://huggingface.co/datasets/mlx-vision/imagenet-1k).
 
 ## **Similarity to PyTorch and other familiar tools**
-`mlx-im` tries to be as close as possible to PyTorch:
-- `DataLoader` -> you can define your own `collate_fn` and also use `num_workers` to speed up the data loading
-- `Dataset` -> `mlx-im` already supports `LabelFolderDataset` (the good and old PyTorch `ImageFolder`) and `FolderDataset` (a generic folder with images in it)
-- `ModelCheckpoint` -> keeps track of the best model and saves it to disk (similar to PyTorchLightning) and it also suggests early stopping
+
+`mlxim` tries to be as close as possible to PyTorch:
+- `DataLoader` -> you can define your own `collate_fn` and also use `num_workers` to speed up data loading
+- `Dataset` -> `mlxim` already supports `LabelFolderDataset` (the good and old PyTorch `ImageFolder`) and `FolderDataset` (a generic folder with images in it)
+- `ModelCheckpoint` -> keeps track of the best model and saves it to disk (similar to PyTorchLightning). It also suggests early stopping
 
 ## **Contributing**
 
@@ -108,7 +119,9 @@ If you love coding and want to contribute, follow the instructions in [CONTRIBUT
 
 [ ] DenseNet
 
-[ ] MobileNet
+[ ] MobileNet (waiting for nn.Conv2d group)
+
+[ ] RegNet (waiting for nn.Conv2d group)
 
 
 ## Contact

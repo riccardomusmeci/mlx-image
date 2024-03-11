@@ -35,7 +35,8 @@ def save_weights(weights: Dict[str, mx.array], output_path: str) -> None:
         output_path (str): path to save weights
     """
     output_dir = os.path.dirname(output_path)
-    os.makedirs(output_dir, exist_ok=True)
+    if len(output_dir) > 0:
+        os.makedirs(output_dir, exist_ok=True)
     mx.savez(output_path, **weights)
 
 
@@ -104,7 +105,7 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     return model
 
 
-def download_from_hf(model_name: str) -> str:
+def download_from_hf(model_name: str, repo_id: Optional[str] = None, filename: Optional[str] = None) -> str:
     """Download weights from HuggingFace Hub.
 
     Args:
@@ -113,12 +114,14 @@ def download_from_hf(model_name: str) -> str:
     Returns:
         str: path to downloaded weights
     """
-    try:
+
+    if repo_id is None and filename is None:
         repo_id = MODEL_CONFIG[model_name].weights.repo_id
         filename = MODEL_CONFIG[model_name].weights.filename
+    try:
         weights_path = hf_hub_download(repo_id=repo_id, repo_type="model", filename=filename)
     except Exception as e:
-        print(f"[ERROR] Downloading weights from HuggingFace Hub failed: {e}.")
+        print(f"[ERROR] Downloading weights from HuggingFace Hub failed for {model_name}: {e}.")
         quit()
 
     return weights_path
