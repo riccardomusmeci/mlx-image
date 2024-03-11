@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlx-image"
-version = "0.1.3"
+version = "0.1.4"
 description = "Apple mlx image models library"
 authors = ["Riccardo Musmeci <riccardomusmeci92@gmail.com>"]
 readme = "README.md"
