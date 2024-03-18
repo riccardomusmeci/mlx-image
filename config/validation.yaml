@@ -12,11 +12,6 @@ dataset:                                                ###### dataset configura
   engine: pil                                           # image processing engine (pil or cv2)
   verbose: false                                        # print dataset info
 
-transform:                                              ###### transform configuration ######
-  train: false                                          # train mode
-  img_size: 224                                         # image size
-  crop_pct: 1                                           # crop percentage
-  interpolation: bilinear                               # interpolation
 
 model:                                                  ###### model configuration ######
   model_name: resnet18                                  # model name
