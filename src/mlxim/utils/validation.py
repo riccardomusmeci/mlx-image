@@ -48,7 +48,7 @@ class ValidationResults:
             "acc@5": [round(acc_5, 5)],
             "param_count": [param_count],
             "img_size": [img_size],
-            "crop_pct": [crop_pct],
+            "crop_pct": [round(crop_pct, 4)],
             "interpolation": [interpolation],
             "engine": [engine],
         }

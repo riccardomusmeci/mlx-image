@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import time
+from dataclasses import asdict
 from shutil import copy2
 from typing import Dict, Union
 
@@ -11,11 +12,11 @@ from mlxim.data import DataLoader, LabelFolderDataset
 from mlxim.io import load_config
 from mlxim.metrics.classification import Accuracy
 from mlxim.model import create_model, num_params
+from mlxim.model._registry import MODEL_CONFIG
 from mlxim.transform import ImageNetTransform
 from mlxim.utils.time import now
 from mlxim.utils.validation import ValidationResults
-from mlxim.model._registry import MODEL_CONFIG
-from dataclasses import asdict
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validation script")
@@ -33,13 +34,12 @@ if __name__ == "__main__":
 
     model_name = config["model"]["model_name"]
     transform_config = asdict(MODEL_CONFIG[model_name].transform)
-    
+
     print("Validation setup:")
     print(f"> Model: {model_name}")
     print(f"> Transform: {transform_config}")
 
-    dataset = LabelFolderDataset(
-        transform=ImageNetTransform(train=False, **transform_config), **config["dataset"])
+    dataset = LabelFolderDataset(transform=ImageNetTransform(train=False, **transform_config), **config["dataset"])
 
     loader = DataLoader(dataset=dataset, **config["loader"])
 
