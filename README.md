@@ -1,7 +1,7 @@
-# **mlxim**
+# **mlx-image**
 Image models based on [Apple MLX framework](https://github.com/ml-explore/mlx) for Apple Silicon machines.
 
-## **Why? 💡**
+## **Why?**
 
 Apple MLX framework is a great tool to run machine learning models on Apple Silicon machines.
 
@@ -9,13 +9,13 @@ This repository is meant to convert image models from timm/torchvision to Apple 
 
 I don't have enough compute power (and time) to train all the models from scratch (**someone buy me a maxed-out Mac, please**).
 
-## **How to install**
+## How to install
 
-```
+```bash
 pip install mlx-image
 ```
 
-## **Models**
+## Models
 
 Model weights are available on the [`mlx-vision`](https://huggingface.co/mlx-vision) community on HuggingFace.
 
@@ -25,9 +25,6 @@ from mlxim.model import create_model
 
 # loading weights from HuggingFace (https://huggingface.co/mlx-vision/resnet18-mlxim)
 model = create_model("resnet18") # pretrained weights loaded from HF
-
-# loading weights from another HuggingFace model
-model = create_model("resnet18", weights="hf://repo_id/filename")
 
 # loading weights from local file
 model = create_model("resnet18", weights="path/to/resnet18/model.safetensors")
@@ -40,17 +37,25 @@ from mlxim.model import list_models
 list_models()
 ```
 > [!WARNING]
-> As of today (2024-03-08) mlx does not support `group` param for nn.Conv2d. Therefore, architectures such as `resnext`, `regnet` or `efficientnet` are not yet supported in `mlxim`.
+> As of today (2024-03-08) mlx does not support `group` param for nn.Conv2d. Therefore, architectures such as `resnext`, `regnet` or `efficientnet` are not yet supported in `mlx-image`.
 
-## **ImageNet-1K Results**
+## ImageNet-1K Results
 
-Go to [results-imagenet-1k.csv](results/results-imagenet-1k.csv) to check every model converted and its performance on ImageNet-1K with different settings.
+Go to [results-imagenet-1k.csv](https://github.com/riccardomusmeci/mlx-image/blob/main/results/results-imagenet-1k.csv) to check every model converted to `mlx-image` and its performance on ImageNet-1K with different settings.
 
 > **TL;DR** performance is comparable to the original models from PyTorch implementations.
 
-## **Training**
 
-Training is similar to PyTorch, thanks to some tools `mlx-im` provides. Here's an example of how to train a model with `mlx-im`:
+## Similarity to PyTorch and other familiar tools
+
+`mlx-image` tries to be as close as possible to PyTorch:
+- `DataLoader` -> you can define your own `collate_fn` and also use `num_workers` to speed up data loading
+- `Dataset` -> `mlx-image` already supports `LabelFolderDataset` (the good and old PyTorch `ImageFolder`) and `FolderDataset` (a generic folder with images in it)
+- `ModelCheckpoint` -> keeps track of the best model and saves it to disk (similar to PyTorchLightning). It also suggests early stopping
+
+## Training
+
+Training is similar to PyTorch. Here's an example of how to train a model:
 
 ```python
 import mlx.nn as nn
@@ -94,13 +99,6 @@ I use the configuration file `config/validation.yaml` to set the parameters for 
 
 You can download the ImageNet-1K validation set from mlx-vision space on HuggingFace at this [link](https://huggingface.co/datasets/mlx-vision/imagenet-1k).
 
-## **Similarity to PyTorch and other familiar tools**
-
-`mlxim` tries to be as close as possible to PyTorch:
-- `DataLoader` -> you can define your own `collate_fn` and also use `num_workers` to speed up data loading
-- `Dataset` -> `mlxim` already supports `LabelFolderDataset` (the good and old PyTorch `ImageFolder`) and `FolderDataset` (a generic folder with images in it)
-- `ModelCheckpoint` -> keeps track of the best model and saves it to disk (similar to PyTorchLightning). It also suggests early stopping
-
 ## **Contributing**
 
 This is a work in progress, so any help is appreciated.
@@ -109,20 +107,20 @@ I am working on it in my spare time, so I can't guarantee frequent updates.
 
 If you love coding and want to contribute, follow the instructions in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## **To-Do**
+## Additional Resources
 
-[ ] add register_model (similar to timm)
+* [mlx-vision community](https://huggingface.co/mlx-vision)
+* [HuggingFace doc](https://huggingface.co/docs/hub/main/en/mlx-image)
+
+## **To-Dos**
 
 [ ] inference script (similar to train/validation)
-
-[ ] SwinTransformer
 
 [ ] DenseNet
 
 [ ] MobileNet (waiting for nn.Conv2d group)
 
 [ ] RegNet (waiting for nn.Conv2d group)
-
 
 ## Contact
 
