@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import mlx.nn as nn
 
@@ -15,7 +15,7 @@ def list_models() -> None:
 
 def create_model(
     model_name: str,
-    weights: bool = True,
+    weights: Union[bool, str] = True,
     num_classes: int = 1000,
     strict: bool = False,
     verbose: bool = False,
@@ -40,7 +40,7 @@ def create_model(
 
     Args:
         model_name (str): model name
-        weights (bool, optional): if True, downloads weights from HF. If starts with "hf://", downloads weights from HF. If str, loads weights from the given path. Defaults to True.
+        weights (Union[bool, str], optional): if True, downloads weights from HF. If starts with "hf://", downloads weights from HF. If str, loads weights from the given path. Defaults to True.
         num_classes (int, optional): number of classes. Defaults to 1000.
         strict (bool, optional): if True, raises an error if some weights are not loaded. Defaults to False.
         verbose (bool, optional): if True, prints information during loading. Defaults to False.
@@ -58,7 +58,9 @@ def create_model(
 
     if isinstance(weights, bool) and weights is True:
         weights_path = download_from_hf(model_name)
-        model = load_weights(model, weights_path, strict=strict, verbose=verbose)
+        model = load_weights(model, weights_path, strict=strict, verbose=verbose)  # type: ignore
+    elif isinstance(weights, bool) and weights is False:
+        pass
     elif isinstance(weights, str) and weights.startswith("hf://"):
         hf_weights_split = weights.replace("hf://", "").split("/")
         repo_id = "/".join(hf_weights_split[:-1])
@@ -68,7 +70,7 @@ def create_model(
             repo_id=repo_id,
             filename=filename,
         )
-        model = load_weights(model, weights_path, strict=strict, verbose=verbose)
+        model = load_weights(model, weights_path, strict=strict, verbose=verbose)  # type: ignore
     elif isinstance(weights, str):
         model = load_weights(model, weights, strict=strict, verbose=verbose)  # type: ignore
     else:
