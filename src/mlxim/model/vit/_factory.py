@@ -9,9 +9,7 @@ vit_configs = {
     "vit_base_patch16_224": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.80634, accuracy_at_5=0.95012),
         transform=Transform(img_size=224, interpolation="bicubic"),
-        weights=HFWeights(
-            repo_id="mlx-vision/vit_base_patch16_224-mlxim", filename="model.safetensors"
-        ),
+        weights=HFWeights(repo_id="mlx-vision/vit_base_patch16_224-mlxim", filename="model.safetensors"),
     ),
     "vit_base_patch16_224.swag_lin": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.81904, accuracy_at_5=0.96169),
@@ -48,34 +46,22 @@ vit_configs = {
     "vit_large_patch16_224.swag_lin": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.8532, accuracy_at_5=0.9745),
         transform=Transform(img_size=224, interpolation="bicubic"),
-        weights=HFWeights(
-            repo_id="mlx-vision/vit_large_patch16_224.swag_lin-mlxim",
-            filename="model.safetensors"
-        ),
+        weights=HFWeights(repo_id="mlx-vision/vit_large_patch16_224.swag_lin-mlxim", filename="model.safetensors"),
     ),
     "vit_large_patch16_512.swag_e2e": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.8236, accuracy_at_5=0.9635),
         transform=Transform(img_size=512, interpolation="bicubic"),
-        weights=HFWeights(
-            repo_id="mlx-vision/vit_large_patch16_512.swag_e2e-mlxim",
-            filename="model.safetensors"
-        ),
+        weights=HFWeights(repo_id="mlx-vision/vit_large_patch16_512.swag_e2e-mlxim", filename="model.safetensors"),
     ),
     "vit_huge_patch14_224.swag_lin": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.7934, accuracy_at_5=0.9427),
         transform=Transform(img_size=224, interpolation="bicubic"),
-        weights=HFWeights(
-            repo_id="mlx-vision/vit_huge_patch14_224.swag_lin-mlxim",
-            filename="model.safetensors"
-        ),
+        weights=HFWeights(repo_id="mlx-vision/vit_huge_patch14_224.swag_lin-mlxim", filename="model.safetensors"),
     ),
     "vit_huge_patch14_518.swag_e2e": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.8236, accuracy_at_5=0.9635),
         transform=Transform(img_size=518, interpolation="bicubic"),
-        weights=HFWeights(
-            repo_id="mlx-vision/vit_huge_patch14_518.swag_e2e-mlxim",
-            filename="model.safetensors"
-        ),
+        weights=HFWeights(repo_id="mlx-vision/vit_huge_patch14_518.swag_e2e-mlxim", filename="model.safetensors"),
     ),
 }
 

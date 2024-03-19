@@ -19,6 +19,8 @@ def pth_to_mlx_weights(ckpt_path: str) -> Dict[str, mx.array]:
     if not ckpt_path.endswith(".pth") and not ckpt_path.endswith(".pt"):
         raise ValueError(f"Invalid file format: {ckpt_path}")
     pth_state_dict = torch.load(ckpt_path, map_location="cpu")
+    if "model" in pth_state_dict:
+        pth_state_dict = pth_state_dict["model"]
     for k, w in tqdm(pth_state_dict.items(), total=len(pth_state_dict.keys()), desc="Converting.."):
         w = mx.array(w.detach().cpu().numpy())
         mlx_weights[k] = w

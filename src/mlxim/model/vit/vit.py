@@ -229,7 +229,7 @@ class VisionTransformer(nn.Module):
         x = x.reshape(n, n_h * n_w, self.hidden_dim)
         return x
 
-    def features(self, x: mx.array) -> mx.array:
+    def get_features(self, x: mx.array) -> mx.array:
         """Forward pass for feature
 
         Args:
@@ -261,7 +261,7 @@ class VisionTransformer(nn.Module):
             mx.array: output mx.array of shape (batch_size, num_classes)
         """
         # Reshape and permute the input tensor
-        x = self.features(x)
+        x = self.get_features(x)
         x = self.heads(x)
 
         return x
