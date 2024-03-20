@@ -9,11 +9,11 @@ swin_base_patch4_window7_224,0.82172,0.95717,87825848,224,0.9412,bicubic,pil
 resnet152,0.8212,0.95819,60344232,224,1.0,bicubic,pil
 vit_base_patch16_224.swag_lin,0.81904,0.96169,86567656,224,1.0,bicubic,pil
 swin_small_patch4_window7_224,0.81752,0.95569,49663882,224,0.9106,bicubic,pil
-swin_v2_base_patch4_window8_224,0.81752,0.95655,88039952,256,0.9412,bicubic,pil
-swin_v2_small_patch4_window8_224,0.81614,0.95515,49846546,256,0.9846,bicubic,pil
+swin_v2_base_patch4_window8_256,0.81752,0.95655,88039952,256,0.9412,bicubic,pil
+swin_v2_small_patch4_window8_256,0.81614,0.95515,49846546,256,0.9846,bicubic,pil
 resnet101,0.81518,0.95597,44654504,224,1.0,bicubic,pil
 wide_resnet50_2,0.81456,0.95619,68951464,224,1.0,bicubic,pil
-swin_v2_tiny_patch4_window8_224,0.80806,0.95178,28406122,256,0.9846,bicubic,pil
+swin_v2_tiny_patch4_window8_256,0.80806,0.95178,28406122,256,0.9846,bicubic,pil
 vit_base_patch16_224,0.80634,0.95012,86567656,224,1.0,bicubic,pil
 resnet50,0.8048,0.95184,25610152,224,1.0,bicubic,pil
 swin_tiny_patch4_window7_224,0.80266,0.94962,28317166,224,0.9655,bicubic,pil
