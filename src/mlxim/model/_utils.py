@@ -37,7 +37,10 @@ def save_weights(weights: Dict[str, mx.array], output_path: str) -> None:
     output_dir = os.path.dirname(output_path)
     if len(output_dir) > 0:
         os.makedirs(output_dir, exist_ok=True)
-    mx.savez(output_path, **weights)
+    if output_path.endswith(".safetensors"):
+        mx.save_safetensors(output_path, weights, metadata={"format": "mlx"})
+    else:
+        mx.savez(output_path, **weights)
 
 
 def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: bool = False) -> nn.Module:

@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import time
+from dataclasses import asdict
 from shutil import copy2
 from typing import Dict, Union
 
@@ -11,6 +12,7 @@ from mlxim.data import DataLoader, LabelFolderDataset
 from mlxim.io import load_config
 from mlxim.metrics.classification import Accuracy
 from mlxim.model import create_model, num_params
+from mlxim.model._registry import MODEL_CONFIG
 from mlxim.transform import ImageNetTransform
 from mlxim.utils.time import now
 from mlxim.utils.validation import ValidationResults
@@ -20,6 +22,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validation script")
 
     parser.add_argument("--config", type=str, default="config/validation.yaml")
+    parser.add_argument("--force-fix", default=True)
 
     return parser.parse_args()
 
@@ -29,11 +32,14 @@ if __name__ == "__main__":
 
     config = load_config(args.config)
 
-    print("Validation setup:")
-    print(f"> Model: {config['model']['model_name']}")
-    print(f"> Transform: {config['transform']}")
+    model_name = config["model"]["model_name"]
+    transform_config = asdict(MODEL_CONFIG[model_name].transform)
 
-    dataset = LabelFolderDataset(transform=ImageNetTransform(**config["transform"]), **config["dataset"])
+    print("Validation setup:")
+    print(f"> Model: {model_name}")
+    print(f"> Transform: {transform_config}")
+
+    dataset = LabelFolderDataset(transform=ImageNetTransform(train=False, **transform_config), **config["dataset"])
 
     loader = DataLoader(dataset=dataset, **config["loader"])
 
@@ -60,9 +66,9 @@ if __name__ == "__main__":
         acc_1=acc["acc@1"],
         acc_5=acc["acc@5"],
         param_count=num_params(model),
-        img_size=config["transform"]["img_size"],
-        crop_pct=config["transform"]["crop_pct"],
-        interpolation=config["transform"]["interpolation"],
+        img_size=transform_config["img_size"],
+        crop_pct=transform_config["crop_pct"],
+        interpolation=transform_config["interpolation"],
         engine=config["dataset"]["engine"],
     )
     results.save()

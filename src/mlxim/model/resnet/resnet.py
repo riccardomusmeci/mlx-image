@@ -20,7 +20,10 @@ def conv3x3(in_planes: int, out_planes: int, stride: int = 1, dilation: int = 1)
     Returns:
         nn.Conv2d: 3x3 convolution
     """
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=dilation, dilation=dilation, bias=False)
+    return nn.Conv2d(
+        in_planes, out_planes, kernel_size=3, stride=stride, padding=dilation, dilation=dilation, bias=False
+    )
+
 
 def conv1x1(in_planes: int, out_planes: int, stride: int = 1) -> nn.Conv2d:
     """1x1 convolution.
@@ -307,7 +310,7 @@ class ResNet(nn.Module):
             )
         return nn.Sequential(*layers)
 
-    def features(self, x: mx.array) -> mx.array:
+    def get_features(self, x: mx.array) -> mx.array:
         """Extact only features.
 
         Args:
@@ -340,6 +343,6 @@ class ResNet(nn.Module):
         Returns:
             mx.array: output array
         """
-        x = self.features(x)
+        x = self.get_features(x)
         x = self.fc(x)
         return x

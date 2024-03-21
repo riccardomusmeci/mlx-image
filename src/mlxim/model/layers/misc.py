@@ -4,6 +4,8 @@ from typing import Callable, List, Optional
 import mlx.core as mx
 import mlx.nn as nn
 
+from ._ops import stochastic_depth
+
 from .pool import AdaptiveAvgPool2d
 
 
@@ -53,7 +55,7 @@ class ConvNormActivation(nn.Module):
                 kernel_size,
                 stride,
                 padding,
-                # dilation=dilation, # TODO: remove since mlx.nn does not have this parameter
+                dilation=dilation,
                 # groups=groups, # TODO: remove since mlx.nn does not have this parameter
                 bias=bias,
             )
@@ -158,3 +160,30 @@ class SqueezeExcitation(nn.Module):
     def __call__(self, input: mx.array) -> mx.array:
         scale = self._scale(input)
         return scale * input
+
+
+class HardSigmoid(nn.Module):
+    def __init__(self, inplace: bool = True):
+        super().__init__()
+
+    def __call__(self, input: mx.array) -> mx.array:
+        return mx.clip(input / 6 + 0.5, 0, 1)
+
+
+class StochasticDepth(nn.Module):
+    """Stochastic Depth from `"Deep Networks with Stochastic Depth"
+
+    Args:
+        p: probability of the x to be zeroed.
+        mode: ``"batch"`` or ``"row"``.
+              ``"batch"`` randomly zeroes the entire x, ``"row"`` zeroes
+              randomly selected rows from the batch.
+    """
+
+    def __init__(self, p: float, mode: str) -> None:
+        super().__init__()
+        self.p = p
+        self.mode = mode
+
+    def __call__(self, input: mx.array) -> mx.array:
+        return stochastic_depth(input, self.p, self.mode, self.training)

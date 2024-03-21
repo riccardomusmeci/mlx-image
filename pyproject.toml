@@ -94,6 +94,7 @@ exclude = [
   "local/test_hf.py",
   "src/mlxim/model/layers",
   "src/mlxim/model/regnet",
+  "src/mlxim/model/mobilenet",
 ]
 #per-file-ignores = {}
 

@@ -30,16 +30,12 @@ resnet_configs = {
     "wide_resnet50_2": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.79635, accuracy_at_5=0.94678),
         transform=Transform(img_size=224),
-        weights=HFWeights(
-            repo_id="mlx-vision/wide_resnet50_2-mlxim", filename="model.safetensors"
-        ),
+        weights=HFWeights(repo_id="mlx-vision/wide_resnet50_2-mlxim", filename="model.safetensors"),
     ),
     "wide_resnet101_2": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.80948, accuracy_at_5=0.95222),
         transform=Transform(img_size=224),
-        weights=HFWeights(
-            repo_id="mlx-vision/wide_resnet101_2-mlxim", filename="model.safetensors"
-        ),
+        weights=HFWeights(repo_id="mlx-vision/wide_resnet101_2-mlxim", filename="model.safetensors"),
     ),
     # TODO: waiting for groups and dilation support
     # "resnext50_32x4d": ModelConfig(
