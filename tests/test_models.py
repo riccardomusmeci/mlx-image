@@ -61,5 +61,5 @@ def test_features_resnet():
     x = mx.random.uniform(shape=(1, 224, 224, 3))
     model = create_model("resnet18", strict=True)
     model.eval()
-    out = model.features(x)
+    out = model.get_features(x)
     assert out.shape == (1, 512), f"Expected shape (1, 512), got {out.shape}"
