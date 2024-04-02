@@ -28,7 +28,7 @@ def create_model(
     ```
     >>> from mlxim.model import create_model
 
-    >>> # Create a Phi2 model with no pretrained weights.
+    >>> # Create a resnet model with no pretrained weights.
     >>> model = create_model('resnet18')
 
     >>> # Create a resnet18 model with pretrained weights from HF.
