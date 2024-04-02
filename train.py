@@ -50,11 +50,6 @@ if __name__ == "__main__":
     )
 
     # define loader + optimizer
-    model = create_model(
-        num_classes=len(train_dataset.class_map),
-        **config["model"],
-    )
-    optimizer = optim.Adam(learning_rate=1e-3)
 
     # define loaders
     train_loader = DataLoader(
@@ -68,16 +63,25 @@ if __name__ == "__main__":
     # define model checkpoint
     model_checkpoint = ModelCheckpoint(output_dir=os.path.join(config["output"], now()), **config["model_checkpoint"])
 
+    model = create_model(
+        num_classes=len(train_dataset.class_map),
+        **config["model"],
+    )
+
+    decay_steps = len(train_loader) * config["trainer"]["max_epochs"]
+    lr_schedule = optim.cosine_decay(init=1e-3, decay_steps=decay_steps)
+    optimizer = optim.SGD(learning_rate=lr_schedule)
+
     # trainer
     trainer = Trainer(
         model=model,
         optimizer=optimizer,
         loss_fn=nn.losses.cross_entropy,
-        loss_fn_args={"label_smoothing": 0.0},
         train_loader=train_loader,
         val_loader=val_loader,
-        log_every=0.05,
         model_checkpoint=model_checkpoint,
+        **config["trainer"]
     )
 
     trainer.train()
+

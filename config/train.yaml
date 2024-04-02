@@ -23,6 +23,7 @@ trainer:                                                  ###### trainer configu
   }
   log_every: 0.05                                         # log every n steps
   top_k: [1, 5]                                           # which top-k accuracy to compute
+  max_epochs: 20                                          # maximum number of epochs
 
 loader:                                                   ###### loader configuration ######
   batch_size: 32                                          # batch size

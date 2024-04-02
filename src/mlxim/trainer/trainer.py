@@ -122,8 +122,8 @@ class Trainer:
                     " | ".join(
                         [
                             f"> iter=[{batch_idx}/{len(self.train_loader)}]",
-                            f"train_loss={np.mean(epoch_loss[-1]):.3f}",
-                            f"train_throughput={np.mean(throughput[-1]):.2f} images/second",
+                            f"train_loss={np.mean(epoch_loss):.3f}",
+                            f"train_throughput={np.mean(throughput):.2f} images/second",
                             f"lr={self.optimizer.state['learning_rate'].item():.5f}",
                         ]
                     )
@@ -171,7 +171,7 @@ class Trainer:
                         f"train_loss={train_loss:.3f}",
                         f"train_throughput={train_throughput:.2f} images/second",
                     ]
-                    + [f"train_acc@{k}={train_acc[f'acc@{k}']}" for k in self.top_k]
+                    + [f"train_acc@{k}={train_acc[f'acc@{k}']:.3f}" for k in self.top_k]
                 )
             )
 
@@ -182,7 +182,7 @@ class Trainer:
                     "> "
                     + " | ".join(
                         [f"val_loss={val_loss:.3f}", f"val_throughput={val_throughput:.2f} images/second"]
-                        + [f"val_acc@{k}={val_acc[f'acc@{k}']}" for k in self.top_k]
+                        + [f"val_acc@{k}={val_acc[f'acc@{k}']:.3f}" for k in self.top_k]
                     )
                 )
 
