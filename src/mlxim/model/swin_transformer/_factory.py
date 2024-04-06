@@ -1,7 +1,6 @@
 from functools import partial
 
 import mlx.nn as nn
-from torchvision.models import swin_transformer
 
 from .._config import HFWeights, Metrics, ModelConfig, Transform
 from .swin_transformer import PatchMergingV2, SwinTransformer, SwinTransformerBlockV2
