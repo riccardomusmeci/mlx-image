@@ -5,8 +5,8 @@ from typing import Dict, Optional, Tuple
 @dataclass
 class Metrics:
     dataset: str
-    accuracy_at_1: float
-    accuracy_at_5: float
+    accuracy_at_1: Optional[float] = None
+    accuracy_at_5: Optional[float] = None
 
 
 @dataclass
