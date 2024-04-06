@@ -109,6 +109,7 @@ class Trainer:
 
             tic = time.perf_counter()
             train_step_fn = nn.value_and_grad(self.model, self._train_step)
+
             loss, grads = train_step_fn(x, target)
             self.optimizer.update(self.model, grads)
             mx.eval(self.state)
