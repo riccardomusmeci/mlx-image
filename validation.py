@@ -17,7 +17,6 @@ from mlxim.transform import ImageNetTransform
 from mlxim.utils.time import now
 from mlxim.utils.validation import ValidationResults
 
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validation script")
 
@@ -47,7 +46,7 @@ if __name__ == "__main__":
     model.eval()
 
     accuracy = Accuracy(**config["metric"])
-    for _i, batch in tqdm(enumerate(loader), total=len(loader)):
+    for _i, batch in tqdm(enumerate(loader), total=len(loader), desc="Validation on ImageNet-1K"):
         x, target = batch
         logits = model(x)
         accuracy.update(logits, target)

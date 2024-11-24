@@ -7,8 +7,6 @@ Apple MLX framework is a great tool to run machine learning models on Apple Sili
 
 This repository is meant to convert image models from timm/torchvision to Apple MLX framework. The weights are just converted from .pth to .npz/.safetensors and the models **are not trained again**.
 
-I don't have enough compute power (and time) to train all the models from scratch (**someone buy me a maxed-out Mac, please**).
-
 ## How to install
 
 ```bash
@@ -36,8 +34,6 @@ To list all available models:
 from mlxim.model import list_models
 list_models()
 ```
-> [!WARNING]
-> As of today (2024-03-08) mlx does not support `group` param for nn.Conv2d. Therefore, architectures such as `resnext`, `regnet` or `efficientnet` are not yet supported in `mlx-image`.
 
 ### Supported models
 
@@ -51,6 +47,9 @@ List of all models available in `mlx-image`:
 
     * **DINO v2**: vit_small_patch14_518.dinov2, vit_base_patch14_518.dinov2, vit_large_patch14_518.dinov2
 * **Swin**: swin_tiny_patch4_window7_224, swin_small_patch4_window7_224, swin_base_patch4_window7_224, swin_v2_tiny_patch4_window8_256, swin_v2_small_patch4_window8_256, swin_v2_base_patch4_window8_256
+* **RegNet**: regnet_x_400mf, regnet_x_800mf, regnet_x_1_6gf, regnet_x_3_2gf, regnet_x_8gf, regnet_x_16gf, regnet_x_32gf, regnet_y_400mf, regnet_y_800mf, regnet_y_1_6gf, regnet_y_3_2gf, regnet_y_8gf, regnet_y_16gf, regnet_y_32gf, regnet_y_128gf
+
+> **Warning**: The `regnet_y_128gf` model couldn't be tested due to computational limitations.
 
 ## ImageNet-1K Results
 
@@ -131,9 +130,7 @@ If you love coding and want to contribute, follow the instructions in [CONTRIBUT
 
 [ ] DenseNet
 
-[ ] MobileNet (waiting for nn.Conv2d group)
-
-[ ] RegNet (waiting for nn.Conv2d group)
+[ ] MobileNet
 
 ## Contact
 

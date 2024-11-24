@@ -6,7 +6,7 @@ import pandas as pd
 
 
 class ValidationResults:
-    """Class to store and update validation results for models.
+    """Store and update the results of the validation experiments.
 
     Args:
         path (str, optional): path to the csv file to store the results. Defaults to "results/results-imagenet-1k.csv".
