@@ -37,7 +37,7 @@ regnet_configs = {
         weights=HFWeights(repo_id="mlx-vision/regnet_x_16gf-mlxim", filename="model.safetensors"),
     ),
     "regnet_x_32gf": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=None, accuracy_at_5=None),
+        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.8084, accuracy_at_5=0.9531),
         transform=Transform(img_size=232, crop_pct=224/232),
         weights=HFWeights(repo_id="mlx-vision/regnet_x_32gf-mlxim", filename="model.safetensors"),
     ),
