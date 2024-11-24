@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlx-image"
-version = "0.1.7"
+version = "0.1.8"
 description = "Apple MLX image models library"
 authors = ["Riccardo Musmeci <riccardomusmeci92@gmail.com>"]
 readme = "README.md"
@@ -10,17 +10,17 @@ packages = [
 
 [tool.poetry.dependencies]
 python="^3.10"
-mlx = "*"
+mlx = "0.21.0"
 numpy = "1.26.2"
 tqdm = "*"
-safetensors = "*"
-opencv-python = "*"
-Pillow = "*"
-pandas = "*"
+safetensors = "0.4.2"
+opencv-python = "4.9.0.80"
+Pillow = "10.2.0"
+pandas = "2.2.1"
 matplotlib = "*"
-albumentations = "*"
+albumentations = "1.4.1"
 types-pyyaml = "^6.0.12.12"
-huggingface_hub = "*"
+huggingface_hub = "0.21.4"
 
 # dev dependencies
 black = { version = "23.3.0", optional = true, extras = ["jupyter"] }
@@ -29,8 +29,8 @@ mypy = { version = "1.2.0", optional = true }
 pre-commit = { version = "3.3.1", optional = true }
 docstr-coverage = { version = "2.2.0", optional = true }
 twine = { version = ">=4.0.0,<5", optional = true }
-torch = { version = "*", optional = true }
-torchvision = { version = "*", optional = true }
+torch = { version = "2.0.0", optional = true }
+torchvision = { version = "0.17.1", optional = true }
 
 # test dependencies
 pytest = { version = "7.3.1", optional = true }
@@ -94,8 +94,6 @@ exclude = [
   "local/_meta.py",
   "local/convert.py",
   "local/test_hf.py",
-  "src/mlxim/model/layers",
-  "src/mlxim/model/regnet",
   "src/mlxim/model/mobilenet",
 ]
 #per-file-ignores = {}
@@ -191,8 +189,6 @@ exclude = [
   '.cicd',
   "tests",
   "local",
-  "src/mlxim/model/regnet",
-  "src/mlxim/model/resnet",
 ]
 # enables PEP 420 style namespace packages.
 namespace_packages = true
