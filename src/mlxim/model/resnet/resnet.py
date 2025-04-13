@@ -1,9 +1,7 @@
-from pathlib import Path
-from typing import Any, Callable, List, Optional, Type, Union
+from typing import List, Optional, Type, Union
 
 import mlx.core as mx
 import mlx.nn as nn
-from mlx.utils import tree_flatten
 
 from ..layers import AdaptiveAvgPool2d
 
@@ -193,7 +191,6 @@ class ResNet(nn.Module):
         block (Union[BasicBlock, Bottleneck]): resnet base block type
         layers (List[int]): layers for each block
         num_classes (int, optional): number of classes. Defaults to 1000.
-        zero_init_residual (bool, optional): zero init residual. Defaults to False.
         groups (int, optional): groups. Defaults to 1.
         width_per_group (int, optional): width per group. Defaults to 64.
         replace_stride_with_dilation (Optional[List[bool]], optional): replace stride with dilation. Defaults to None.
@@ -205,7 +202,6 @@ class ResNet(nn.Module):
         block: Union[Type[BasicBlock], Type[Bottleneck]],
         layers: List[int],
         num_classes: int = 1000,
-        zero_init_residual: bool = False,
         groups: int = 1,
         width_per_group: int = 64,
         replace_stride_with_dilation: Optional[List[bool]] = None,
@@ -247,7 +243,7 @@ class ResNet(nn.Module):
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.he_uniform(m.weight)  # type: ignore
+                nn.init.he_uniform(m.weight)
                 # nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, (nn.BatchNorm, nn.GroupNorm)):
                 nn.init.constant(1, m.weight)

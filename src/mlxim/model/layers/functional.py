@@ -1,5 +1,6 @@
-import mlx.core as mx
 from typing import List
+
+import mlx.core as mx
 
 
 def roll(x: mx.array, shifts: List[int], axes: List[int]) -> mx.array:

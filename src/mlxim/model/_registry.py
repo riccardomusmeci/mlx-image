@@ -1,7 +1,7 @@
+from .regnet import REGNET_CONFIG, REGNET_ENTRYPOINT
 from .resnet import RESNET_CONFIG, RESNET_ENTRYPOINT
 from .swin_transformer import SWIN_CONFIG, SWIN_ENTRYPOINT
 from .vit import VIT_CONFIG, VIT_ENTRYPOINT
-from .regnet import REGNET_CONFIG, REGNET_ENTRYPOINT
 
 ###### Registry ######
 MODEL_ENTRYPOINT = {}

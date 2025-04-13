@@ -1,3 +1,4 @@
+import math
 import warnings
 from typing import Callable, List, Optional, Union
 
@@ -5,10 +6,7 @@ import mlx.core as mx
 import mlx.nn as nn
 
 from ._ops import stochastic_depth
-
 from .pool import AdaptiveAvgPool2d
-
-import math
 
 
 class ConvNormActivation(nn.Module):
@@ -49,7 +47,7 @@ class ConvNormActivation(nn.Module):
             padding = (kernel_size - 1) // 2 * dilation
         if bias is None:
             bias = norm_layer is None
-        
+
         self.layers = [
             conv_layer(
                 in_channels,

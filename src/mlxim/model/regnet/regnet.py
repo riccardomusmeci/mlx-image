@@ -7,9 +7,9 @@ import mlx.core as mx
 import mlx.nn as nn
 import numpy as np
 
-from ..layers.utils import _make_divisible
 from ..layers.misc import Conv2dNormActivation, SqueezeExcitation
 from ..layers.pool import AdaptiveAvgPool2d
+from ..layers.utils import _make_divisible
 
 
 class SimpleStemIN(Conv2dNormActivation):
@@ -119,7 +119,7 @@ class ResBottleneckBlock(nn.Module):
         # self.proj = None
         should_proj = (width_in != width_out) or (stride != 1)
         if should_proj:
-            self.proj = Conv2dNormActivation(
+            self.proj: Conv2dNormActivation | None = Conv2dNormActivation(
                 width_in, width_out, kernel_size=1, stride=stride, norm_layer=norm_layer, activation_layer=None
             )
         else:
@@ -294,7 +294,7 @@ class BlockParams:
             se_ratio=se_ratio,
         )
 
-    def _get_expanded_params(self):
+    def _get_expanded_params(self) -> zip:
         return zip(self.widths, self.strides, self.depths, self.group_widths, self.bottleneck_multipliers)
 
     @staticmethod
@@ -331,7 +331,7 @@ class RegNet(nn.Module):
         if stem_type is None:
             stem_type = SimpleStemIN
         if norm_layer is None:
-            norm_layer = nn.BatchNorm2d
+            norm_layer = nn.BatchNorm
         if block_type is None:
             block_type = ResBottleneckBlock
         if activation is None:
@@ -377,20 +377,20 @@ class RegNet(nn.Module):
 
         self.avgpool = AdaptiveAvgPool2d((1, 1))
         if num_classes > 0:
-            self.fc = nn.Linear(current_width, num_classes)
+            self.fc: nn.Module = nn.Linear(current_width, num_classes)
         else:
             self.fc = nn.Identity()
 
         # Performs ResNet-style weight initialization
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.he_uniform(m.weight)  # type: ignore
+                nn.init.he_uniform(m.weight)
                 # nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, nn.BatchNorm):
                 nn.init.constant(1, m.weight)
                 nn.init.constant(0, m.bias)
             elif isinstance(m, nn.Linear):
-                nn.init.he_uniform(m.weight)  # type: ignore
+                nn.init.he_uniform(m.weight)
                 nn.init.constant(0, m.bias)
 
     def get_features(self, x: mx.array) -> mx.array:
