@@ -26,7 +26,7 @@ clean:
 check:
 	ruff check --diff .
 	black --check --diff .
-	mypy .s
+	mypy .
 
 format:
 	ruff check --show-fixes .

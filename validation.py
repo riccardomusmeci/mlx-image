@@ -17,6 +17,7 @@ from mlxim.transform import ImageNetTransform
 from mlxim.utils.time import now
 from mlxim.utils.validation import ValidationResults
 
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validation script")
 

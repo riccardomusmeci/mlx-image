@@ -7,11 +7,11 @@ import numpy as np
 from PIL import Image
 
 
-def read_rgb(file_path: Union[str, Path], engine: str = "pil") -> np.array:  # type: ignore
+def read_rgb(file_path: str, engine: str = "pil") -> np.array:  # type: ignore
     """Load an image from file_path as a numpy array.
 
     Args:
-        file_path (Union[str, Path]): path to image
+        file_path (str): path to image
         engine (str, optional): image loading engine. Defaults to "pil".
 
     Raises:
@@ -29,12 +29,9 @@ def read_rgb(file_path: Union[str, Path], engine: str = "pil") -> np.array:  # t
 
     if engine == "pil":
         image = Image.open(file_path).convert("RGB")
-        image = np.array(image)
+        return np.array(image)
     else:
-        image = cv2.imread(file_path)  # type: ignore
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-    return image
+        return cv2.cvtColor(cv2.imread(file_path), cv2.COLOR_BGR2RGB)
 
 
 def save_image(image: np.array, output_path: Union[Path, str]) -> None:  # type: ignore
@@ -42,9 +39,9 @@ def save_image(image: np.array, output_path: Union[Path, str]) -> None:  # type:
 
     Args:
         image (np.array): image to save
-        Union[Path, str] (str): output path
+        output_path: Union[Path, str] (str): output path
     """
-    output_dir = output_path.replace(os.path.basename(output_path), "")  # type: ignore
+    output_dir = Path(output_path).replace(os.path.basename(output_path))
     os.makedirs(output_dir, exist_ok=True)
 
     if len(image.shape) > 2:  # type: ignore
