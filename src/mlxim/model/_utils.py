@@ -121,8 +121,8 @@ def download_from_hf(model_name: str, repo_id: Optional[str] = None, filename: O
     if repo_id is None and filename is None:
         repo_id = MODEL_CONFIG[model_name].weights.repo_id
         filename = MODEL_CONFIG[model_name].weights.filename
-    print(f"Downloading weights for {model_name} from HuggingFace Hub.")
     try:
+        print(f"Downloading weights for {model_name} from HuggingFace Hub.")
         weights_path = hf_hub_download(repo_id=repo_id, repo_type="model", filename=filename)
     except Exception as e:
         print(f"[ERROR] Downloading weights from HuggingFace Hub failed for {model_name}: {e}.")
