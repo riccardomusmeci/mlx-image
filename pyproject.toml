@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlx-image"
-version = "0.1.8"
+version = "0.1.9s"
 description = "Apple MLX image models library"
 authors = ["Riccardo Musmeci <riccardomusmeci92@gmail.com>"]
 readme = "README.md"
@@ -91,10 +91,8 @@ exclude = [
   "__pycache__",
   "bin",
   "lib",
-  "local/_meta.py",
-  "local/convert.py",
-  "local/test_hf.py",
-  "src/mlxim/model/mobilenet",
+  "local",
+  "notebooks",
 ]
 #per-file-ignores = {}
 

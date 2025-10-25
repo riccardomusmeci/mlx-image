@@ -4,6 +4,10 @@ vit_large_patch16_512.swag_e2e,0.88476,0.98612,305174504,512,1.0,bicubic,pil
 vit_huge_patch14_224.swag_lin,0.86052,0.97715,632045800,224,1.0,bicubic,pil
 vit_base_patch16_384.swag_e2e,0.85667,0.97657,86859496,384,1.0,bicubic,pil
 vit_large_patch16_224.swag_lin,0.85325,0.97449,304326632,224,1.0,bicubic,pil
+efficientnet_b6,0.84583,0.97101,43265136,528,1.0,bicubic,pil
+efficientnet_b5,0.83859,0.96781,30562520,456,1.0,bicubic,pil
+efficientnet_b4,0.83749,0.96613,19466816,380,0.9896,bicubic,pil
+efficientnet_b3,0.82368,0.96157,12320528,300,0.9375,bicubic,pil
 wide_resnet101_2,0.82274,0.95975,127024552,224,1.0,bicubic,pil
 swin_base_patch4_window7_224,0.82172,0.95717,87825848,224,0.9412,bicubic,pil
 resnet152,0.8212,0.95819,60344232,224,1.0,bicubic,pil
@@ -17,6 +21,7 @@ resnet101,0.81518,0.95597,44654504,224,1.0,bicubic,pil
 wide_resnet50_2,0.81456,0.95619,68951464,224,1.0,bicubic,pil
 regnet_x_32gf,0.80838,0.95312,107973576,232,0.9655,bilinear,pil
 swin_v2_tiny_patch4_window8_256,0.80806,0.95178,28406122,256,0.9846,bicubic,pil
+efficientnet_b2,0.80762,0.9525,9177562,288,1.0,bicubic,pil
 regnet_x_16gf,0.80682,0.95276,54389704,232,0.9655,bilinear,pil
 vit_base_patch16_224,0.80634,0.95012,86567656,224,1.0,bicubic,pil
 resnet50,0.8048,0.95184,25610152,224,1.0,bicubic,pil
@@ -27,6 +32,8 @@ vit_large_patch16_224,0.79343,0.94272,304326632,224,1.0,bicubic,pil
 regnet_y_1_6gf,0.79128,0.94762,11255102,232,0.9655,bilinear,pil
 regnet_x_3_2gf,0.79072,0.94644,15359112,232,0.9655,bilinear,pil
 regnet_y_32gf,0.7901,0.94394,145205058,232,0.9655,bilinear,pil
+efficientnet_b1,0.78403,0.94232,7856232,240,0.9412,bilinear,pil
+efficientnet_b0,0.77943,0.93702,5330564,224,0.875,bicubic,pil
 regnet_x_1_6gf,0.77248,0.93672,9233640,232,0.9655,bilinear,pil
 regnet_y_800mf,0.76808,0.93476,6462944,232,0.9655,bilinear,pil
 regnet_y_400mf,0.76048,0.93218,4371296,256,0.875,bilinear,pil
@@ -36,10 +43,3 @@ resnet34,0.71957,0.90413,21814696,224,1.0,bicubic,pil
 regnet_x_400mf,0.71674,0.90284,5533832,232,0.9655,bilinear,pil
 regnet_x_800mf,0.70968,0.90024,7296968,232,0.9655,bilinear,pil
 resnet18,0.68006,0.88032,11699112,224,1.0,bicubic,pil
-efficientnet_b0,0.77943,0.93702,5330564,224,0.875,bicubic,pil
-efficientnet_b1,0.78403,0.94232,7856232,240,0.9412,bilinear,pil
-efficientnet_b2,0.80762,0.9525,9177562,288,1.0,bicubic,pil
-efficientnet_b3,0.82368,0.96157,12320528,300,0.9375,bicubic,pil
-efficientnet_b4,0.83749,0.96613,19466816,380,0.9896,bicubic,pil
-efficientnet_b5,0.83859,0.96781,30562520,456,1.0,bicubic,pil
-efficientnet_b6,0.84583,0.97101,43265136,528,1.0,bicubic,pil
