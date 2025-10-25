@@ -42,4 +42,7 @@ regnet_y_400mf,0.73756,0.91756,4371296,232,0.9655,bilinear,pil
 resnet34,0.71957,0.90413,21814696,224,1.0,bicubic,pil
 regnet_x_400mf,0.71674,0.90284,5533832,232,0.9655,bilinear,pil
 regnet_x_800mf,0.70968,0.90024,7296968,232,0.9655,bilinear,pil
+mobilenet_v3_large,0.69888,0.89071,5507432,224,0.875,bilinear,pil
+mobilenet_v2,0.69846,0.89653,3538984,224,0.875,bilinear,pil
 resnet18,0.68006,0.88032,11699112,224,1.0,bicubic,pil
+mobilenet_v3_small,0.63176,0.84807,2554968,224,0.875,bilinear,pil
