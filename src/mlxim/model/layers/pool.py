@@ -26,7 +26,11 @@ class AdaptiveAvgPool2d(nn.Module):
         """
         B, H, W, C = x.shape
         x = x.reshape(
-            B, H // self.output_size[0], self.output_size[0], W // self.output_size[1], self.output_size[1], C
+            B,
+            self.output_size[0],
+            H // self.output_size[0],
+            self.output_size[1],
+            W // self.output_size[1],
+            C,
         )
-        x = mx.mean(x, axis=(1, 3))
-        return x
+        return mx.mean(x, axis=(2, 4))
