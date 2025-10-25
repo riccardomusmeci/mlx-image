@@ -1,9 +1,10 @@
 import math
 from functools import partial
-from typing import Callable, Iterable, List, Literal, Optional, Sequence, Tuple, Type, Union
+from typing import Any, Callable, Collection, Iterable, List, Literal, Optional, Sequence, Sized, Tuple, Type, Union
 
 import mlx.core as mx
 import mlx.nn as nn
+from mlx.core import array
 
 
 class Attention(nn.Module):
@@ -227,7 +228,7 @@ class Encoder(nn.Module):
             )
         self.ln = norm_layer(hidden_dim)
 
-    def get_intermediate_layers(self, x: mx.array, blocks_to_take: Iterable) -> Tuple[List[mx.array], List[mx.array]]:
+    def get_intermediate_layers(self, x: mx.array, blocks_to_take: Collection) -> Tuple[List[mx.array], List[mx.array]]:
         """Get intermediate layers outputs
 
         Args:
@@ -278,7 +279,7 @@ class VisionTransformer(nn.Module):
         num_layers: int,
         num_heads: int,
         hidden_dim: int,
-        mlp_dim: Optional[int] = None,  # usually hidden_dimx4
+        mlp_dim: int,  # usually hidden_dimx4
         dropout: float = 0.0,
         num_classes: int = 1000,
         init_values: Optional[float] = None,
@@ -329,7 +330,7 @@ class VisionTransformer(nn.Module):
         )
         self.seq_length = seq_length
 
-        heads_layers = []
+        heads_layers: List[nn.Module] = []
         if self.head_type == "dino":
             heads_layers.append(
                 DINOHead(in_dim=hidden_dim * (self.n_last_blocks + int(self.avgpool)), out_dim=num_classes)
@@ -339,12 +340,12 @@ class VisionTransformer(nn.Module):
                 heads_layers.append(nn.Linear(hidden_dim, num_classes))
             else:
                 heads_layers.append(nn.Linear(hidden_dim, representation_size))
-                heads_layers.append(nn.Tanh())  # type: ignore
+                heads_layers.append(nn.Tanh())
                 heads_layers.append(nn.Linear(representation_size, num_classes))
         if self.num_classes > 0:
-            self.heads = nn.Sequential(*heads_layers)
+            self.heads: nn.Module = nn.Sequential(*heads_layers)
         else:
-            self.heads = nn.Identity()  # type: ignore
+            self.heads = nn.Identity()
 
     def _process_input(self, x: mx.array) -> mx.array:
         n, h, w, c = x.shape
@@ -380,15 +381,14 @@ class VisionTransformer(nn.Module):
         x: mx.array,
         n: Union[int, Sequence] = 1,  # Layers or n last layers to take
         reshape: bool = False,
-        return_class_token: bool = False,
         norm: bool = True,
-    ) -> Tuple[Union[mx.array, Tuple[mx.array, mx.array]]]:
+    ) -> tuple[list[Any], list[array]]:
         """Get intermediate layers outputs
 
         Args:
             x (mx.array): input mx.array of shape (batch_size, image_size, image_size, 3)
             n (Union[int, Sequence], optional): number of layers to take. Defaults to 1.
-            return_class_token (bool, optional): return class token. Defaults to False.
+            reshape (bool): reshape image ( RGB -> BRG)
             norm (bool, optional): apply normalization. Defaults to True.
 
         Returns:
@@ -397,14 +397,13 @@ class VisionTransformer(nn.Module):
 
         x = self._prepare_tokens(x)
         # If n is an int, take the n last blocks. If it's a list, take them
-        output, total_block_len = [], len(self.encoder.layers)  # noqa: F841
+        total_block_len = len(self.encoder.layers)
         blocks_to_take = range(total_block_len - n, total_block_len) if isinstance(n, int) else n
 
         outputs, attn_mat = self.encoder.get_intermediate_layers(x, blocks_to_take)
 
         if norm:
             outputs = [self.encoder.ln(out) for out in outputs]
-        class_tokens = [out[:, 0] for out in outputs]
         outputs = [out[:, 1:] for out in outputs]
         if reshape:
             B, w, h, _ = x.shape
@@ -412,9 +411,7 @@ class VisionTransformer(nn.Module):
                 out.reshape(B, w // self.patch_size, h // self.patch_size, -1).permute(0, 3, 1, 2).contiguous()
                 for out in outputs
             ]
-        if return_class_token:
-            return tuple(zip(outputs, class_tokens)), attn_mat
-        return tuple(outputs), attn_mat
+        return outputs, attn_mat
 
     def get_features(self, x: mx.array) -> mx.array:
         """Forward pass for feature
@@ -447,7 +444,7 @@ class VisionTransformer(nn.Module):
         # Reshape and permute the input tensor
 
         if self.head_type == "dino":
-            intermediate_x, attn = self.get_intermediate_layers(x, n=self.n_last_blocks, return_class_token=False)
+            intermediate_x, attn = self.get_intermediate_layers(x, n=self.n_last_blocks)
             x = mx.concatenate([x[:, 0] for x in intermediate_x], axis=1)
             if self.avgpool:
                 x = mx.concatenate(

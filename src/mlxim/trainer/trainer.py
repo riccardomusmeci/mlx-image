@@ -44,7 +44,7 @@ class Trainer:
         model_checkpoint: Optional[ModelCheckpoint] = None,
         top_k: Tuple[int, int] = (1, 5),
     ) -> None:
-        mx.set_default_device(device)  # type: ignore
+        mx.set_default_device(device)
 
         self.model = model
         self.optimizer = optimizer

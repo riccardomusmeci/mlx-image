@@ -40,7 +40,7 @@ def _get_relative_position_bias(
         mx.array: relative position bias.
     """
     N = window_size[0] * window_size[1]
-    relative_position_bias = relative_position_bias_table[relative_position_index]  # type: ignore[index]
+    relative_position_bias = relative_position_bias_table[relative_position_index]
     relative_position_bias = relative_position_bias.reshape(N, N, -1)
     relative_position_bias = relative_position_bias.transpose(2, 0, 1)[None]
     return relative_position_bias
@@ -86,7 +86,7 @@ class PatchMergingV2(nn.Module):
         self.reduction = nn.Linear(4 * dim, 2 * dim, bias=False)
         self.norm = norm_layer(2 * dim)  # difference
 
-    def __call__(self, x: mx.array):
+    def __call__(self, x: mx.array) -> mx.array:
         """
         Args:
             x (mx.array): input mx.array with expected layout of [..., H, W, C]
@@ -151,7 +151,7 @@ def shifted_window_attention(
 
     # cyclic shift
     if sum(shift_size) > 0:
-        x = F.roll(x, shifts=(-shift_size[0], -shift_size[1]), axes=(1, 2))
+        x = F.roll(x, shifts=[-shift_size[0], -shift_size[1]], axes=[1, 2])
 
     # partition windows
     num_windows = (pad_H // window_size[0]) * (pad_W // window_size[1])
@@ -320,7 +320,7 @@ class ShiftedWindowAttention(nn.Module):
         return _get_relative_position_bias(
             self.relative_position_bias_table,
             self.relative_position_index,
-            self.window_size,  # type: ignore
+            self.window_size,
         )
 
     def __call__(self, x: mx.array) -> mx.array:
@@ -417,7 +417,7 @@ class ShiftedWindowAttentionV2(ShiftedWindowAttention):
         """
         relative_position_bias = _get_relative_position_bias(
             self.cpb_mlp(self.relative_coords_table).reshape(-1, self.num_heads),
-            self.relative_position_index,  # type: ignore
+            self.relative_position_index,
             self.window_size,
         )
         relative_position_bias = 16 * mx.sigmoid(relative_position_bias)
@@ -494,9 +494,9 @@ class SwinTransformerBlock(nn.Module):
 
         for m in self.mlp.modules():
             if isinstance(m, nn.Linear):
-                nn.init.normal(m.weight)  # type: ignore
+                nn.init.normal(m.weight)
                 if m.bias is not None:
-                    nn.init.normal(m.bias, std=1e-6)  # type: ignore
+                    nn.init.normal(m.bias, std=1e-6)
 
     def __call__(self, x: mx.array) -> mx.array:
         """Forward pass
@@ -659,13 +659,13 @@ class SwinTransformer(nn.Module):
         self.norm = norm_layer(num_features)
         self.avgpool = AdaptiveAvgPool2d((1, 1))
         if self.num_classes > 0:
-            self.head = nn.Linear(num_features, num_classes)
+            self.head: nn.Module = nn.Linear(num_features, num_classes)
         else:
-            self.head = nn.Identity()  # type: ignore
+            self.head = nn.Identity()
 
         for m in self.modules():
             if isinstance(m, nn.Linear):
-                nn.init.normal(m.weight, std=0.02)  # type: ignore
+                nn.init.normal(m.weight, std=0.02)
                 if hasattr(m, "bias") and m.bias is not None:
                     nn.init.constant(0)(m.bias)
 

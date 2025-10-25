@@ -1,6 +1,7 @@
-import mlx.nn as nn
-from typing import List, Optional, Callable
+from typing import Callable, List, Optional
+
 import mlx.core as mx
+import mlx.nn as nn
 
 
 class MLP(nn.Module):
@@ -20,13 +21,13 @@ class MLP(nn.Module):
         in_channels: int,
         hidden_channels: List[int],
         norm_layer: Optional[Callable[..., nn.Module]] = None,
-        activation_layer: Optional[Callable[..., nn.Module]] = nn.ReLU,
+        activation_layer: Callable[..., nn.Module] = nn.ReLU,
         bias: bool = True,
         dropout: float = 0.0,
     ):
         super().__init__()
 
-        self.layers = []
+        self.layers: List[nn.Module] = []
         in_dim = in_channels
         for hidden_dim in hidden_channels[:-1]:
             self.layers.append(nn.Linear(in_dim, hidden_dim, bias=bias))

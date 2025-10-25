@@ -1,6 +1,6 @@
-from itertools import repeat
 import collections.abc
-from typing import Optional, Callable
+from itertools import repeat
+from typing import Callable, Optional
 
 
 def _ntuple(n: int) -> Callable:
