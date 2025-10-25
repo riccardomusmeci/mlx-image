@@ -254,7 +254,7 @@ efficientnet_configs = {
         weights=HFWeights(repo_id="mlx-vision/efficientnet_b6-mlxim", filename="model.safetensors"),
     ),
     "efficientnet_b7": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.84122, accuracy_at_5=0.96908),
+        metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.84887, accuracy_at_5=0.97247),
         transform=Transform(img_size=600, crop_pct=600/600, interpolation="bicubic"),
         weights=HFWeights(repo_id="mlx-vision/efficientnet_b7-mlxim", filename="model.safetensors"),
     ),
