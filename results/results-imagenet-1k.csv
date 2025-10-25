@@ -36,3 +36,10 @@ resnet34,0.71957,0.90413,21814696,224,1.0,bicubic,pil
 regnet_x_400mf,0.71674,0.90284,5533832,232,0.9655,bilinear,pil
 regnet_x_800mf,0.70968,0.90024,7296968,232,0.9655,bilinear,pil
 resnet18,0.68006,0.88032,11699112,224,1.0,bicubic,pil
+efficientnet_b0,0.77943,0.93702,5330564,224,0.875,bicubic,pil
+efficientnet_b1,0.78403,0.94232,7856232,240,0.9412,bilinear,pil
+efficientnet_b2,0.80762,0.9525,9177562,288,1.0,bicubic,pil
+efficientnet_b3,0.82368,0.96157,12320528,300,0.9375,bicubic,pil
+efficientnet_b4,0.83749,0.96613,19466816,380,0.9896,bicubic,pil
+efficientnet_b5,0.83859,0.96781,30562520,456,1.0,bicubic,pil
+efficientnet_b6,0.84583,0.97101,43265136,528,1.0,bicubic,pil
