@@ -5,6 +5,7 @@ import time
 from dataclasses import asdict
 from shutil import copy2
 from typing import Dict, Union
+from pathlib import Path
 
 from tqdm import tqdm
 
@@ -16,6 +17,9 @@ from mlxim.model._registry import MODEL_CONFIG
 from mlxim.transform import ImageNetTransform
 from mlxim.utils.time import now
 from mlxim.utils.validation import ValidationResults
+
+
+script_dir = Path(__file__).parent
 
 
 def parse_args() -> argparse.Namespace:
@@ -60,7 +64,7 @@ if __name__ == "__main__":
 
     output_dir = os.path.join(config["output"], config["model"]["model_name"], now())
 
-    results = ValidationResults("results/results-imagenet-1k.csv")
+    results = ValidationResults(script_dir / "results/results-imagenet-1k.csv")
     results.update(
         model_name=config["model"]["model_name"],
         acc_1=acc["acc@1"],
