@@ -72,6 +72,14 @@ class ConvNormActivation(nn.Module):
         self.out_channels = out_channels
 
     def __call__(self, x: mx.array) -> mx.array:
+        """Forward pass
+
+        Args:
+            x (mx.array): input array
+
+        Returns:
+            mx.array: output array
+        """
         for l in self.layers:
             x = l(x)
         return x

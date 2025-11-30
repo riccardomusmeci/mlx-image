@@ -3,9 +3,9 @@ import json
 import os
 import time
 from dataclasses import asdict
+from pathlib import Path
 from shutil import copy2
 from typing import Dict, Union
-from pathlib import Path
 
 from tqdm import tqdm
 
@@ -17,7 +17,6 @@ from mlxim.model._registry import MODEL_CONFIG
 from mlxim.transform import ImageNetTransform
 from mlxim.utils.time import now
 from mlxim.utils.validation import ValidationResults
-
 
 script_dir = Path(__file__).parent
 

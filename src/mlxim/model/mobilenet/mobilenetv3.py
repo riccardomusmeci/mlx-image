@@ -4,9 +4,10 @@ Based on the paper: Searching for MobileNetV3 (https://arxiv.org/abs/1905.02244)
 
 Original implementation: torchvision (https://github.com/pytorch/vision)
 """
+from typing import Callable, List, Optional
+
 import mlx.core as mx
 import mlx.nn as nn
-from typing import Callable, List, Optional
 
 from ..layers import Conv2dNormActivation, SqueezeExcitation
 from ..layers.misc import HardSigmoid
@@ -157,7 +158,7 @@ class MobileNetV3(nn.Module):
 
         if not inverted_residual_setting:
             raise ValueError("The inverted_residual_setting should not be empty")
-        elif not all([isinstance(s, InvertedResidualConfig) for s in inverted_residual_setting]):
+        elif not all(isinstance(s, InvertedResidualConfig) for s in inverted_residual_setting):
             raise TypeError("The inverted_residual_setting should be List[InvertedResidualConfig]")
 
         if block is None:
@@ -324,5 +325,3 @@ def _mobilenet_v3_conf(
         raise ValueError(f"Unsupported model type {arch}")
 
     return inverted_residual_setting, last_channel
-
-

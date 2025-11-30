@@ -1,6 +1,6 @@
+from ._factory import mobilenet_configs, mobilenet_v2, mobilenet_v3_large, mobilenet_v3_small
 from .mobilenetv2 import InvertedResidual, MobileNetV2
 from .mobilenetv3 import InvertedResidualConfig, MobileNetV3
-from ._factory import mobilenet_configs, mobilenet_v2, mobilenet_v3_large, mobilenet_v3_small
 
 __all__ = [
     "MobileNetV2",

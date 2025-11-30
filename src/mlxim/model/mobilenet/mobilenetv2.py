@@ -4,12 +4,14 @@ Based on the paper: MobileNetV2: Inverted Residuals and Linear Bottlenecks (http
 
 Original implementation: torchvision (https://github.com/pytorch/vision)
 """
+from typing import Callable, Optional
+
 import mlx.core as mx
 import mlx.nn as nn
-from typing import Callable, Optional
 
 from ..layers import Conv2dNormActivation
 from ..layers.utils import _make_divisible
+
 
 # Necessary for backwards compatibility
 class InvertedResidual(nn.Module):
