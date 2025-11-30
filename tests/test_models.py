@@ -68,12 +68,16 @@ def test_features_resnet():
 def test_download_efficientnet():
     x = mx.random.uniform(shape=(1, 224, 224, 3))
     model = create_model("efficientnet_b0", strict=True)
+def test_download_mobilenetv2():
+    x = mx.random.uniform(shape=(1, 224, 224, 3))
+    model = create_model("mobilenet_v2", strict=True)
     model.eval()
     out = model(x)
     assert out.shape == (1, 1000), f"Expected shape (1, 1000), got {out.shape}"
 
 
 def test_inference_efficientnet():
+def test_inference_mobilenetv2():
     class_map = {0: "n01440764", 1: "n01514668", 2: "n01667778"}
     dataset = LabelFolderDataset(
         "tests/data",
@@ -82,6 +86,10 @@ def test_inference_efficientnet():
     )
     loader = DataLoader(dataset=dataset)
     model = create_model("efficientnet_b0", weights=False, strict=True)
+        transform=ImageNetTransform(train=False, img_size=224, interpolation="bilinear"),
+    )
+    loader = DataLoader(dataset=dataset)
+    model = create_model("mobilenet_v2", weights=False, strict=True)
     model.eval()
     for batch in loader:
         x, target = batch
@@ -96,3 +104,75 @@ def test_features_efficientnet():
     model.eval()
     out = model.get_features(x)
     assert out.shape == (1, 1280), f"Expected shape (1, 1280), got {out.shape}"
+def test_features_mobilenetv2():
+    x = mx.random.uniform(shape=(1, 224, 224, 3))
+    model = create_model("mobilenet_v2", strict=True)
+    model.eval()
+    out = model.get_features(x)
+    assert out.shape == (1, 1280), f"Expected shape (1, 1280), got {out.shape}"
+
+
+def test_download_mobilenetv3_large():
+    x = mx.random.uniform(shape=(1, 224, 224, 3))
+    model = create_model("mobilenet_v3_large", weights=False, strict=True)
+    model.eval()
+    out = model(x)
+    assert out.shape == (1, 1000), f"Expected shape (1, 1000), got {out.shape}"
+
+
+def test_download_mobilenetv3_small():
+    x = mx.random.uniform(shape=(1, 224, 224, 3))
+    model = create_model("mobilenet_v3_small", weights=False, strict=True)
+    model.eval()
+    out = model(x)
+    assert out.shape == (1, 1000), f"Expected shape (1, 1000), got {out.shape}"
+
+
+def test_inference_mobilenetv3_large():
+    class_map = {0: "n01440764", 1: "n01514668", 2: "n01667778"}
+    dataset = LabelFolderDataset(
+        "tests/data",
+        class_map=class_map,
+        transform=ImageNetTransform(train=False, img_size=224, interpolation="bilinear"),
+    )
+    loader = DataLoader(dataset=dataset)
+    model = create_model("mobilenet_v3_large", weights=False, strict=True)
+    model.eval()
+    for batch in loader:
+        x, target = batch
+        logits = model(x)
+
+        assert logits.shape == (1, 1000), f"Expected shape (1, 1000), got {logits.shape}"
+
+
+def test_inference_mobilenetv3_small():
+    class_map = {0: "n01440764", 1: "n01514668", 2: "n01667778"}
+    dataset = LabelFolderDataset(
+        "tests/data",
+        class_map=class_map,
+        transform=ImageNetTransform(train=False, img_size=224, interpolation="bilinear"),
+    )
+    loader = DataLoader(dataset=dataset)
+    model = create_model("mobilenet_v3_small", weights=False, strict=True)
+    model.eval()
+    for batch in loader:
+        x, target = batch
+        logits = model(x)
+
+        assert logits.shape == (1, 1000), f"Expected shape (1, 1000), got {logits.shape}"
+
+
+def test_features_mobilenetv3_large():
+    x = mx.random.uniform(shape=(1, 224, 224, 3))
+    model = create_model("mobilenet_v3_large", weights=False, strict=True)
+    model.eval()
+    out = model.get_features(x)
+    assert out.shape == (1, 960), f"Expected shape (1, 960), got {out.shape}"
+
+
+def test_features_mobilenetv3_small():
+    x = mx.random.uniform(shape=(1, 224, 224, 3))
+    model = create_model("mobilenet_v3_small", weights=False, strict=True)
+    model.eval()
+    out = model.get_features(x)
+    assert out.shape == (1, 576), f"Expected shape (1, 576), got {out.shape}"
