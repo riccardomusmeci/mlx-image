@@ -4,6 +4,7 @@ vit_large_patch16_512.swag_e2e,0.88476,0.98612,305174504,512,1.0,bicubic,pil
 vit_huge_patch14_224.swag_lin,0.86052,0.97715,632045800,224,1.0,bicubic,pil
 vit_base_patch16_384.swag_e2e,0.85667,0.97657,86859496,384,1.0,bicubic,pil
 vit_large_patch16_224.swag_lin,0.85325,0.97449,304326632,224,1.0,bicubic,pil
+efficientnet_b7,0.84887,0.97247,66658680,600,1.0,bicubic,pil
 efficientnet_b6,0.84583,0.97101,43265136,528,1.0,bicubic,pil
 efficientnet_b5,0.83859,0.96781,30562520,456,1.0,bicubic,pil
 efficientnet_b4,0.83749,0.96613,19466816,380,0.9896,bicubic,pil
