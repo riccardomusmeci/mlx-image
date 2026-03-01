@@ -81,7 +81,6 @@ exclude = [
   ".eggs",
   ".git",
   ".hg",
-  ".mypy_cache",
   ".nox",
   ".pants.d",
   ".ruff_cache",
@@ -146,7 +145,6 @@ exclude = '''
     \.eggs         # exclude a few common directories in the
   | \.git          # root of the project
   | \.hg
-  | \.mypy_cache
   | \.nox
   | \.tox
   | \.venv
