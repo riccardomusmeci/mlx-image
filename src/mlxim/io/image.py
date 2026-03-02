@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 
-def read_rgb(file_path: str, engine: str = "pil") -> np.array:  # type: ignore
+def read_rgb(file_path: str, engine: str = "pil") -> np.array:
     """Load an image from file_path as a numpy array.
 
     Args:
@@ -34,7 +34,7 @@ def read_rgb(file_path: str, engine: str = "pil") -> np.array:  # type: ignore
         return cv2.cvtColor(cv2.imread(file_path), cv2.COLOR_BGR2RGB)
 
 
-def save_image(image: np.array, output_path: Union[Path, str]) -> None:  # type: ignore
+def save_image(image: np.array, output_path: Union[Path, str]) -> None:
     """Save an image at given path making sure the folder exists.
 
     Args:
@@ -44,15 +44,15 @@ def save_image(image: np.array, output_path: Union[Path, str]) -> None:  # type:
     output_dir = Path(output_path).replace(os.path.basename(output_path))
     os.makedirs(output_dir, exist_ok=True)
 
-    if len(image.shape) > 2:  # type: ignore
+    if len(image.shape) > 2:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     try:
-        cv2.imwrite(output_path, image)  # type: ignore
+        cv2.imwrite(output_path, image)
     except Exception as e:
         print(f"[ERROR] While saving image at path {output_path} found an error - {e}")
 
 
-def resize_rgb(image: np.array, w: int, h: int) -> np.array:  # type: ignore
+def resize_rgb(image: np.array, w: int, h: int) -> np.array:
     """Resize image to w x h.
 
     Args:

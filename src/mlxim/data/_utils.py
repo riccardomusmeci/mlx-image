@@ -17,5 +17,5 @@ def _default_collate_fn(batch: List[Tuple[mx.array, int]]) -> Union[Tuple[mx.arr
         inputs = [item[0] for item in batch]
         targets = [item[1] for item in batch]
         return mx.stack(inputs), mx.array(targets)
-    elif isinstance(batch[0], mx.array):  # type: ignore
+    elif isinstance(batch[0], mx.array):
         return mx.stack(batch)

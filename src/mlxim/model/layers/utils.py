@@ -13,7 +13,7 @@ def _ntuple(n: int) -> Callable:
         Callable: callable
     """
 
-    def parse(x):  # type: ignore
+    def parse(x):
         if isinstance(x, collections.abc.Iterable) and not isinstance(x, str):
             return tuple(x)
         return tuple(repeat(x, n))

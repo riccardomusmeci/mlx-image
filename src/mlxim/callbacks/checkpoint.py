@@ -42,7 +42,7 @@ class ModelCheckpoint:
         """
 
         if remove_last:
-            self.to_remove = self.history[-1][1]  # type: ignore
+            self.to_remove = self.history[-1][1]
             self.history = self.history[:-1]
 
         self.history.append((val, epoch))
@@ -128,7 +128,7 @@ class ModelCheckpoint:
         if len(self.history) == self.save_top_k:
             for f in os.listdir(self.output_dir):
                 if self.to_remove is not None:
-                    if f.startswith(f"epoch={self.to_remove}"):  # type: ignore
+                    if f.startswith(f"epoch={self.to_remove}"):
                         os.remove(os.path.join(self.output_dir, f))
         try:
             save_weights(weights, os.path.join(self.output_dir, mlx_filename))

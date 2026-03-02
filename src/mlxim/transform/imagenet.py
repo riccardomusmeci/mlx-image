@@ -161,7 +161,7 @@ class ImageNetTransform:
             assert len(self.img_size) == 2
             scaled_img_size = tuple([math.floor(x / self.crop_pct) for x in self.img_size])
         else:
-            scaled_img_size = math.floor(self.img_size / self.crop_pct)  # type: ignore
+            scaled_img_size = math.floor(self.img_size / self.crop_pct)
             scaled_img_size = (scaled_img_size, scaled_img_size)
 
         # squash mode scales each edge to 1/pct of target, then crops
@@ -196,7 +196,7 @@ class ImageNetTransform:
         _transforms.append(A.Normalize())
         return A.Compose(_transforms)
 
-    def __call__(self, image: np.array) -> np.array:  # type: ignore
+    def __call__(self, image: np.array) -> np.array:
         """Apply transform to image
 
         Args:

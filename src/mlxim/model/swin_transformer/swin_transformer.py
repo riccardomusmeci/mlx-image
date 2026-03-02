@@ -236,7 +236,7 @@ def shifted_window_attention(
 
     # reverse cyclic shift
     if sum(shift_size) > 0:
-        x = F.roll(x, shifts=(shift_size[0], shift_size[1]), axes=(1, 2))  # type: ignore
+        x = F.roll(x, shifts=(shift_size[0], shift_size[1]), axes=(1, 2))
 
     # unpad features
     x = x[:, :H, :W, :]

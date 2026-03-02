@@ -67,7 +67,7 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     # check if pretrained_weights does not have more keys
     extras = set(pretrained_weights.keys()) - set(model_weights.keys())
     if extras:
-        extras = " ".join(list(extras))  # type: ignore
+        extras = " ".join(list(extras))
         if strict:
             raise ValueError(f"Found extra keys in weights file: {extras}")
         else:
@@ -77,7 +77,7 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     # check if pretrained_weights does not have less keys
     missing = set(model_weights.keys()) - set(pretrained_weights.keys())
     if missing:
-        missing = " ".join(list(missing))  # type: ignore
+        missing = " ".join(list(missing))
         if strict:
             raise ValueError(f"Missing keys in weights file: {missing}")
         else:

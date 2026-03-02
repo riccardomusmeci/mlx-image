@@ -32,7 +32,7 @@ class Accuracy:
 
     def __init__(self, top_k: Tuple[int, int] = (1, 5)) -> None:
         self.top_k = top_k
-        self.data = []  # type: ignore
+        self.data = []
 
     def update(self, logits: mx.array, targets: mx.array) -> None:
         """

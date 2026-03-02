@@ -35,8 +35,8 @@ class DataLoader:
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.num_workers = num_workers + 1 if num_workers == 0 else num_workers
-        self.data_queue = Queue()  # type: ignore
-        self.index_queue = Queue()  # type: ignore
+        self.data_queue = Queue()
+        self.index_queue = Queue()
         self.stop_token = object()
         self.collate_fn = collate_fn
         self.drop_last = drop_last
@@ -61,7 +61,7 @@ class DataLoader:
             self.data_queue.put(data)
 
     def __iter__(self) -> Any:
-        self.batch_indices = []  # type: ignore
+        self.batch_indices = []
         self.start_workers()
 
         for idx in self.indices:

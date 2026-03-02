@@ -23,7 +23,6 @@ types-pyyaml = "^6.0.12.12"
 huggingface_hub = "0.24.0"
 
 # dev dependencies
-black = { version = "23.3.0", optional = true, extras = ["jupyter"] }
 ruff = { version = "0.0.264", optional = true }
 
 pre-commit = { version = "3.3.1", optional = true }
@@ -43,7 +42,6 @@ pytest-xdist = { version = "3.2.1", optional = true }
 
 [tool.poetry.extras]
 dev = [
-  "black",
   "ruff",
 
   "pre-commit",
@@ -61,6 +59,7 @@ build-backend = "poetry.core.masonry.api"
 [dependency-groups]
 dev = [
     "detect-secrets>=1.5.0",
+    "ruff>=0.8.6",
     "ty>=0.0.15",
     "urllib3>=2.6.3",
     "werkzeug>=3.1.5",
@@ -136,38 +135,6 @@ exclude_lines = [
 [tool.coverage.html]
 directory = "htmlcov"
 show_contexts = true
-
-[tool.black]
-line-length = 120
-include = '\.pyi?$|\.ipynb$'
-exclude = '''
-/(
-    \.eggs         # exclude a few common directories in the
-  | \.git          # root of the project
-  | \.hg
-  | \.nox
-  | \.tox
-  | \.venv
-  | venv
-  | \.svn
-  | \.ipynb_checkpoints
-  | _build
-  | buck-out
-  | build
-  | dist
-  | __pypackages__
-  | \.env
-  | env
-  | \.vscode
-  | \.ruff_cache
-  | docs
-  | bin
-  | lib
-  | \.cicd
-  | src/mlxim/\.resources
-  | local
-)/
-'''
 
 [tool.local-ci]
 skip_tests = true  # Requires Apple Silicon (MLX) - tests run manually on mini1/mini2

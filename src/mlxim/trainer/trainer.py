@@ -73,7 +73,7 @@ class Trainer:
             mx.array: loss
         """
         logits = self.model(x)
-        loss = mx.mean(self.loss_fn(logits, target, **self.loss_fn_args))  # type: ignore
+        loss = mx.mean(self.loss_fn(logits, target, **self.loss_fn_args))
         self.train_acc.update(logits, target)
         return loss
 
@@ -88,7 +88,7 @@ class Trainer:
             mx.array: loss
         """
         logits = self.model(x)
-        loss = mx.mean(self.loss_fn(logits, target, **self.loss_fn_args))  # type: ignore
+        loss = mx.mean(self.loss_fn(logits, target, **self.loss_fn_args))
         self.val_acc.update(logits, target)
         return loss
 
@@ -143,7 +143,7 @@ class Trainer:
         self.model.eval()
         epoch_loss = []
         throughput = []
-        for _, batch in tqdm(enumerate(self.val_loader), total=len(self.val_loader)):  # type: ignore
+        for _, batch in tqdm(enumerate(self.val_loader), total=len(self.val_loader)):
             x, target = batch
             tic = time.perf_counter()
             loss = self._val_step(x, target)

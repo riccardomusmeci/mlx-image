@@ -67,7 +67,7 @@ class ConvNormActivation(nn.Module):
         if activation_layer is not None:
             # TODO: removed inplace
             # params = {} if inplace is None else {"inplace": inplace}
-            params = {}  # type: ignore
+            params = {}
             self.layers.append(activation_layer(**params))
         self.out_channels = out_channels
 
