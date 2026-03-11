@@ -94,6 +94,7 @@ class SelfAttentionBlock(nn.Module):
         ffn_layer: FFN class.
         mask_k_bias: Whether to use bias for mask K.
     """
+
     def __init__(
         self,
         dim: int,
@@ -123,9 +124,7 @@ class SelfAttentionBlock(nn.Module):
             proj_drop=drop,
             mask_k_bias=mask_k_bias,
         )
-        self.ls1 = (
-            LayerScale(dim, init_values=init_values) if init_values else nn.Identity()
-        )
+        self.ls1 = LayerScale(dim, init_values=init_values) if init_values else nn.Identity()
 
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * ffn_ratio)
@@ -136,9 +135,7 @@ class SelfAttentionBlock(nn.Module):
             drop=drop,
             bias=ffn_bias,
         )
-        self.ls2 = (
-            LayerScale(dim, init_values=init_values) if init_values else nn.Identity()
-        )
+        self.ls2 = LayerScale(dim, init_values=init_values) if init_values else nn.Identity()
 
         self.sample_drop_ratio = drop_path
 
@@ -181,9 +178,7 @@ class SelfAttentionBlock(nn.Module):
             x_subset_2 = x_attn[indices_2]
             residual_2 = self.mlp(self.norm2(x_subset_2))
 
-            x_ffn = x_attn.at[indices_2].add(
-                self.ls2(residual_2) * residual_scale_factor
-            )
+            x_ffn = x_attn.at[indices_2].add(self.ls2(residual_2) * residual_scale_factor)
         else:
             x_attn = x + self.ls1(self.attn(self.norm1(x), rope=rope))
             x_ffn = x_attn + self.ls2(self.mlp(self.norm2(x_attn)))
@@ -197,27 +192,19 @@ class SelfAttentionBlock(nn.Module):
         related to concat ops.
         """
         b_list = [x.shape[0] for x in x_list]
-        sample_subset_sizes = [
-            max(int(b * (1 - self.sample_drop_ratio)), 1) for b in b_list
-        ]
-        residual_scale_factors = [
-            b / sample_subset_size
-            for b, sample_subset_size in zip(b_list, sample_subset_sizes)
-        ]
+        sample_subset_sizes = [max(int(b * (1 - self.sample_drop_ratio)), 1) for b in b_list]
+        residual_scale_factors = [b / sample_subset_size for b, sample_subset_size in zip(b_list, sample_subset_sizes)]
 
         if self.training and self.sample_drop_ratio > 0.0:
             indices_1_list = [
                 _randperm(b)[:sample_subset_size]
                 for x, b, sample_subset_size in zip(x_list, b_list, sample_subset_sizes)
             ]
-            x_subset_1_list = [
-                x[indices_1] for x, indices_1 in zip(x_list, indices_1_list)
-            ]
+            x_subset_1_list = [x[indices_1] for x, indices_1 in zip(x_list, indices_1_list)]
 
             if rope_list is not None:
                 rope_subset_list = [
-                    self._maybe_index_rope(rope, indices_1)
-                    for rope, indices_1 in zip(rope_list, indices_1_list)
+                    self._maybe_index_rope(rope, indices_1) for rope, indices_1 in zip(rope_list, indices_1_list)
                 ]
             else:
                 rope_subset_list = rope_list
@@ -237,9 +224,7 @@ class SelfAttentionBlock(nn.Module):
                 _randperm(b)[:sample_subset_size]
                 for x, b, sample_subset_size in zip(x_list, b_list, sample_subset_sizes)
             ]
-            x_subset_2_list = [
-                x[indices_2] for x, indices_2 in zip(x_attn_list, indices_2_list)
-            ]
+            x_subset_2_list = [x[indices_2] for x, indices_2 in zip(x_attn_list, indices_2_list)]
             flattened, shapes, num_tokens = cat_keep_shapes(x_subset_2_list)
             norm2_flat = self.norm2(flattened)
             norm2_list = uncat_with_shapes(norm2_flat, shapes, num_tokens)
@@ -300,6 +285,7 @@ class CausalSelfAttentionBlock(nn.Module):
         norm_layer: Normalization layer.
         dropout_prob: Dropout rate.
     """
+
     def __init__(
         self,
         dim: int,
@@ -315,15 +301,9 @@ class CausalSelfAttentionBlock(nn.Module):
 
         self.dim = dim
         self.is_causal = is_causal
-        self.ls1 = (
-            LayerScale(dim, init_values=ls_init_value)
-            if ls_init_value
-            else nn.Identity()
-        )
+        self.ls1 = LayerScale(dim, init_values=ls_init_value) if ls_init_value else nn.Identity()
         self.attention_norm = norm_layer(dim)
-        self.attention = CausalSelfAttention(
-            dim, num_heads, attn_drop=dropout_prob, proj_drop=dropout_prob
-        )
+        self.attention = CausalSelfAttention(dim, num_heads, attn_drop=dropout_prob, proj_drop=dropout_prob)
 
         self.ffn_norm = norm_layer(dim)
         ffn_hidden_dim = int(dim * ffn_ratio)
@@ -334,11 +314,7 @@ class CausalSelfAttentionBlock(nn.Module):
             act_layer=act_layer,
         )
 
-        self.ls2 = (
-            LayerScale(dim, init_values=ls_init_value)
-            if ls_init_value
-            else nn.Identity()
-        )
+        self.ls2 = LayerScale(dim, init_values=ls_init_value) if ls_init_value else nn.Identity()
 
     def init_weights(
         self,
@@ -369,7 +345,6 @@ class CausalSelfAttentionBlock(nn.Module):
         x_attn = x + self.ls1(self.attention(self.attention_norm(x), self.is_causal))
         x_ffn = x_attn + self.ls2(self.feed_forward(self.ffn_norm(x_attn)))
         return x_ffn
-
 
 
 class DinoVisionTransformer(nn.Module):
@@ -403,6 +378,7 @@ class DinoVisionTransformer(nn.Module):
         ffn_layer: FFN class.
         mask_k_bias: Whether to use bias for mask K.
     """
+
     def __init__(
         self,
         *,
@@ -459,19 +435,13 @@ class DinoVisionTransformer(nn.Module):
         self.cls_token = mx.zeros((1, 1, embed_dim), dtype=mx.float32)
         self.n_storage_tokens = n_storage_tokens
         if self.n_storage_tokens > 0:
-            self.storage_tokens = mx.zeros(
-                (1, n_storage_tokens, embed_dim), dtype=mx.float32
-            )
+            self.storage_tokens = mx.zeros((1, n_storage_tokens, embed_dim), dtype=mx.float32)
         logger.info(f"using base={pos_embed_rope_base} for rope new")
         logger.info(f"using min_period={pos_embed_rope_min_period} for rope new")
         logger.info(f"using max_period={pos_embed_rope_max_period} for rope new")
-        logger.info(
-            f"using normalize_coords={pos_embed_rope_normalize_coords} for rope new"
-        )
+        logger.info(f"using normalize_coords={pos_embed_rope_normalize_coords} for rope new")
         logger.info(f"using shift_coords={pos_embed_rope_shift_coords} for rope new")
-        logger.info(
-            f"using rescale_coords={pos_embed_rope_rescale_coords} for rope new"
-        )
+        logger.info(f"using rescale_coords={pos_embed_rope_rescale_coords} for rope new")
         logger.info(f"using jitter_coords={pos_embed_rope_jitter_coords} for rope new")
         logger.info(f"using dtype={pos_embed_rope_dtype} for rope new")
         self.rope_embed = RopePositionEmbedding(
@@ -581,9 +551,7 @@ class DinoVisionTransformer(nn.Module):
         if self.n_storage_tokens > 0 and self.storage_tokens is not None:
             storage_tokens = self.storage_tokens
         else:
-            storage_tokens = mx.zeros(
-                (1, 0, cls_token.shape[-1]), dtype=cls_token.dtype
-            )
+            storage_tokens = mx.zeros((1, 0, cls_token.shape[-1]), dtype=cls_token.dtype)
 
         # Expand CLS and storage tokens across the batch and concatenate.
         cls_tokens = mx.repeat(cls_token, repeats=B, axis=0)
@@ -630,13 +598,9 @@ class DinoVisionTransformer(nn.Module):
                 if self.untie_global_and_local_cls_norm and self.training and idx == 1:
                     # Assume second entry of list corresponds to local crops.
                     # We only ever apply this during training.
-                    x_norm_cls_reg = self.local_cls_norm(
-                        x_val[:, : self.n_storage_tokens + 1]
-                    )
+                    x_norm_cls_reg = self.local_cls_norm(x_val[:, : self.n_storage_tokens + 1])
                 elif self.untie_cls_and_patch_norms:
-                    x_norm_cls_reg = self.cls_norm(
-                        x_val[:, : self.n_storage_tokens + 1]
-                    )
+                    x_norm_cls_reg = self.cls_norm(x_val[:, : self.n_storage_tokens + 1])
                 else:
                     x_norm_cls_reg = self.norm(x_val[:, : self.n_storage_tokens + 1])
                 x_norm_patch = self.norm(x_val[:, self.n_storage_tokens + 1 :])
@@ -675,9 +639,7 @@ class DinoVisionTransformer(nn.Module):
                 masks = [None] * len(x)
             return self.forward_features_list(x, masks)
 
-    def _get_intermediate_layers_not_chunked(
-        self, x: mx.array, n: int = 1
-    ) -> List[mx.array]:
+    def _get_intermediate_layers_not_chunked(self, x: mx.array, n: int = 1) -> List[mx.array]:
         """
         Get intermediate layers.
         Args:
@@ -689,9 +651,7 @@ class DinoVisionTransformer(nn.Module):
         x, (H, W) = self.prepare_tokens_with_masks(x)
         # If n is an int, take the n last blocks. If it's a list, take them
         output, total_block_len = [], len(self.blocks)
-        blocks_to_take = (
-            range(total_block_len - n, total_block_len) if isinstance(n, int) else n
-        )
+        blocks_to_take = range(total_block_len - n, total_block_len) if isinstance(n, int) else n
         for i, blk in enumerate(self.blocks):
             if self.rope_embed is not None:
                 rope_sincos = self.rope_embed(H=H, W=W)
@@ -700,9 +660,7 @@ class DinoVisionTransformer(nn.Module):
             x = blk(x, rope_sincos)
             if i in blocks_to_take:
                 output.append(x)
-        assert len(output) == len(blocks_to_take), (
-            f"only {len(output)} / {len(blocks_to_take)} blocks found"
-        )
+        assert len(output) == len(blocks_to_take), f"only {len(output)} / {len(blocks_to_take)} blocks found"
         return output
 
     def get_intermediate_layers(
@@ -734,9 +692,7 @@ class DinoVisionTransformer(nn.Module):
                 if self.untie_cls_and_patch_norms:
                     x_norm_cls_reg = self.cls_norm(out[:, : self.n_storage_tokens + 1])
                     x_norm_patch = self.norm(out[:, self.n_storage_tokens + 1 :])
-                    outputs_normed.append(
-                        mx.concat((x_norm_cls_reg, x_norm_patch), axis=1)
-                    )
+                    outputs_normed.append(mx.concat((x_norm_cls_reg, x_norm_patch), axis=1))
                 else:
                     outputs_normed.append(self.norm(out))
             outputs = outputs_normed
@@ -761,9 +717,7 @@ class DinoVisionTransformer(nn.Module):
         elif return_class_token and return_extra_tokens:
             return tuple(zip(outputs, class_tokens, extra_tokens))
 
-    def __call__(
-        self, *args, is_training: bool = False, **kwargs
-    ) -> Union[List[Dict[str, mx.array]], mx.array]:
+    def __call__(self, *args, is_training: bool = False, **kwargs) -> Union[List[Dict[str, mx.array]], mx.array]:
         """
         Forward pass for a list of inputs.
         Args:
@@ -781,13 +735,16 @@ class DinoVisionTransformer(nn.Module):
             return self.head(ret["x_norm_clstoken"])
 
 
-def vit_small(patch_size=16, **kwargs):
+def vit_small(**kwargs) -> DinoVisionTransformer:
     model = DinoVisionTransformer(
-        patch_size=patch_size,
+        patch_size=16,
         embed_dim=384,
         depth=12,
         num_heads=6,
         ffn_ratio=4,
+        n_storage_tokens=4,
+        layerscale_init=1e-5,
+        mask_k_bias=True,
         **kwargs,
     )
     return model
