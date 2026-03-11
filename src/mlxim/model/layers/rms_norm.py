@@ -4,15 +4,27 @@ import mlx.nn as nn
 # TODO: Delete RMSNorm if the internal rms norm works
 
 class RMSNorm(nn.Module):
+    """RMSNorm layer.
+    Args:
+        dim: Dimension of the input features.
+        eps: Epsilon value for numerical stability.
+    """
     def __init__(self, dim: int, eps: float = 1e-5):
         super().__init__()
         self.weight = mx.ones(shape=(dim,))
         self.eps = eps
 
     def __call__(self, x: mx.array) -> mx.array:
+        """
+        Args:
+            x: Input array.
+        Returns:
+            Output array.
+        """
         return x * mx.rsqrt(mx.square(x).mean(axis=-1, keepdims=True) + self.eps) * self.weight
 
     def reset_parameters(self):
+        """Reset the parameters."""
         self.weight = mx.ones_like(self.weight)
 
 

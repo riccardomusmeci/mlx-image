@@ -76,6 +76,24 @@ def init_weights_vit(module: nn.Module, name: str = ""):
 
 
 class SelfAttentionBlock(nn.Module):
+    """Self-Attention block.
+    Args:
+        dim: Dimension of the input features.
+        num_heads: Number of attention heads.
+        ffn_ratio: Ratio of FFN hidden dimension to embedding dimension.
+        qkv_bias: Whether to use bias for QKV projection.
+        proj_bias: Whether to use bias for output projection.
+        ffn_bias: Whether to use bias for FFN.
+        drop: Dropout rate.
+        attn_drop: Attention dropout rate.
+        init_values: Initial values for LayerScale.
+        drop_path: Drop path rate.
+        act_layer: Activation layer.
+        norm_layer: Normalization layer.
+        attn_class: Attention class.
+        ffn_layer: FFN class.
+        mask_k_bias: Whether to use bias for mask K.
+    """
     def __init__(
         self,
         dim: int,
@@ -249,6 +267,13 @@ class SelfAttentionBlock(nn.Module):
         x_or_x_list: mx.array | List[mx.array],
         rope_or_rope_list: mx.array | List[mx.array] | None = None,
     ) -> mx.array | List[mx.array]:
+        """
+        Args:
+            x_or_x_list: Input array or list of input arrays.
+            rope_or_rope_list: RoPE embeddings or list of RoPE embeddings.
+        Returns:
+            Output array or list of output arrays.
+        """
         if isinstance(x_or_x_list, mx.array):
             # for reference:
             # return self._forward(x_or_x_list, rope=rope_or_rope_list)
@@ -264,6 +289,17 @@ class SelfAttentionBlock(nn.Module):
 
 
 class CausalSelfAttentionBlock(nn.Module):
+    """Causal Self-Attention block.
+    Args:
+        dim: Dimension of the input features.
+        num_heads: Number of attention heads.
+        ffn_ratio: Ratio of FFN hidden dimension to embedding dimension.
+        ls_init_value: Initial values for LayerScale.
+        is_causal: Whether to use causal attention.
+        act_layer: Activation layer.
+        norm_layer: Normalization layer.
+        dropout_prob: Dropout rate.
+    """
     def __init__(
         self,
         dim: int,
@@ -324,7 +360,12 @@ class CausalSelfAttentionBlock(nn.Module):
         self,
         x: mx.array,
     ):
-
+        """
+        Args:
+            x: Input array.
+        Returns:
+            Output array.
+        """
         x_attn = x + self.ls1(self.attention(self.attention_norm(x), self.is_causal))
         x_ffn = x_attn + self.ls2(self.feed_forward(self.ffn_norm(x_attn)))
         return x_ffn
@@ -332,6 +373,36 @@ class CausalSelfAttentionBlock(nn.Module):
 
 
 class DinoVisionTransformer(nn.Module):
+    """Dino Vision Transformer.
+    Args:
+        img_size: Size of the input image.
+        patch_size: Size of the patches.
+        in_chans: Number of input channels.
+        pos_embed_rope_base: Base for RoPE embeddings.
+        pos_embed_rope_min_period: Minimum period for RoPE embeddings.
+        pos_embed_rope_max_period: Maximum period for RoPE embeddings.
+        pos_embed_rope_normalize_coords: Normalization method for RoPE embeddings.
+        pos_embed_rope_shift_coords: Shift for RoPE embeddings.
+        pos_embed_rope_jitter_coords: Jitter for RoPE embeddings.
+        pos_embed_rope_rescale_coords: Rescale for RoPE embeddings.
+        pos_embed_rope_dtype: Data type for RoPE embeddings.
+        embed_dim: Dimension of the embedding.
+        depth: Depth of the transformer.
+        num_heads: Number of attention heads.
+        ffn_ratio: Ratio of FFN hidden dimension to embedding dimension.
+        qkv_bias: Whether to use bias for QKV projection.
+        proj_bias: Whether to use bias for output projection.
+        ffn_bias: Whether to use bias for FFN.
+        drop: Dropout rate.
+        attn_drop: Attention dropout rate.
+        init_values: Initial values for LayerScale.
+        drop_path: Drop path rate.
+        act_layer: Activation layer.
+        norm_layer: Normalization layer.
+        attn_class: Attention class.
+        ffn_layer: FFN class.
+        mask_k_bias: Whether to use bias for mask K.
+    """
     def __init__(
         self,
         *,
@@ -462,6 +533,7 @@ class DinoVisionTransformer(nn.Module):
         self.mask_token = mx.zeros((1, embed_dim), dtype=mx.float32)
 
     def init_weights(self):
+        """Initialize the weights."""
         # Reinitialize RoPE periods and token parameters.
         self.rope_embed._init_weights()
 
@@ -486,6 +558,14 @@ class DinoVisionTransformer(nn.Module):
     def prepare_tokens_with_masks(
         self, x: mx.array, masks: Optional[mx.array] = None
     ) -> Tuple[mx.array, Tuple[int, int]]:
+        """
+        Prepares tokens with masks.
+        Args:
+            x: Input array.
+            masks: Mask array.
+        Returns:
+            Tuple of output array and shape.
+        """
         x = self.patch_embed(x)  # [B, H, W, D]
         B, H, W, D = x.shape
         x = x.reshape(B, H * W, D)  # [B, HW, D]
@@ -525,6 +605,14 @@ class DinoVisionTransformer(nn.Module):
     def forward_features_list(
         self, x_list: List[mx.array], masks_list: List[Optional[mx.array]]
     ) -> List[Dict[str, mx.array]]:
+        """
+        Forward pass for a list of inputs.
+        Args:
+            x_list: List of input arrays.
+            masks_list: List of mask arrays.
+        Returns:
+            List of output dictionaries.
+        """
         x = []
         rope = []
         for t_x, t_masks in zip(x_list, masks_list):
@@ -574,6 +662,14 @@ class DinoVisionTransformer(nn.Module):
         x: mx.array | List[mx.array],
         masks: Optional[mx.array | List[Optional[mx.array]]] = None,
     ) -> Union[Dict[str, mx.array], List[Dict[str, mx.array]]]:
+        """
+        Forward pass for a list of inputs.
+        Args:
+            x: Input array or list of input arrays.
+            masks: Mask array or list of mask arrays.
+        Returns:
+            Dictionary of output arrays or list of dictionaries.
+        """
         if isinstance(x, mx.array):
             return self.forward_features_list([x], [masks])[0]
         else:
@@ -584,6 +680,14 @@ class DinoVisionTransformer(nn.Module):
     def _get_intermediate_layers_not_chunked(
         self, x: mx.array, n: int = 1
     ) -> List[mx.array]:
+        """
+        Get intermediate layers.
+        Args:
+            x: Input array.
+            n: Number of layers to take.
+        Returns:
+            List of output arrays.
+        """
         x, (H, W) = self.prepare_tokens_with_masks(x)
         # If n is an int, take the n last blocks. If it's a list, take them
         output, total_block_len = [], len(self.blocks)
@@ -613,6 +717,18 @@ class DinoVisionTransformer(nn.Module):
         return_extra_tokens: bool = False,
         norm: bool = True,
     ) -> Tuple[Union[mx.array, Tuple[mx.array, ...]]]:
+        """
+        Get intermediate layers.
+        Args:
+            x: Input array.
+            n: Number of layers to take.
+            reshape: Whether to reshape the output.
+            return_class_token: Whether to return the class token.
+            return_extra_tokens: Whether to return extra tokens.
+            norm: Whether to normalize the output.
+        Returns:
+            Tuple of output arrays.
+        """
         outputs = self._get_intermediate_layers_not_chunked(x, n)
         if norm:
             outputs_normed = []
@@ -650,6 +766,16 @@ class DinoVisionTransformer(nn.Module):
     def __call__(
         self, *args, is_training: bool = False, **kwargs
     ) -> Union[List[Dict[str, mx.array]], mx.array]:
+        """
+        Forward pass for a list of inputs.
+        Args:
+            x: Input array or list of input arrays.
+            masks: Mask array or list of mask arrays.
+            is_training: Whether the model is in training mode.
+            **kwargs: Additional keyword arguments.
+        Returns:
+            Dictionary of output arrays or list of dictionaries.
+        """
         ret = self.forward_features(*args, **kwargs)
         if is_training:
             return ret

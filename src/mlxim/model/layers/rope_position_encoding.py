@@ -63,6 +63,13 @@ class RopePositionEmbedding(nn.Module):
         self.freeze(keys="periods", strict=False)
 
     def __call__(self, *, H: int, W: int) -> tuple[mx.array, mx.array]:
+        """
+        Args:
+            H: Height of the input array.
+            W: Width of the input array.
+        Returns:
+            Tuple of query and key arrays with RoPE applied.
+        """
         dtype = self.dtype
 
         # Prepare coords in range [-1, +1]

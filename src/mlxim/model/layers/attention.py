@@ -8,6 +8,12 @@ from mlxim.model.layers.rope_position_encoding import rope_apply
 
 
 class LinearKMaskedBias(nn.Linear):
+    """Linear layer with masked bias.
+    Args:
+        in_features: Number of input features.
+        out_features: Number of output features.
+        bias: Whether to use bias.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.out_features = self.weight.shape[0]
@@ -21,6 +27,12 @@ class LinearKMaskedBias(nn.Linear):
             self.freeze(keys="bias_mask", strict=True)
 
     def __call__(self, x: mx.array) -> mx.array:
+        """
+        Args:
+            x: Input array.
+        Returns:
+            Output array.
+        """
         if "bias" in self:
             masked_bias = self["bias"] * self["bias_mask"]
             return mx.addmm(masked_bias, x, self["weight"].T)
@@ -29,6 +41,16 @@ class LinearKMaskedBias(nn.Linear):
 
 
 class RoPESelfAttention(nn.Module):
+    """RoPE Self-Attention layer.
+    Args:
+        dim: Dimension of the input features.
+        num_heads: Number of attention heads.
+        qkv_bias: Whether to use bias for QKV projection.
+        proj_bias: Whether to use bias for output projection.
+        attn_drop: Dropout rate for attention weights.
+        proj_drop: Dropout rate for output projection.
+        mask_k_bias: Whether to use masked bias for K projection.
+    """
     def __init__(
         self,
         dim: int,
@@ -51,6 +73,14 @@ class RoPESelfAttention(nn.Module):
       self.proj_drop = nn.Dropout(proj_drop)
 
     def apply_rope(self, q: mx.array, k: mx.array, rope: mx.array | Tuple[mx.array, mx.array]) -> Tuple[mx.array, mx.array]:
+      """
+      Args:
+          q: Query array.
+          k: Key array.
+          rope: RoPE embeddings.
+      Returns:
+          Tuple of query and key arrays with RoPE applied.
+      """
       # All operations will use the dtype of rope, the output is cast back to the dtype of q and k
       q_dtype = q.dtype
       k_dtype = k.dtype
@@ -75,6 +105,15 @@ class RoPESelfAttention(nn.Module):
 
 
     def __call__(self, x: mx.array, attn_bias: mx.array | None = None, rope: List[mx.array] | None = None) -> mx.array:
+      """
+      Compute RoPE Self-Attention.
+      Args:
+          x: Input array.
+          attn_bias: Attention bias.
+          rope: RoPE embeddings.
+      Returns:
+          Output array.
+      """
       qkv = self.qkv(x)
       attn_v = self.compute_attention(qkv=qkv, attn_bias=attn_bias, rope=rope)
       x = self.proj(attn_v)
@@ -82,6 +121,15 @@ class RoPESelfAttention(nn.Module):
       return x
 
     def compute_attention(self, qkv: mx.array, attn_bias: mx.array | None = None, rope: Tuple[mx.array, mx.array] | None = None) -> mx.array:
+      """
+      Compute RoPE Self-Attention.
+      Args:
+          qkv: QKV array.
+          attn_bias: Attention bias.
+          rope: RoPE embeddings.
+      Returns:
+          Output array.
+      """
       assert attn_bias is None
       B, N, _ = qkv.shape
       C = self.qkv.weight.shape[1]
@@ -100,6 +148,15 @@ class RoPESelfAttention(nn.Module):
 
 
 class CausalSelfAttention(nn.Module):
+    """Causal Self-Attention layer.
+    Args:
+        dim: Dimension of the input features.
+        num_heads: Number of attention heads.
+        qkv_bias: Whether to use bias for QKV projection.
+        proj_bias: Whether to use bias for output projection.
+        attn_drop: Dropout rate for attention weights.
+        proj_drop: Dropout rate for output projection.
+    """
     def __init__(
         self,
         dim: int,
@@ -130,6 +187,14 @@ class CausalSelfAttention(nn.Module):
       _ = factor
 
     def __call__(self, x: mx.array, is_causal: bool = True) -> mx.array:
+      """
+      Compute Causal Self-Attention.
+      Args:
+          x: Input array.
+          is_causal: Whether to use causal attention.
+      Returns:
+          Output array.
+      """
       B, N, C = x.shape
       qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads)
       q = qkv[:, :, 0]

@@ -67,11 +67,15 @@ class PatchEmbed(nn.Module):
 
     def __call__(self, x: mx.array) -> mx.array:
         """
-        Input is expected to be NHWC (B, H, W, C)
-        However, for compatibility with typical PT style calling code,
-        we check if it looks like NCHW and transpose if needed.
-        But per standard MLX, we should prefer NHWC.
+        Args:
+            x: Input array.
+        Returns:
+            Output array.
         """
+        # Input is expected to be NHWC (B, H, W, C)
+        # However, for compatibility with typical PT style calling code,
+        # we check if it looks like NCHW and transpose if needed.
+        # But per standard MLX, we should prefer NHWC.
         if x.ndim == 4 and x.shape[1] == self.in_chans and x.shape[-1] != self.in_chans:
             x = x.transpose(0, 2, 3, 1)
 
@@ -92,6 +96,7 @@ class PatchEmbed(nn.Module):
         return x
 
     def flops(self) -> float:
+        """Compute the number of FLOPs."""
         Ho, Wo = self.patches_resolution
         flops = (
             Ho
