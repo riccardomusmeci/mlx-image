@@ -2,7 +2,8 @@ from typing import Callable, List, Optional
 
 import mlx.core as mx
 import mlx.nn as nn
-from dinov3.utils.utils import cat_keep_shapes, uncat_with_shapes
+
+from ..layers import cat_keep_shapes, uncat_with_shapes
 
 
 class ListForwardMixin(object):
@@ -28,6 +29,7 @@ class Mlp(nn.Module, ListForwardMixin):
         drop: Dropout rate.
         bias: Whether to use bias.
     """
+
     def __init__(
         self,
         in_features: int,
@@ -71,6 +73,7 @@ class SwiGLUFFN(nn.Module, ListForwardMixin):
         bias: Whether to use bias.
         align_to: Alignment to use for hidden features.
     """
+
     def __init__(
         self,
         in_features: int,

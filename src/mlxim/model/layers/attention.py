@@ -3,8 +3,8 @@ from typing import List, Tuple
 import mlx.core as mx
 import mlx.nn as nn
 
-from mlxim.model.layers.functional import scaled_dot_product_attention
-from mlxim.model.layers.rope_position_encoding import rope_apply
+from .functional import scaled_dot_product_attention
+from .rope_position_encoding import rope_apply
 
 
 class LinearKMaskedBias(nn.Linear):

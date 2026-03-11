@@ -4,9 +4,8 @@ from typing import Any, Callable, Dict, List, Literal, Optional, Sequence, Tuple
 
 import mlx.core as mx
 import mlx.nn as nn
-from mlxim.model.dinov3.layers.ffn_layers import Mlp, SwiGLUFFN
 
-from mlxim.model.layers import (
+from ..layers import (
     CausalSelfAttention,
     LayerScale,
     PatchEmbed,
@@ -17,6 +16,7 @@ from mlxim.model.layers import (
     named_apply,
     uncat_with_shapes,
 )
+from .ffn_layers import Mlp, SwiGLUFFN
 
 logger = logging.getLogger("dinov3")
 
@@ -442,9 +442,7 @@ class DinoVisionTransformer(nn.Module):
 
         norm_layer_cls = norm_layer_dict[norm_layer]
 
-        self.num_features = self.embed_dim = (
-            embed_dim  # num_features for consistency with other models
-        )
+        self.num_features = self.embed_dim = embed_dim  # num_features for consistency with other models
         self.n_blocks = depth
         self.num_heads = num_heads
         self.patch_size = patch_size
