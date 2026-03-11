@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict, List, Literal, Optional, Sequence, Tuple
 
 import mlx.core as mx
 import mlx.nn as nn
-from dinov3.utils import named_apply
 from mlxim.model.dinov3.layers.ffn_layers import Mlp, SwiGLUFFN
 
 from mlxim.model.layers import (
@@ -15,6 +14,7 @@ from mlxim.model.layers import (
     RoPESelfAttention,
     _randperm,
     cat_keep_shapes,
+    named_apply,
     uncat_with_shapes,
 )
 
