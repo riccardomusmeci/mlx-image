@@ -180,11 +180,8 @@ class CausalSelfAttention(nn.Module):
     def init_weights(
         self, init_attn_std: float | None = None, init_proj_std: float | None = None, factor: float = 1.0
     ) -> None:
-      # Keep MLX's default parameter initialization; this method is
-      # retained only for API compatibility with the original code.
-      _ = init_attn_std
-      _ = init_proj_std
-      _ = factor
+      """Not Implemented"""
+      pass
 
     def __call__(self, x: mx.array, is_causal: bool = True) -> mx.array:
       """
