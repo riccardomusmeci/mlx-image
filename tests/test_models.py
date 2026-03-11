@@ -188,3 +188,11 @@ def test_features_mobilenetv3_small():
     model.eval()
     out = model.get_features(x)
     assert out.shape == (1, 576), f"Expected shape (1, 576), got {out.shape}"
+
+
+def test_features_vit_small_patch16_224_dinov3():
+    x = mx.random.uniform(shape=(1, 224, 224, 3))
+    model = create_model("vit_small_patch16_224.dinov3", strict=True)
+    model.eval()
+    out = model(x)
+    assert out.shape == (1, 384), f"Expected shape (1, 384), got {out.shape}"
