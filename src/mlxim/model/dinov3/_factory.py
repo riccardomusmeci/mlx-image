@@ -5,9 +5,14 @@ from .dinov3 import DinoVisionTransformer
 
 dinov3_configs = {
     "vit_small_patch16_224.dinov3": ModelConfig(
-        metrics=Metrics(dataset="ImageNet-1K"),
+        metrics=Metrics(dataset="LVD-1689M"),
         transform=Transform(img_size=224, interpolation="bicubic"),
         weights=HFWeights(repo_id="mlx-vision/vit_small_patch16_224.dinov3-mlxim", filename="model.safetensors"),
+    ),
+    "vit_small_plus_patch16_224.dinov3": ModelConfig(
+        metrics=Metrics(dataset="LVD-1689M"),
+        transform=Transform(img_size=224, interpolation="bicubic"),
+        weights=HFWeights(repo_id="mlx-vision/vit_small_plus_patch16_224.dinov3-mlxim", filename="model.safetensors"),
     ),
 }
 
@@ -20,6 +25,23 @@ def vit_small_patch16_224_dinov3(num_classes: int = 0, **kwargs) -> DinoVisionTr
         depth=12,
         num_heads=6,
         ffn_ratio=4,
+        n_storage_tokens=4,
+        layerscale_init=1e-5,
+        mask_k_bias=True,
+        **kwargs,
+    )
+    return model
+
+
+def vit_small_plus_patch16_224_dinov3(num_classes: int = 0, **kwargs) -> DinoVisionTransformer:
+    """ViT-S/16 for DINOv3"""
+    model = DinoVisionTransformer(
+        patch_size=16,
+        embed_dim=384,
+        depth=12,
+        num_heads=6,
+        ffn_ratio=6,
+        ffn_layer="swiglu",
         n_storage_tokens=4,
         layerscale_init=1e-5,
         mask_k_bias=True,
