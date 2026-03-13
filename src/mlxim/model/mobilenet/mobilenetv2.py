@@ -4,7 +4,8 @@ Based on the paper: MobileNetV2: Inverted Residuals and Linear Bottlenecks (http
 
 Original implementation: torchvision (https://github.com/pytorch/vision)
 """
-from typing import Callable, Optional
+
+from collections.abc import Callable
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -16,7 +17,7 @@ from ..layers.utils import _make_divisible
 # Necessary for backwards compatibility
 class InvertedResidual(nn.Module):
     def __init__(
-        self, inp: int, oup: int, stride: int, expand_ratio: int, norm_layer: Optional[Callable[..., nn.Module]] = None
+        self, inp: int, oup: int, stride: int, expand_ratio: int, norm_layer: Callable[..., nn.Module] | None = None
     ) -> None:
         super().__init__()
         self.stride = stride
@@ -33,7 +34,7 @@ class InvertedResidual(nn.Module):
         if expand_ratio != 1:
             # pw
             layers.append(
-                Conv2dNormActivation(inp, hidden_dim, kernel_size=1,  norm_layer=norm_layer, activation_layer=nn.ReLU6)
+                Conv2dNormActivation(inp, hidden_dim, kernel_size=1, norm_layer=norm_layer, activation_layer=nn.ReLU6)
             )
         layers.extend(
             [
@@ -44,7 +45,7 @@ class InvertedResidual(nn.Module):
                     stride=stride,
                     groups=hidden_dim,
                     norm_layer=norm_layer,
-                    activation_layer=nn.ReLU6
+                    activation_layer=nn.ReLU6,
                 ),
                 # pw-linear
                 nn.Conv2d(hidden_dim, oup, 1, 1, 0, bias=False),
@@ -64,12 +65,13 @@ class InvertedResidual(nn.Module):
 
 class MobileNetV2(nn.Module):
     def __init__(
-        self, num_classes: int = 1000,
+        self,
+        num_classes: int = 1000,
         width_mult: float = 1.0,
-        inverted_residual_setting: Optional[list[list[int]]] = None,
+        inverted_residual_setting: list[list[int]] | None = None,
         round_nearest: int = 8,
-        block: Optional[Callable[..., nn.Module]] = None,
-        norm_layer: Optional[Callable[..., nn.Module]] = None,
+        block: Callable[..., nn.Module] | None = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
         dropout: float = 0.2,
     ) -> None:
         """
@@ -118,7 +120,8 @@ class MobileNetV2(nn.Module):
         self.last_channel = _make_divisible(last_channel * max(1.0, width_mult), round_nearest)
         features: list[nn.Module] = [
             Conv2dNormActivation(
-                in_channels=3, out_channels=input_channel, stride=2, norm_layer=norm_layer, activation_layer=nn.ReLU6)
+                in_channels=3, out_channels=input_channel, stride=2, norm_layer=norm_layer, activation_layer=nn.ReLU6
+            )
         ]
 
         # Building the inverted residual blocks

@@ -1,5 +1,4 @@
 import os
-from typing import Dict, Optional
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -27,7 +26,7 @@ def get_weights(model: nn.Module) -> dict:
     return state_dict
 
 
-def save_weights(weights: Dict[str, mx.array], output_path: str) -> None:
+def save_weights(weights: dict[str, mx.array], output_path: str) -> None:
     """Save MLX weights to a given path.
 
     Args:
@@ -61,13 +60,15 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     if verbose:
         print(f"\n> Loading weights from {weights}")
 
-    pretrained_weights = dict(list(mx.load(weights).items()))
+    loaded = mx.load(weights)
+    assert isinstance(loaded, dict), f"Expected dict from mx.load, got {type(loaded)}"
+    pretrained_weights: dict[str, mx.array] = {str(k): v for k, v in loaded.items() if isinstance(v, mx.array)}
     # create a torch-like state dict { layer_name: weights }
     model_weights = dict(tree_flatten(model.parameters()))
     # check if pretrained_weights does not have more keys
     extras = set(pretrained_weights.keys()) - set(model_weights.keys())
     if extras:
-        extras = " ".join(list(extras))  # type: ignore
+        extras = " ".join(list(extras))
         if strict:
             raise ValueError(f"Found extra keys in weights file: {extras}")
         else:
@@ -77,7 +78,7 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     # check if pretrained_weights does not have less keys
     missing = set(model_weights.keys()) - set(pretrained_weights.keys())
     if missing:
-        missing = " ".join(list(missing))  # type: ignore
+        missing = " ".join(list(missing))
         if strict:
             raise ValueError(f"Missing keys in weights file: {missing}")
         else:
@@ -96,19 +97,38 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
             pretrained_w = pretrained_weights[k]
             # checking if pretrained_w has the same shape as w
             if pretrained_w.shape != w.shape:
-                if strict:
-                    raise ValueError(f"Expected shape {w.shape} for key {k}, got {pretrained_w.shape}")
+                # Try transposing Conv2d weights: PyTorch (O,I,H,W) -> MLX (O,H,W,I)
+                if len(pretrained_w.shape) == 4 and len(w.shape) == 4:
+                    transposed = mx.transpose(pretrained_w, (0, 2, 3, 1))
+                    if transposed.shape == w.shape:
+                        if verbose:
+                            print(
+                                f"> [INFO] Transposed Conv2d weights for key {k}: {pretrained_w.shape} -> {transposed.shape}"
+                            )
+                        pretrained_w = transposed
+                    else:
+                        if strict:
+                            raise ValueError(f"Expected shape {w.shape} for key {k}, got {pretrained_w.shape}")
+                        else:
+                            if verbose:
+                                print(
+                                    f"> [WARNING] Shape mismatch for key {k}: expected {w.shape}, got {pretrained_w.shape} (transpose gave {transposed.shape})"
+                                )
+                            pretrained_w = w
                 else:
-                    if verbose:
-                        print(f"> [WARNING] Expected shape {w.shape} for key {k}, got {pretrained_w.shape}")
-                    pretrained_w = w
+                    if strict:
+                        raise ValueError(f"Expected shape {w.shape} for key {k}, got {pretrained_w.shape}")
+                    else:
+                        if verbose:
+                            print(f"> [WARNING] Expected shape {w.shape} for key {k}, got {pretrained_w.shape}")
+                        pretrained_w = w
             model_weights[k] = pretrained_w
 
     model.update(tree_unflatten(list(model_weights.items())))
     return model
 
 
-def download_from_hf(model_name: str, repo_id: Optional[str] = None, filename: Optional[str] = None) -> str:
+def download_from_hf(model_name: str, repo_id: str | None = None, filename: str | None = None) -> str:
     """Download weights from HuggingFace Hub.
 
     Args:
@@ -121,11 +141,12 @@ def download_from_hf(model_name: str, repo_id: Optional[str] = None, filename: O
     if repo_id is None and filename is None:
         repo_id = MODEL_CONFIG[model_name].weights.repo_id
         filename = MODEL_CONFIG[model_name].weights.filename
+    assert repo_id is not None, f"repo_id required for {model_name}"
+    assert filename is not None, f"filename required for {model_name}"
+    print(f"Downloading weights for {model_name} from HuggingFace Hub.")
     try:
-        print(f"Downloading weights for {model_name} from HuggingFace Hub.")
         weights_path = hf_hub_download(repo_id=repo_id, repo_type="model", filename=filename)
     except Exception as e:
-        print(f"[ERROR] Downloading weights from HuggingFace Hub failed for {model_name}: {e}.")
-        quit()
+        raise RuntimeError(f"Downloading weights from HuggingFace Hub failed for {model_name}: {e}") from e
 
     return weights_path

@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any
 
 import mlx.nn as nn
 
@@ -6,20 +6,22 @@ from ._registry import MODEL_ENTRYPOINT
 from ._utils import download_from_hf, load_weights
 
 
-def list_models() -> None:
-    """List all available image models."""
-    print("Available models:")
-    for model_name in list(MODEL_ENTRYPOINT.keys()):
-        print(f"\t- {model_name}")
+def list_models() -> list[str]:
+    """List all available image models.
+
+    Returns:
+        list[str]: list of available model names
+    """
+    return list(MODEL_ENTRYPOINT.keys())
 
 
 def create_model(
     model_name: str,
-    weights: Union[bool, str] = True,
+    weights: bool | str = True,
     num_classes: int = 1000,
     strict: bool = False,
     verbose: bool = False,
-    **kwargs: Dict[str, Any],
+    **kwargs: dict[str, Any],
 ) -> nn.Module:
     """Create an image model.
 
@@ -58,7 +60,7 @@ def create_model(
 
     if isinstance(weights, bool) and weights is True:
         weights_path = download_from_hf(model_name)
-        model = load_weights(model, weights_path, strict=strict, verbose=verbose)  # type: ignore
+        model = load_weights(model, weights_path, strict=strict, verbose=verbose)
     elif isinstance(weights, bool) and weights is False:
         pass
     elif isinstance(weights, str) and weights.startswith("hf://"):
@@ -70,9 +72,9 @@ def create_model(
             repo_id=repo_id,
             filename=filename,
         )
-        model = load_weights(model, weights_path, strict=strict, verbose=verbose)  # type: ignore
+        model = load_weights(model, weights_path, strict=strict, verbose=verbose)
     elif isinstance(weights, str):
-        model = load_weights(model, weights, strict=strict, verbose=verbose)  # type: ignore
+        model = load_weights(model, weights, strict=strict, verbose=verbose)
     else:
         raise ValueError(f"Invalid weights type: {type(weights)}")
 

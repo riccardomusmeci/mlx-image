@@ -1,9 +1,8 @@
-from typing import List
-
 import mlx.core as mx
+import mlx.nn as nn
 
 
-def roll(x: mx.array, shifts: List[int], axes: List[int]) -> mx.array:
+def roll(x: mx.array, shifts: list[int], axes: list[int]) -> mx.array:
     """Roll the mx.array along the given dimensions.
 
     Args:
@@ -23,7 +22,7 @@ def roll(x: mx.array, shifts: List[int], axes: List[int]) -> mx.array:
         shift = shift % x.shape[axis]
         # split and concatenate
         splits = mx.split(output, [shift], axis=axis)
-        output = mx.concatenate(splits[::-1], axis=axis)
+        output = mx.concatenate(list(splits[::-1]), axis=axis)
     return output
 
 
@@ -53,6 +52,27 @@ def dropout(x: mx.array, p: float, training: bool) -> mx.array:
         mx.array: The dropout mx.array.
     """
     if p > 0 and training:
-        mask = mx.random.uniform(0, 1, x.shape, dtype=x.dtype, ctx=x.context) > p
+        mask = mx.random.uniform(0, 1, x.shape, dtype=x.dtype) > p
         x = x * mask / (1 - p)
     return x
+
+
+def scaled_dot_product_attention(
+    q: mx.array,
+    k: mx.array,
+    v: mx.array,
+    scale: float,
+    attn_mask: mx.array | None = None,
+    dropout_p: float = 0.0,
+    is_causal: bool = False,
+) -> mx.array:
+    """Scaled dot-product attention."""
+    attn_weights = mx.matmul(q, mx.swapaxes(k, -2, -1)) * scale
+    if attn_mask is not None:
+        attn_weights = mx.where(attn_mask != 0, attn_weights, float("-inf"))
+    if is_causal:
+        attn_weights = mx.tril(attn_weights, k=0)
+    attn_weights = mx.softmax(attn_weights, axis=-1)
+    if dropout_p > 0.0:
+        attn_weights = nn.Dropout(dropout_p)(attn_weights)
+    return mx.matmul(attn_weights, v)

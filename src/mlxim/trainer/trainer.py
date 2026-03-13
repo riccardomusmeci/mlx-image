@@ -1,5 +1,5 @@
 import time
-from typing import Callable, Dict, Optional, Tuple
+from collections.abc import Callable
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -36,15 +36,15 @@ class Trainer:
         optimizer: optim.Optimizer,
         loss_fn: Callable,
         train_loader: DataLoader,
-        loss_fn_args: Optional[dict] = None,
-        val_loader: Optional[DataLoader] = None,
+        loss_fn_args: dict | None = None,
+        val_loader: DataLoader | None = None,
         log_every: float = 0.1,
-        device: mx.DeviceType = mx.gpu,
+        device: mx.DeviceType | mx.Device = mx.gpu,
         max_epochs: int = 10,
-        model_checkpoint: Optional[ModelCheckpoint] = None,
-        top_k: Tuple[int, int] = (1, 5),
+        model_checkpoint: ModelCheckpoint | None = None,
+        top_k: tuple[int, int] = (1, 5),
     ) -> None:
-        mx.set_default_device(device)
+        mx.set_default_device(mx.Device(device) if isinstance(device, mx.DeviceType) else device)
 
         self.model = model
         self.optimizer = optimizer
@@ -52,7 +52,7 @@ class Trainer:
         self.loss_fn_args = loss_fn_args
         self.train_loader = train_loader
         self.val_loader = val_loader
-        self.log_every = int(log_every * len(self.train_loader))
+        self.log_every = max(1, int(log_every * len(self.train_loader)))
         self.max_epochs = max_epochs
         self.model_checkpoint = model_checkpoint
         self.top_k = top_k
@@ -73,7 +73,7 @@ class Trainer:
             mx.array: loss
         """
         logits = self.model(x)
-        loss = mx.mean(self.loss_fn(logits, target, **self.loss_fn_args))  # type: ignore
+        loss = mx.mean(self.loss_fn(logits, target, **(self.loss_fn_args or {})))
         self.train_acc.update(logits, target)
         return loss
 
@@ -88,11 +88,11 @@ class Trainer:
             mx.array: loss
         """
         logits = self.model(x)
-        loss = mx.mean(self.loss_fn(logits, target, **self.loss_fn_args))  # type: ignore
+        loss = mx.mean(self.loss_fn(logits, target, **(self.loss_fn_args or {})))
         self.val_acc.update(logits, target)
         return loss
 
-    def train_epoch(self) -> Tuple[float, Dict, float]:
+    def train_epoch(self) -> tuple[float, dict, float]:
         """Train the model for a single epoch.
 
         Args:
@@ -134,16 +134,17 @@ class Trainer:
         self.train_acc.reset()
         return np.mean(epoch_loss), epoch_acc, np.mean(throughput)
 
-    def val_epoch(self) -> Tuple[float, Dict, float]:
+    def val_epoch(self) -> tuple[float, dict, float]:
         """Run the validation step for a single epoch.
 
         Returns:
             Tuple[float, float, float]: mean loss, mean accuracy, mean throughput
         """
         self.model.eval()
+        assert self.val_loader is not None
         epoch_loss = []
         throughput = []
-        for _, batch in tqdm(enumerate(self.val_loader), total=len(self.val_loader)):  # type: ignore
+        for _, batch in tqdm(enumerate(self.val_loader), total=len(self.val_loader)):
             x, target = batch
             tic = time.perf_counter()
             loss = self._val_step(x, target)
@@ -168,7 +169,7 @@ class Trainer:
                 "> "
                 + " | ".join(
                     [
-                        f"epoch_time={toc-tic:.2f}s",
+                        f"epoch_time={toc - tic:.2f}s",
                         f"train_loss={train_loss:.3f}",
                         f"train_throughput={train_throughput:.2f} images/second",
                     ]
@@ -197,7 +198,7 @@ class Trainer:
                     if self.model_checkpoint.patience_over:
                         print("\n*******************\n")
                         print(f"Early stopping at epoch {epoch}")
-                        quit()
+                        return
             else:
                 if self.model_checkpoint:
                     train_metrics = {"train_loss": train_loss} | {
@@ -211,6 +212,6 @@ class Trainer:
                     if self.model_checkpoint.patience_over:
                         print("\n*******************\n")
                         print(f"Early stopping at epoch {epoch}")
-                        quit()
+                        return
 
             print("\n*******************\n")

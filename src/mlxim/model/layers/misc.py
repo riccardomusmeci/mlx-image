@@ -1,6 +1,6 @@
 import math
 import warnings
-from typing import Callable, List, Optional, Union
+from collections.abc import Callable
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -33,13 +33,13 @@ class ConvNormActivation(nn.Module):
         out_channels: int,
         kernel_size: int = 3,
         stride: int = 1,
-        padding: Optional[int] = None,
+        padding: int | None = None,
         groups: int = 1,
-        norm_layer: Optional[Callable[..., nn.Module]] = nn.BatchNorm,
-        activation_layer: Optional[Callable[..., nn.Module]] = nn.ReLU,
+        norm_layer: Callable[..., nn.Module] | None = nn.BatchNorm,
+        activation_layer: Callable[..., nn.Module] | None = nn.ReLU,
         dilation: int = 1,
-        inplace: Optional[bool] = None,
-        bias: Optional[bool] = None,
+        inplace: bool | None = None,
+        bias: bool | None = None,
         conv_layer: Callable[..., nn.Module] = nn.Conv2d,
     ) -> None:
         super().__init__()
@@ -67,7 +67,7 @@ class ConvNormActivation(nn.Module):
         if activation_layer is not None:
             # TODO: removed inplace
             # params = {} if inplace is None else {"inplace": inplace}
-            params = {}  # type: ignore
+            params = {}
             self.layers.append(activation_layer(**params))
         self.out_channels = out_channels
 
@@ -108,13 +108,13 @@ class Conv2dNormActivation(ConvNormActivation):
         out_channels: int,
         kernel_size: int = 3,
         stride: int = 1,
-        padding: Optional[int] = None,
+        padding: int | None = None,
         groups: int = 1,
-        norm_layer: Optional[Callable[..., nn.Module]] = nn.BatchNorm,
-        activation_layer: Optional[Callable[..., nn.Module]] = nn.ReLU,
+        norm_layer: Callable[..., nn.Module] | None = nn.BatchNorm,
+        activation_layer: Callable[..., nn.Module] | None = nn.ReLU,
         dilation: int = 1,
-        inplace: Optional[bool] = None,
-        bias: Optional[bool] = None,
+        inplace: bool | None = None,
+        bias: bool | None = None,
     ) -> None:
         super().__init__(
             in_channels,

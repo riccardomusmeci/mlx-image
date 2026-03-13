@@ -1,14 +1,14 @@
 SHELL = /bin/bash
 
 
-.PHONY: all install clean check test full coverage
+.PHONY: all install clean check test full coverage format
+
 all:
 	make clean
 	make install
 
 install:
-    # Uncomment the following line if you want to run a prebuild script (must exist)
-	pip install -e .[dev,test,docs]
+	uv sync --all-extras
 	make full
 
 clean:
@@ -24,19 +24,20 @@ clean:
 	-find tests -depth -type d -empty -delete
 
 check:
-	ruff check --diff .
-	black --check --diff .
-	mypy .
+	uv run ruff check --diff .
+	uv run ruff format --check --diff .
+	uv run ty check src/
 
 format:
-	ruff check --show-fixes .
-	black .
-	mypy .
+	uv run ruff check --show-fixes .
+	uv run ruff format .
 
 test:
-	pytest tests/
+	uv run pytest tests/
 
 full:
 	make check
 	make test
 
+coverage:
+	uv run pytest tests/ --cov=src/mlxim --cov-report=term-missing

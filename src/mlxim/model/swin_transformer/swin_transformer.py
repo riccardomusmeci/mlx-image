@@ -1,6 +1,6 @@
 import math
+from collections.abc import Callable
 from functools import partial
-from typing import Any, Callable, List, Optional
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -27,14 +27,14 @@ def _patch_merging_pad(x: mx.array) -> mx.array:
 def _get_relative_position_bias(
     relative_position_bias_table: mx.array,
     relative_position_index: mx.array,
-    window_size: List[int],
+    window_size: list[int],
 ) -> mx.array:
     """Get relative position bias.
 
     Args:
         relative_position_bias_table (mx.array): relative position bias table.
         relative_position_index (mx.array): relative position index.
-        window_size (List[int]): window size.
+        window_size (list[int]): window size.
 
     Returns:
         mx.array: relative position bias.
@@ -104,14 +104,14 @@ def shifted_window_attention(
     qkv_weight: mx.array,
     proj_weight: mx.array,
     relative_position_bias: mx.array,
-    window_size: List[int],
+    window_size: list[int],
     num_heads: int,
-    shift_size: List[int],
+    shift_size: list[int],
     attention_dropout: float = 0.0,
     dropout: float = 0.0,
-    qkv_bias: Optional[mx.array] = None,
-    proj_bias: Optional[mx.array] = None,
-    logit_scale: Optional[mx.array] = None,
+    qkv_bias: mx.array | None = None,
+    proj_bias: mx.array | None = None,
+    logit_scale: mx.array | None = None,
     training: bool = True,
 ) -> mx.array:
     """
@@ -166,8 +166,8 @@ def shifted_window_attention(
     x = x.transpose(0, 1, 3, 2, 4, 5).reshape(B * num_windows, window_size[0] * window_size[1], C)  # B*nW, Ws*Ws, C
 
     # multi-head attention
-    if logit_scale is not None and qkv_bias is not None:
-        qkv_bias = qkv_bias
+    assert qkv_bias is not None, "qkv_bias is required"
+    if logit_scale is not None:
         length = qkv_bias.size // 3
         qkv_bias[length : 2 * length] = 0
     qkv = mx.matmul(x, qkv_weight.T) + qkv_bias
@@ -219,6 +219,7 @@ def shifted_window_attention(
     attn = nn.softmax(attn, axis=-1)
     attn = F.dropout(attn, p=attention_dropout, training=training)
 
+    assert proj_bias is not None, "proj_bias is required"
     x = mx.matmul(attn, v).transpose(0, 2, 1, 3).reshape(x.shape[0], x.shape[1], C)
     x = mx.matmul(x, proj_weight.T) + proj_bias
     x = F.dropout(x, p=dropout, training=training)
@@ -236,7 +237,7 @@ def shifted_window_attention(
 
     # reverse cyclic shift
     if sum(shift_size) > 0:
-        x = F.roll(x, shifts=(shift_size[0], shift_size[1]), axes=(1, 2))  # type: ignore
+        x = F.roll(x, shifts=[shift_size[0], shift_size[1]], axes=[1, 2])
 
     # unpad features
     x = x[:, :H, :W, :]
@@ -260,8 +261,8 @@ class ShiftedWindowAttention(nn.Module):
     def __init__(
         self,
         dim: int,
-        window_size: List[int],
-        shift_size: List[int],
+        window_size: list[int],
+        shift_size: list[int],
         num_heads: int,
         qkv_bias: bool = True,
         proj_bias: bool = True,
@@ -292,7 +293,7 @@ class ShiftedWindowAttention(nn.Module):
                 self.num_heads,
             )
         )  # 2*Wh-1 * 2*Ww-1, nH
-        nn.init.normal(self.relative_position_bias_table, std=0.02)
+        self.relative_position_bias_table = nn.init.normal(std=0.02)(self.relative_position_bias_table)
 
     def define_relative_position_index(self) -> None:
         """Define relative position index."""
@@ -364,8 +365,8 @@ class ShiftedWindowAttentionV2(ShiftedWindowAttention):
     def __init__(
         self,
         dim: int,
-        window_size: List[int],
-        shift_size: List[int],
+        window_size: list[int],
+        shift_size: list[int],
         num_heads: int,
         qkv_bias: bool = True,
         proj_bias: bool = True,
@@ -468,8 +469,8 @@ class SwinTransformerBlock(nn.Module):
         self,
         dim: int,
         num_heads: int,
-        window_size: List[int],
-        shift_size: List[int],
+        window_size: list[int],
+        shift_size: list[int],
         mlp_ratio: float = 4.0,
         dropout: float = 0.0,
         attention_dropout: float = 0.0,
@@ -532,8 +533,8 @@ class SwinTransformerBlockV2(SwinTransformerBlock):
         self,
         dim: int,
         num_heads: int,
-        window_size: List[int],
-        shift_size: List[int],
+        window_size: list[int],
+        shift_size: list[int],
         mlp_ratio: float = 4.0,
         dropout: float = 0.0,
         attention_dropout: float = 0.0,
@@ -592,18 +593,18 @@ class SwinTransformer(nn.Module):
 
     def __init__(
         self,
-        patch_size: List[int],
+        patch_size: list[int],
         embed_dim: int,
-        depths: List[int],
-        num_heads: List[int],
-        window_size: List[int],
+        depths: list[int],
+        num_heads: list[int],
+        window_size: list[int],
         mlp_ratio: float = 4.0,
         dropout: float = 0.0,
         attention_dropout: float = 0.0,
         stochastic_depth_prob: float = 0.1,
         num_classes: int = 1000,
-        norm_layer: Optional[Callable[..., nn.Module]] = None,
-        block: Optional[Callable[..., nn.Module]] = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
+        block: Callable[..., nn.Module] | None = None,
         downsample_layer: Callable[..., nn.Module] = PatchMerging,
     ):
         super().__init__()
@@ -625,12 +626,12 @@ class SwinTransformer(nn.Module):
             norm_layer(embed_dim),
         )
 
-        layers: List[nn.Module] = []
+        layers: list[nn.Module] = []
         total_stage_blocks = sum(depths)
         stage_block_id = 0
         # build SwinTransformer blocks
         for i_stage in range(len(depths)):
-            stage: List[nn.Module] = []
+            stage: list[nn.Module] = []
             dim = embed_dim * 2**i_stage
             for i_layer in range(depths[i_stage]):
                 # adjust stochastic depth probability based on the depth of the stage block
@@ -667,7 +668,7 @@ class SwinTransformer(nn.Module):
             if isinstance(m, nn.Linear):
                 nn.init.normal(m.weight, std=0.02)
                 if hasattr(m, "bias") and m.bias is not None:
-                    nn.init.constant(0)(m.bias)
+                    m.bias = nn.init.constant(0)(m.bias)
 
     def get_features(self, x: mx.array) -> mx.array:
         """Get model features

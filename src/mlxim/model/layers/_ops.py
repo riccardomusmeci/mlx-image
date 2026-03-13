@@ -1,9 +1,7 @@
-from typing import Optional
-
 import mlx.core as mx
 
 
-def _make_divisible(v: float, divisor: int, min_value: Optional[int] = None) -> int:
+def _make_divisible(v: float, divisor: int, min_value: int | None = None) -> int:
     """
     This function is taken from the original tf repo.
     It ensures that all layers have a channel number that is divisible by 8

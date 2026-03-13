@@ -1,11 +1,10 @@
 import os
 from pathlib import Path
-from typing import Dict, Optional
 
 import yaml
 
 
-def load_config(config_path: str) -> Dict:
+def load_config(config_path: str) -> dict:
     """Load a single yml file.
 
     Args:
@@ -24,6 +23,5 @@ def load_config(config_path: str) -> Dict:
         try:
             params = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
-            print(exc)
-            quit()
+            raise ValueError(f"Failed to parse YAML config {config_path}: {exc}") from exc
     return params

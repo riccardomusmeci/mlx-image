@@ -40,6 +40,7 @@ def test_inference_resnet():
 
         assert logits.shape == (1, 1000), f"Expected shape (1, 1000), got {logits.shape}"
 
+
 def test_features_resnet():
     x = mx.random.uniform(shape=(1, 224, 224, 3))
     model = create_model("resnet18", strict=True)
@@ -86,6 +87,7 @@ def test_inference_efficientnet():
         logits = model(x)
         assert logits.shape == (1, 1000), f"Expected shape (1, 1000), got {logits.shape}"
 
+
 def test_download_mobilenetv2():
     x = mx.random.uniform(shape=(1, 224, 224, 3))
     model = create_model("mobilenet_v2", strict=True)
@@ -109,12 +111,14 @@ def test_inference_mobilenetv2():
         logits = model(x)
         assert logits.shape == (1, 1000), f"Expected shape (1, 1000), got {logits.shape}"
 
+
 def test_features_efficientnet():
     x = mx.random.uniform(shape=(1, 224, 224, 3))
     model = create_model("efficientnet_b0", strict=True)
     model.eval()
     out = model.get_features(x)
     assert out.shape == (1, 1280), f"Expected shape (1, 1280), got {out.shape}"
+
 
 def test_features_mobilenetv2():
     x = mx.random.uniform(shape=(1, 224, 224, 3))

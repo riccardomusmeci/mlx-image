@@ -1,46 +1,73 @@
+# Pre-commit hooks for artifact-service
+# Install: pre-commit install -t pre-commit -t pre-push
+# Run all: pre-commit run --all-files
+
 repos:
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.4.0
-      hooks:
-          - id: check-added-large-files
-            args: ["--maxkb=2048"]
-          - id: check-yaml
-            exclude: ^bamboo-specs/
-          - id: check-json
-          - id: check-toml
-          - id: detect-private-key
-          - id: end-of-file-fixer
-          - id: trailing-whitespace
-          - id: mixed-line-ending
-          - id: check-merge-conflict
-          - id: debug-statements
-          - id: requirements-txt-fixer
-          - id: check-executables-have-shebangs
-    - repo: https://github.com/IamTheFij/docker-pre-commit
-      rev: v2.1.1
-      hooks:
-          - id: docker-compose-check
-    - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
-      rev: v0.1.0
-      hooks:
-          - id: dockerfilelint
-    - repo: https://github.com/pre-commit/pygrep-hooks
-      rev: v1.10.0
-      hooks:
-          - id: python-no-log-warn
-          - id: python-check-mock-methods
-    - repo: https://github.com/Lucas-C/pre-commit-hooks
-      rev: v1.4.2
-      hooks:
-          - id: remove-tabs
-    - repo: https://github.com/asottile/pyupgrade
-      rev: v3.3.1
-      hooks:
-          - id: pyupgrade
-    - repo: local
-      hooks:
-          - id: check
-            name: Local repo make check (black, ruff, mypy, docformatter)
-            language: system
-            entry: make check
-            pass_filenames: false
+  # Ruff - extremely fast Python linter (replaces flake8, isort, etc.)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        types_or: [python, pyi]
+      - id: ruff-format
+        types_or: [python, pyi]
+
+  # Standard pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--unsafe]  # Allow custom tags
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  # Dockerfile linting
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+        args: [--ignore, DL3008, --ignore, DL3013]  # Allow unpinned apt/pip
+
+  # Secret detection
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: [--baseline, .secrets.baseline]
+        exclude: package-lock.json|uv.lock
+
+  # Type checking and tests - only on push (slower)
+  - repo: local
+    hooks:
+      - id: ty
+        name: ty type checking
+        entry: uv run ty check src/
+        language: system
+        types: [python]
+        pass_filenames: false
+        stages: [pre-push]
+
+      - id: pytest-unit
+        name: pytest unit tests
+        entry: uv run pytest tests/ -v --tb=short -x
+        language: system
+        types: [python]
+        pass_filenames: false
+        stages: [pre-push]
+
+      - id: pip-audit
+        name: pip-audit security scan
+        entry: bash -c 'uv pip install pip-audit -q 2>/dev/null && uv run pip-audit --ignore-vuln GHSA-wj6h-64fc-37mp --ignore-vuln CVE-2025-62609 --ignore-vuln CVE-2025-62608'
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+# Configuration for ci environments
+ci:
+  autofix_prs: false
+  autoupdate_schedule: monthly

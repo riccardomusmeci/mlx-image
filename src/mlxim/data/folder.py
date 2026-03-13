@@ -1,8 +1,8 @@
 import json
 import os
 import random
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import mlx.core as mx
 import numpy as np
@@ -22,7 +22,7 @@ class FolderDataset(Dataset):
     """
 
     def __init__(
-        self, root_dir: Union[Path, str], transform: Optional[Callable], engine: str = "pil", verbose: bool = True
+        self, root_dir: Path | str, transform: Callable | None, engine: str = "pil", verbose: bool = True
     ) -> None:
         super().__init__()
         assert os.path.exists(root_dir), f"Folder with images {root_dir} does not exist."
@@ -83,9 +83,9 @@ class LabelFolderDataset(Dataset):
 
     def __init__(
         self,
-        root_dir: Union[Path, str],
-        class_map: Union[Dict[int, Union[str, List[str]]], str, Path],
-        transform: Optional[Callable] = None,
+        root_dir: Path | str,
+        class_map: dict[int, str | list[str]] | str | Path,
+        transform: Callable | None = None,
         engine: str = "pil",
         verbose: bool = True,
     ) -> None:
@@ -110,7 +110,7 @@ class LabelFolderDataset(Dataset):
         if verbose:
             self.stats()
 
-    def _sanity_check(self, root_dir: Union[Path, str]) -> None:
+    def _sanity_check(self, root_dir: Path | str) -> None:
         """Check dataset structure.
 
         Args:
@@ -133,7 +133,7 @@ class LabelFolderDataset(Dataset):
         if self.verbose:
             print("> [INFO] dataset sanity check OK")
 
-    def _load_samples(self) -> Tuple[List[str], List[int]]:
+    def _load_samples(self) -> tuple[list[str], list[int]]:
         """Load samples and targets.
 
         Returns:
@@ -168,7 +168,7 @@ class LabelFolderDataset(Dataset):
             print(f"\t- label {k} - {classes} - {counts[k]}/{num_samples} -> {100 * counts[k] / num_samples:.3f}%")
         print(" -------------------------------------")
 
-    def __getitem__(self, index: int) -> Tuple[mx.array, int]:
+    def __getitem__(self, index: int) -> tuple[mx.array, int]:
         """Return a tuple (image, target) given an index.
 
         Args:

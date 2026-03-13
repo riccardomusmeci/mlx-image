@@ -135,4 +135,4 @@ If you love coding and want to contribute, follow the instructions in [CONTRIBUT
 
 ## Contact
 
-If you have any questions, please email `riccardomusmeci92@gmail.com`.
+If you have any questions, please email `riccardomusmeci92@gmail.com`.               

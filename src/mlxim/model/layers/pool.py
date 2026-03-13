@@ -1,5 +1,3 @@
-from typing import Tuple, Union
-
 import mlx.core as mx
 import mlx.nn as nn
 
@@ -11,7 +9,7 @@ class AdaptiveAvgPool2d(nn.Module):
         output_size (Union[int, Tuple[int, int]], optional): output size. Defaults to 1.
     """
 
-    def __init__(self, output_size: Union[int, Tuple[int, int]] = 1) -> None:
+    def __init__(self, output_size: int | tuple[int, int] = 1) -> None:
         super().__init__()
         self.output_size = output_size if isinstance(output_size, tuple) else (output_size, output_size)
 

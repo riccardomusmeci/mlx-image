@@ -5,17 +5,17 @@ from .mobilenetv3 import MobileNetV3, _mobilenet_v3_conf
 mobilenet_configs = {
     "mobilenet_v2": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.69846, accuracy_at_5=0.89653),
-        transform=Transform(img_size=224, crop_pct=224/232, interpolation="bilinear"),
+        transform=Transform(img_size=224, crop_pct=224 / 232, interpolation="bilinear"),
         weights=HFWeights(repo_id="mlx-vision/mobilenet_v2-mlxim", filename="model.safetensors"),
     ),
     "mobilenet_v3_large": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.69888, accuracy_at_5=0.89071),
-        transform=Transform(img_size=224, crop_pct=224/232, interpolation="bilinear"),
+        transform=Transform(img_size=224, crop_pct=224 / 232, interpolation="bilinear"),
         weights=HFWeights(repo_id="mlx-vision/mobilenet_v3_large-mlxim", filename="model.safetensors"),
     ),
     "mobilenet_v3_small": ModelConfig(
         metrics=Metrics(dataset="ImageNet-1K", accuracy_at_1=0.63176, accuracy_at_5=0.84807),
-        transform=Transform(img_size=224, crop_pct=224/232, interpolation="bilinear"),
+        transform=Transform(img_size=224, crop_pct=224 / 232, interpolation="bilinear"),
         weights=HFWeights(repo_id="mlx-vision/mobilenet_v3_small-mlxim", filename="model.safetensors"),
     ),
 }

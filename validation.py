@@ -5,7 +5,6 @@ import time
 from dataclasses import asdict
 from pathlib import Path
 from shutil import copy2
-from typing import Dict, Union
 
 from tqdm import tqdm
 

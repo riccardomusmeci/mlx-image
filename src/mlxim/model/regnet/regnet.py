@@ -1,7 +1,8 @@
 import math
 from collections import OrderedDict
+from collections.abc import Callable
 from functools import partial
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -50,7 +51,7 @@ class BottleneckTransform(nn.Module):
         activation_layer: Callable[..., nn.Module],
         group_width: int,
         bottleneck_multiplier: float,
-        se_ratio: Optional[float],
+        se_ratio: float | None,
     ) -> None:
         super().__init__()
 
@@ -79,7 +80,6 @@ class BottleneckTransform(nn.Module):
         )
 
     def __call__(self, x: mx.array) -> mx.array:
-
         x = self.a(x)
 
         x = self.b(x)
@@ -112,7 +112,7 @@ class ResBottleneckBlock(nn.Module):
         activation_layer: Callable[..., nn.Module],
         group_width: int = 1,
         bottleneck_multiplier: float = 1.0,
-        se_ratio: Optional[float] = None,
+        se_ratio: float | None = None,
     ) -> None:
         super().__init__()
 
@@ -177,7 +177,7 @@ class AnyStage(nn.Module):
         activation_layer: Callable[..., nn.Module],
         group_width: int,
         bottleneck_multiplier: float,
-        se_ratio: Optional[float] = None,
+        se_ratio: float | None = None,
         stage_index: int = 0,
     ) -> None:
         super().__init__()
@@ -205,12 +205,12 @@ class AnyStage(nn.Module):
 class BlockParams:
     def __init__(
         self,
-        depths: List[int],
-        widths: List[int],
-        group_widths: List[int],
-        bottleneck_multipliers: List[float],
-        strides: List[int],
-        se_ratio: Optional[float] = None,
+        depths: list[int],
+        widths: list[int],
+        group_widths: list[int],
+        bottleneck_multipliers: list[float],
+        strides: list[int],
+        se_ratio: float | None = None,
     ) -> None:
         self.depths = depths
         self.widths = widths
@@ -228,7 +228,7 @@ class BlockParams:
         w_m: float,
         group_width: int,
         bottleneck_multiplier: float = 1.0,
-        se_ratio: Optional[float] = None,
+        se_ratio: float | None = None,
         **kwargs: Any,
     ) -> "BlockParams":
         """
@@ -300,8 +300,8 @@ class BlockParams:
 
     @staticmethod
     def _adjust_widths_groups_compatibilty(
-        stage_widths: List[int], bottleneck_ratios: List[float], group_widths: List[int]
-    ) -> Tuple[List[int], List[int]]:
+        stage_widths: list[int], bottleneck_ratios: list[float], group_widths: list[int]
+    ) -> tuple[list[int], list[int]]:
         """
         Adjusts the compatibility of widths and groups,
         depending on the bottleneck ratio.
@@ -322,10 +322,10 @@ class RegNet(nn.Module):
         block_params: BlockParams,
         num_classes: int = 1000,
         stem_width: int = 32,
-        stem_type: Optional[Callable[..., nn.Module]] = None,
-        block_type: Optional[Callable[..., nn.Module]] = None,
-        norm_layer: Optional[Callable[..., nn.Module]] = None,
-        activation: Optional[Callable[..., nn.Module]] = None,
+        stem_type: Callable[..., nn.Module] | None = None,
+        block_type: Callable[..., nn.Module] | None = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
+        activation: Callable[..., nn.Module] | None = None,
     ) -> None:
         super().__init__()
 
