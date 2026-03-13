@@ -144,11 +144,11 @@ class TestModelRegistry:
             assert hasattr(config, "transform"), f"Model {name} config missing transform"
             assert hasattr(config.transform, "img_size"), f"Model {name} transform missing img_size"
 
-    def test_list_models_runs(self, capsys):
-        list_models()
-        captured = capsys.readouterr()
-        assert "resnet18" in captured.out
-        assert "vit_base_patch16_224" in captured.out
+    def test_list_models_runs(self):
+        models = list_models()
+        assert isinstance(models, list)
+        assert "resnet18" in models
+        assert "vit_base_patch16_224" in models
 
     def test_create_model_invalid_raises(self):
         with pytest.raises(ValueError, match="not available"):

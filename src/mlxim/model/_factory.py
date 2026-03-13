@@ -6,11 +6,13 @@ from ._registry import MODEL_ENTRYPOINT
 from ._utils import download_from_hf, load_weights
 
 
-def list_models() -> None:
-    """List all available image models."""
-    print("Available models:")
-    for model_name in list(MODEL_ENTRYPOINT.keys()):
-        print(f"\t- {model_name}")
+def list_models() -> list[str]:
+    """List all available image models.
+
+    Returns:
+        list[str]: list of available model names
+    """
+    return list(MODEL_ENTRYPOINT.keys())
 
 
 def create_model(

@@ -14,10 +14,10 @@ def test_create_model_no_weights():
     assert model is not None
 
 
-def test_list_models(capsys):
-    list_models()
-    captured = capsys.readouterr()
-    assert "resnet18" in captured.out
+def test_list_models():
+    models = list_models()
+    assert isinstance(models, list)
+    assert "resnet18" in models
 
 
 def test_model_registry_not_empty():
