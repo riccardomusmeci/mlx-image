@@ -9,5 +9,4 @@ def now() -> str:
     Returns:
         str: current time
     """
-    STRFTIME_FORMAT = "%Y-%m-%d-%H-%M-%S"
     return datetime.datetime.now().strftime(STRFTIME_FORMAT)

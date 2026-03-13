@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any
 
 import mlx.nn as nn
 
@@ -15,11 +15,11 @@ def list_models() -> None:
 
 def create_model(
     model_name: str,
-    weights: Union[bool, str] = True,
+    weights: bool | str = True,
     num_classes: int = 1000,
     strict: bool = False,
     verbose: bool = False,
-    **kwargs: Dict[str, Any],
+    **kwargs: dict[str, Any],
 ) -> nn.Module:
     """Create an image model.
 

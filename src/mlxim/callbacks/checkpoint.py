@@ -1,5 +1,4 @@
 import os
-from typing import Dict, List, Optional, Tuple
 
 from mlxim.model import save_weights
 
@@ -22,7 +21,7 @@ class ModelCheckpoint:
         self.output_dir = os.path.join(output_dir, "checkpoints")
         os.makedirs(self.output_dir, exist_ok=True)
         self.monitor = monitor
-        self.history: List[Tuple[float, int]] = []  # each el is a Tuple of (val, epoch)
+        self.history: list[tuple[float, int]] = []  # each el is a tuple of (val, epoch)
         self.save_top_k = save_top_k
         self.mode = mode
         self.reverse = True if self.mode == "max" else False
@@ -50,7 +49,7 @@ class ModelCheckpoint:
         self.patience_count = 0
 
     @property
-    def best_val(self) -> Optional[float]:
+    def best_val(self) -> float | None:
         """Return best value of history sequence
 
         Returns:
@@ -97,7 +96,7 @@ class ModelCheckpoint:
         """
         return self.patience_count >= self.patience
 
-    def _create_filename(self, epoch: int, metrics: Dict[str, float]) -> str:
+    def _create_filename(self, epoch: int, metrics: dict[str, float]) -> str:
         """Create mlx filename
 
         Args:
@@ -115,7 +114,7 @@ class ModelCheckpoint:
             base_filename += f"{k}={metrics[k]:.4f}{sep}"
         return f"{base_filename}.npz"
 
-    def save(self, epoch: int, metrics: Dict[str, float], weights: Dict) -> None:
+    def save(self, epoch: int, metrics: dict[str, float], weights: dict) -> None:
         """Save mlx file and removes old worst one if needed
 
         Args:
@@ -136,7 +135,7 @@ class ModelCheckpoint:
         except Exception as e:
             print(f"[ERROR] Error while saving model. Error {e}.")
 
-    def step(self, epoch: int, metrics: Dict[str, float], weights: Dict) -> None:
+    def step(self, epoch: int, metrics: dict[str, float], weights: dict) -> None:
         """Update model checkpoint data and save mlx file if needed
 
         Args:

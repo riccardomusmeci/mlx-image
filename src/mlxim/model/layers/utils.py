@@ -1,6 +1,6 @@
 import collections.abc
+from collections.abc import Callable
 from itertools import repeat
-from typing import Callable, Optional
 
 
 def _ntuple(n: int) -> Callable:
@@ -28,7 +28,7 @@ to_4tuple = _ntuple(4)
 to_ntuple = _ntuple
 
 
-def _make_divisible(v: float, divisor: int, min_value: Optional[int] = None) -> int:
+def _make_divisible(v: float, divisor: int, min_value: int | None = None) -> int:
     """
     This function is taken from the original tf repo.
     It ensures that all layers have a channel number that is divisible by 8

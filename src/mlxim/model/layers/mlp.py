@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from collections.abc import Callable
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -19,15 +19,15 @@ class MLP(nn.Module):
     def __init__(
         self,
         in_channels: int,
-        hidden_channels: List[int],
-        norm_layer: Optional[Callable[..., nn.Module]] = None,
+        hidden_channels: list[int],
+        norm_layer: Callable[..., nn.Module] | None = None,
         activation_layer: Callable[..., nn.Module] = nn.ReLU,
         bias: bool = True,
         dropout: float = 0.0,
     ):
         super().__init__()
 
-        self.layers: List[nn.Module] = []
+        self.layers: list[nn.Module] = []
         in_dim = in_channels
         for hidden_dim in hidden_channels[:-1]:
             self.layers.append(nn.Linear(in_dim, hidden_dim, bias=bias))

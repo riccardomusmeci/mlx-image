@@ -5,7 +5,7 @@ Based on the paper: Searching for MobileNetV3 (https://arxiv.org/abs/1905.02244)
 Original implementation: torchvision (https://github.com/pytorch/vision)
 """
 
-from typing import Callable, List, Optional
+from collections.abc import Callable
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -61,8 +61,8 @@ class InvertedResidual(nn.Module):
     def __init__(
         self,
         cnf: InvertedResidualConfig,
-        norm_layer: Optional[Callable[..., nn.Module]] = None,
-        se_layer: Optional[Callable[..., nn.Module]] = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
+        se_layer: Callable[..., nn.Module] | None = None,
     ):
         super().__init__()
         if not (1 <= cnf.stride <= 2):
@@ -76,7 +76,7 @@ class InvertedResidual(nn.Module):
         if se_layer is None:
             se_layer = SqueezeExcitation
 
-        layers: List[nn.Module] = []
+        layers: list[nn.Module] = []
         activation_layer = nn.Hardswish if cnf.use_hs else nn.ReLU
 
         # Expand
@@ -147,11 +147,11 @@ class MobileNetV3(nn.Module):
 
     def __init__(
         self,
-        inverted_residual_setting: List[InvertedResidualConfig],
+        inverted_residual_setting: list[InvertedResidualConfig],
         last_channel: int,
         num_classes: int = 1000,
-        block: Optional[Callable[..., nn.Module]] = None,
-        norm_layer: Optional[Callable[..., nn.Module]] = None,
+        block: Callable[..., nn.Module] | None = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
         dropout: float = 0.2,
         **kwargs,
     ) -> None:
@@ -169,7 +169,7 @@ class MobileNetV3(nn.Module):
             # MobileNetV3 uses different BatchNorm settings than MobileNetV2
             norm_layer = nn.BatchNorm
 
-        layers: List[nn.Module] = []
+        layers: list[nn.Module] = []
 
         # Building first layer
         firstconv_output_channels = inverted_residual_setting[0].input_channels

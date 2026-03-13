@@ -5,7 +5,7 @@ Based on the paper: MobileNetV2: Inverted Residuals and Linear Bottlenecks (http
 Original implementation: torchvision (https://github.com/pytorch/vision)
 """
 
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -17,7 +17,7 @@ from ..layers.utils import _make_divisible
 # Necessary for backwards compatibility
 class InvertedResidual(nn.Module):
     def __init__(
-        self, inp: int, oup: int, stride: int, expand_ratio: int, norm_layer: Optional[Callable[..., nn.Module]] = None
+        self, inp: int, oup: int, stride: int, expand_ratio: int, norm_layer: Callable[..., nn.Module] | None = None
     ) -> None:
         super().__init__()
         self.stride = stride
@@ -68,10 +68,10 @@ class MobileNetV2(nn.Module):
         self,
         num_classes: int = 1000,
         width_mult: float = 1.0,
-        inverted_residual_setting: Optional[list[list[int]]] = None,
+        inverted_residual_setting: list[list[int]] | None = None,
         round_nearest: int = 8,
-        block: Optional[Callable[..., nn.Module]] = None,
-        norm_layer: Optional[Callable[..., nn.Module]] = None,
+        block: Callable[..., nn.Module] | None = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
         dropout: float = 0.2,
     ) -> None:
         """

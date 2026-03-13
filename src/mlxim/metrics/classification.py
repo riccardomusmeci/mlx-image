@@ -1,10 +1,8 @@
-from typing import Dict, Tuple, Union
-
 import mlx.core as mx
 import numpy as np
 
 
-def accuracy_at_k(logits: mx.array, targets: mx.array, top_k: Tuple[int, int] = (1, 5)) -> Dict:
+def accuracy_at_k(logits: mx.array, targets: mx.array, top_k: tuple[int, int] = (1, 5)) -> dict:
     """Compute the accuracy at k.
 
     Args:
@@ -30,7 +28,7 @@ def accuracy_at_k(logits: mx.array, targets: mx.array, top_k: Tuple[int, int] = 
 class Accuracy:
     """Compute the accuracy of a classifier."""
 
-    def __init__(self, top_k: Tuple[int, int] = (1, 5)) -> None:
+    def __init__(self, top_k: tuple[int, int] = (1, 5)) -> None:
         self.top_k = top_k
         self.data = []
 
@@ -44,7 +42,7 @@ class Accuracy:
         """
         self.data.append(accuracy_at_k(logits, targets, top_k=self.top_k))
 
-    def compute(self) -> Dict[str, float]:
+    def compute(self) -> dict[str, float]:
         """
         Compute the accuracy over all batches.
 
@@ -70,7 +68,7 @@ class Accuracy:
         """
         self.data = []
 
-    def as_dict(self) -> Dict:
+    def as_dict(self) -> dict:
         """Return a dict with accuracy at k.
 
         Returns:

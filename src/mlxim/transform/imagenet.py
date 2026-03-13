@@ -1,5 +1,4 @@
 import math
-from typing import List, Optional, Tuple, Union
 
 import albumentations as A
 import numpy as np
@@ -31,18 +30,18 @@ class ImageNetTransform:
     def __init__(
         self,
         train: bool,
-        img_size: Union[int, Tuple[int, int]] = 224,
-        scale: Optional[Tuple[float, float]] = None,
-        ratio: Optional[Tuple[float, float]] = None,
+        img_size: int | tuple[int, int] = 224,
+        scale: tuple[float, float] | None = None,
+        ratio: tuple[float, float] | None = None,
         crop_mode: str = "center",
         crop_pct: float = 0.875,
         hflip: float = 0.5,
         vflip: float = 0.0,
-        color_jitter: Optional[Union[float, Tuple[float, float, float, float]]] = 0.4,
-        auto_augment: Optional[str] = None,
+        color_jitter: float | tuple[float, float, float, float] | None = 0.4,
+        auto_augment: str | None = None,
         interpolation: str = "bilinear",
-        mean: Tuple[float, ...] = IMAGENET_DEFAULT_MEAN,
-        std: Tuple[float, ...] = IMAGENET_DEFAULT_STD,
+        mean: tuple[float, ...] = IMAGENET_DEFAULT_MEAN,
+        std: tuple[float, ...] = IMAGENET_DEFAULT_STD,
     ):
         assert crop_mode in {"center", "squash", "border"}
         self.img_size = img_size if isinstance(img_size, (tuple, list)) else (img_size, img_size)
@@ -63,19 +62,18 @@ class ImageNetTransform:
         else:
             self.transform = self._val_transform()
 
-    def _primary_transform(self) -> List[A.BasicTransform]:
+    def _primary_transform(self) -> list[A.BasicTransform | A.BaseCompose]:
         """Compose primary transform
 
         Returns:
             List[A.BasicTransform]: list of albumentations transforms
         """
-        _transforms = []
+        _transforms: list[A.BasicTransform | A.BaseCompose] = []
         scale = self.scale if self.scale is not None else (0.08, 1.0)  # default imagenet scale range
         ratio = self.ratio if self.ratio is not None else (3.0 / 4.0, 4.0 / 3.0)  # default imagenet ratio range
         _transforms.append(
             A.RandomResizedCrop(
-                height=self.img_size[0],
-                width=self.img_size[1],
+                size=(self.img_size[0], self.img_size[1]),
                 scale=scale,
                 ratio=ratio,
                 interpolation=self.interpolation,
@@ -89,13 +87,13 @@ class ImageNetTransform:
 
         return _transforms
 
-    def _secondary_transform(self) -> List[A.BasicTransform]:
+    def _secondary_transform(self) -> list[A.BasicTransform | A.BaseCompose]:
         """Compose secondary transform
 
         Returns:
             List[A.BasicTransform]: list of albumentations transforms
         """
-        _transforms = []
+        _transforms: list[A.BasicTransform | A.BaseCompose] = []
         disable_color_jitter = False
         # TODO: implement auto_augment techniques: randaugment, augmix, autoagument
         if self.auto_augment is not None:
@@ -111,21 +109,21 @@ class ImageNetTransform:
                     contrast=self.color_jitter[1],
                     saturation=self.color_jitter[2],
                     hue=self.color_jitter[3],
-                    always_apply=True,
+                    p=1.0,
                 )
             )
 
         return _transforms
 
-    def _final_transform(self) -> List[A.BasicTransform]:
+    def _final_transform(self) -> list[A.BasicTransform | A.BaseCompose]:
         """Compose final transform
 
         Returns:
             List[A.BasicTransform]: list of albumentations transforms
         """
-        _transforms = []
+        _transforms: list[A.BasicTransform | A.BaseCompose] = []
         _transforms.append(
-            A.Normalize(mean=self.mean, std=self.std, max_pixel_value=255.0, always_apply=True),
+            A.Normalize(mean=self.mean, std=self.std, max_pixel_value=255.0, p=1.0),
             # TODO: add RandomErase
         )
 
@@ -138,7 +136,6 @@ class ImageNetTransform:
             A.Compose: composition of transforms
         """
 
-        _transforms: List[A.BasicTransform] = []
         _primary_transform = self._primary_transform()
         _secondary_transform = self._secondary_transform()
         _final_transform = self._final_transform()
@@ -167,7 +164,7 @@ class ImageNetTransform:
         # squash mode scales each edge to 1/pct of target, then crops
         # aspect ration is not preserved, no img lost if crop_pct == 1.0
 
-        _transforms = []
+        _transforms: list[A.BasicTransform | A.BaseCompose] = []
         if self.crop_mode == "squash":
             _transforms.append(A.SmallestMaxSize(max_size=max(scaled_img_size), interpolation=self.interpolation))
             _transforms.append(A.CenterCrop(self.img_size[0], self.img_size[1]))
@@ -177,7 +174,7 @@ class ImageNetTransform:
             )
             _transforms.append(
                 A.PadIfNeeded(
-                    self.img_size[0], self.img_size[1], value=[round(255 * v) for v in self.mean], border_mode=0
+                    self.img_size[0], self.img_size[1], fill=tuple(round(255 * v) for v in self.mean), border_mode=0
                 )
             )
             _transforms.append(
@@ -196,7 +193,7 @@ class ImageNetTransform:
         _transforms.append(A.Normalize())
         return A.Compose(_transforms)
 
-    def __call__(self, image: np.array) -> np.array:
+    def __call__(self, image: np.ndarray) -> np.ndarray:
         """Apply transform to image
 
         Args:

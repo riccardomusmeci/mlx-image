@@ -1,6 +1,5 @@
 import os
 from dataclasses import dataclass
-from typing import Optional
 
 import pandas as pd
 
@@ -26,7 +25,7 @@ class ValidationResults:
         crop_pct: float,
         interpolation: str,
         engine: str,
-        hf_weights: Optional[str] = None,
+        hf_weights: str | None = None,
     ) -> None:
         """Update the results dataframe with new results.
 

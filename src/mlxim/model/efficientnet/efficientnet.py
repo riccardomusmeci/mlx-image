@@ -1,8 +1,6 @@
 """EfficientNet model implementation in MLX."""
 
 import copy
-from pathlib import Path
-from typing import List, Optional, Union
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -25,12 +23,12 @@ class EfficientNet(nn.Module):
 
     def __init__(
         self,
-        inverted_residual_setting: List[MBConvConfig],
+        inverted_residual_setting: list[MBConvConfig],
         dropout: float,
         stochastic_depth_prob: float = 0.2,
         num_classes: int = 1000,
-        norm_layer: Optional[type] = None,
-        last_channel: Optional[int] = None,
+        norm_layer: type | None = None,
+        last_channel: int | None = None,
     ) -> None:
         super().__init__()
 

@@ -1,9 +1,9 @@
+from collections.abc import Callable
 from queue import Queue
 from threading import Thread
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
-import torch
 
 from ._base import Dataset
 from ._utils import _default_collate_fn

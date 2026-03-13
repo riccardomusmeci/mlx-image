@@ -1,9 +1,7 @@
-from typing import List, Tuple, Union
-
 import mlx.core as mx
 
 
-def _default_collate_fn(batch: List[Tuple[mx.array, int]]) -> Union[Tuple[mx.array, mx.array], mx.array]:
+def _default_collate_fn(batch: list[tuple[mx.array, int]]) -> tuple[mx.array, mx.array] | mx.array:
     """Default collate function for the DataLoader.
 
     Args:

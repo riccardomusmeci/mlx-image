@@ -1,13 +1,12 @@
 import os
 from pathlib import Path
-from typing import Union
 
 import cv2
 import numpy as np
 from PIL import Image
 
 
-def read_rgb(file_path: str, engine: str = "pil") -> np.array:
+def read_rgb(file_path: str, engine: str = "pil") -> np.ndarray:
     """Load an image from file_path as a numpy array.
 
     Args:
@@ -31,28 +30,30 @@ def read_rgb(file_path: str, engine: str = "pil") -> np.array:
         image = Image.open(file_path).convert("RGB")
         return np.array(image)
     else:
-        return cv2.cvtColor(cv2.imread(file_path), cv2.COLOR_BGR2RGB)
+        bgr = cv2.imread(file_path)
+        assert bgr is not None, f"cv2.imread failed for {file_path}"
+        return cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
 
 
-def save_image(image: np.array, output_path: Union[Path, str]) -> None:
+def save_image(image: np.ndarray, output_path: Path | str) -> None:
     """Save an image at given path making sure the folder exists.
 
     Args:
         image (np.array): image to save
         output_path: Union[Path, str] (str): output path
     """
-    output_dir = Path(output_path).replace(os.path.basename(output_path))
+    output_dir = Path(output_path).parent
     os.makedirs(output_dir, exist_ok=True)
 
     if len(image.shape) > 2:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     try:
-        cv2.imwrite(output_path, image)
+        cv2.imwrite(str(output_path), image)
     except Exception as e:
         print(f"[ERROR] While saving image at path {output_path} found an error - {e}")
 
 
-def resize_rgb(image: np.array, w: int, h: int) -> np.array:
+def resize_rgb(image: np.ndarray, w: int, h: int) -> np.ndarray:
     """Resize image to w x h.
 
     Args:

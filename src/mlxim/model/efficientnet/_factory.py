@@ -1,7 +1,5 @@
 """Factory functions for EfficientNet models."""
 
-from typing import List, Optional
-
 from .._config import HFWeights, Metrics, ModelConfig, Transform
 from ._blocks import MBConvConfig
 from .efficientnet import EfficientNet
@@ -11,7 +9,7 @@ def _efficientnet_conf(
     arch: str,
     width_mult: float = 1.0,
     depth_mult: float = 1.0,
-) -> tuple[List[MBConvConfig], Optional[int]]:
+) -> tuple[list[MBConvConfig], int | None]:
     """Get configuration for EfficientNet variants.
 
     Args:

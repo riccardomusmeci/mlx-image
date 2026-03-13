@@ -1,9 +1,7 @@
-from typing import List
-
 import mlx.core as mx
 
 
-def roll(x: mx.array, shifts: List[int], axes: List[int]) -> mx.array:
+def roll(x: mx.array, shifts: list[int], axes: list[int]) -> mx.array:
     """Roll the mx.array along the given dimensions.
 
     Args:
@@ -23,7 +21,7 @@ def roll(x: mx.array, shifts: List[int], axes: List[int]) -> mx.array:
         shift = shift % x.shape[axis]
         # split and concatenate
         splits = mx.split(output, [shift], axis=axis)
-        output = mx.concatenate(splits[::-1], axis=axis)
+        output = mx.concatenate(list(splits[::-1]), axis=axis)
     return output
 
 
@@ -53,6 +51,6 @@ def dropout(x: mx.array, p: float, training: bool) -> mx.array:
         mx.array: The dropout mx.array.
     """
     if p > 0 and training:
-        mask = mx.random.uniform(0, 1, x.shape, dtype=x.dtype, ctx=x.context) > p
+        mask = mx.random.uniform(0, 1, x.shape, dtype=x.dtype) > p
         x = x * mask / (1 - p)
     return x

@@ -54,7 +54,7 @@ repos:
 
       - id: pytest-unit
         name: pytest unit tests
-        entry: uv run pytest tests/unit -v --tb=short -x
+        entry: uv run pytest tests/ -v --tb=short -x
         language: system
         types: [python]
         pass_filenames: false

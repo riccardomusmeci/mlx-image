@@ -1,6 +1,8 @@
+import collections.abc
 import math
+from collections.abc import Callable
 from functools import partial
-from typing import Any, Callable, Collection, Iterable, List, Literal, Optional, Sequence, Sized, Tuple, Type, Union
+from typing import Any, Literal
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -25,11 +27,11 @@ class Attention(nn.Module):
         self,
         dims: int,
         num_heads: int,
-        query_input_dims: Optional[int] = None,
-        key_input_dims: Optional[int] = None,
-        value_input_dims: Optional[int] = None,
-        value_dims: Optional[int] = None,
-        value_output_dims: Optional[int] = None,
+        query_input_dims: int | None = None,
+        key_input_dims: int | None = None,
+        value_input_dims: int | None = None,
+        value_dims: int | None = None,
+        value_output_dims: int | None = None,
         bias: bool = False,
     ):
         super().__init__()
@@ -52,8 +54,8 @@ class Attention(nn.Module):
         self.out_proj = nn.Linear(value_dims, value_output_dims, bias=bias)
 
     def __call__(
-        self, queries: mx.array, keys: mx.array, values: mx.array, mask: Optional[mx.array] = None
-    ) -> Tuple[mx.array, mx.array]:
+        self, queries: mx.array, keys: mx.array, values: mx.array, mask: mx.array | None = None
+    ) -> tuple[mx.array, mx.array]:
         """Forward pass
 
         Args:
@@ -144,7 +146,7 @@ class EncoderBlock(nn.Module):
         hidden_dim: int,
         mlp_dim: int,
         dropout: float,
-        init_values: Optional[float] = None,
+        init_values: float | None = None,
         norm_layer: Callable[..., nn.Module] = nn.LayerNorm,
         bias: bool = True,
     ):
@@ -160,14 +162,14 @@ class EncoderBlock(nn.Module):
         self.ln_2 = norm_layer(hidden_dim)
         self.mlp = MLPBlock(hidden_dim, mlp_dim, dropout)
 
-    def __call__(self, x: mx.array) -> mx.array:
+    def __call__(self, x: mx.array) -> tuple[mx.array, mx.array]:
         """Forward pass
 
         Args:
             x (mx.array): input mx.array of shape (batch_size, seq_length, hidden_dim)
 
         Returns:
-            mx.array: Output mx.array of shape (batch_size, seq_length, hidden_dim)
+            tuple[mx.array, mx.array]: Output tensor and attention mask
         """
         _x = x
         assert _x.ndim == 3, f"Expected (batch_size, seq_length, hidden_dim) got {_x.shape}"
@@ -204,7 +206,7 @@ class Encoder(nn.Module):
         hidden_dim: int,
         mlp_dim: int,
         dropout: float,
-        init_values: Optional[float] = None,
+        init_values: float | None = None,
         norm_layer: Callable[..., nn.Module] = nn.LayerNorm,
         eps: float = 1e-6,
         attn_bias: bool = True,
@@ -227,7 +229,9 @@ class Encoder(nn.Module):
             )
         self.ln = norm_layer(hidden_dim)
 
-    def get_intermediate_layers(self, x: mx.array, blocks_to_take: Collection) -> Tuple[List[mx.array], List[mx.array]]:
+    def get_intermediate_layers(
+        self, x: mx.array, blocks_to_take: collections.abc.Collection
+    ) -> tuple[list[mx.array], list[mx.array]]:
         """Get intermediate layers outputs
 
         Args:
@@ -249,19 +253,19 @@ class Encoder(nn.Module):
         assert len(output) == len(blocks_to_take), f"only {len(output)} / {len(blocks_to_take)} blocks found"
         return output, attn_mat
 
-    def __call__(self, x: mx.array) -> mx.array:
+    def __call__(self, x: mx.array) -> tuple[mx.array, list[mx.array]]:
         """Forward pass
 
         Args:
             x (mx.array): input mx.array of shape (batch_size, seq_length, hidden_dim)
 
         Returns:
-            mx.array: output mx.array of shape (batch_size, seq_length, hidden_dim)
+            tuple[mx.array, list[mx.array]]: output tensor and attention masks from each layer
         """
         assert x.ndim == 3, f"Expected (batch_size, seq_length, hidden_dim) got {x.shape}"
         x = x + self.pos_embedding
 
-        attn_masks = []
+        attn_masks: list[mx.array] = []
         for layer in self.layers:
             x, attn_mask = layer(x)
             attn_masks.append(attn_mask)
@@ -281,8 +285,8 @@ class VisionTransformer(nn.Module):
         mlp_dim: int,  # usually hidden_dimx4
         dropout: float = 0.0,
         num_classes: int = 1000,
-        init_values: Optional[float] = None,
-        representation_size: Optional[int] = None,
+        init_values: float | None = None,
+        representation_size: int | None = None,
         norm_layer: Callable[..., nn.Module] = nn.LayerNorm,
         attn_bias: bool = True,
         head_type: Literal["linear", "dino"] = "linear",
@@ -329,7 +333,7 @@ class VisionTransformer(nn.Module):
         )
         self.seq_length = seq_length
 
-        heads_layers: List[nn.Module] = []
+        heads_layers: list[nn.Module] = []
         if self.head_type == "dino":
             heads_layers.append(
                 DINOHead(in_dim=hidden_dim * (self.n_last_blocks + int(self.avgpool)), out_dim=num_classes)
@@ -378,7 +382,7 @@ class VisionTransformer(nn.Module):
     def get_intermediate_layers(
         self,
         x: mx.array,
-        n: Union[int, Sequence] = 1,  # Layers or n last layers to take
+        n: int | collections.abc.Sequence = 1,  # Layers or n last layers to take
         reshape: bool = False,
         norm: bool = True,
     ) -> tuple[list[Any], list[array]]:
@@ -407,12 +411,11 @@ class VisionTransformer(nn.Module):
         if reshape:
             B, w, h, _ = x.shape
             outputs = [
-                out.reshape(B, w // self.patch_size, h // self.patch_size, -1).permute(0, 3, 1, 2).contiguous()
-                for out in outputs
+                out.reshape(B, w // self.patch_size, h // self.patch_size, -1).transpose(0, 3, 1, 2) for out in outputs
             ]
         return outputs, attn_mat
 
-    def get_features(self, x: mx.array) -> mx.array:
+    def get_features(self, x: mx.array) -> tuple[mx.array, list[mx.array]]:
         """Forward pass for feature
 
         Args:
@@ -430,7 +433,7 @@ class VisionTransformer(nn.Module):
 
         return x, attn_masks
 
-    def __call__(self, x: mx.array, attn_masks: bool = False) -> Union[mx.array, Tuple[mx.array, List[mx.array]]]:
+    def __call__(self, x: mx.array, attn_masks: bool = False) -> mx.array | tuple[mx.array, list[mx.array]]:
         """Forward pass.
 
         Args:

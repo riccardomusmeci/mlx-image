@@ -1,8 +1,8 @@
 """MBConv blocks for EfficientNet."""
 
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -42,7 +42,7 @@ class MBConvConfig:
         self.num_layers = self.adjust_depth(self.num_layers, self.depth_mult)
 
     @staticmethod
-    def adjust_channels(channels: int, width_mult: float, min_value: Optional[int] = None) -> int:
+    def adjust_channels(channels: int, width_mult: float, min_value: int | None = None) -> int:
         """Adjust number of channels based on width multiplier."""
         return _make_divisible(channels * width_mult, 8, min_value)
 
@@ -73,7 +73,7 @@ class MBConv(nn.Module):
         self,
         cnf: MBConvConfig,
         stochastic_depth_prob: float,
-        norm_layer: Optional[Callable[..., nn.Module]] = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
         se_layer: Callable[..., nn.Module] = SqueezeExcitation,
     ) -> None:
         super().__init__()

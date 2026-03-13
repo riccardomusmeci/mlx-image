@@ -1,4 +1,4 @@
-from typing import List, Optional, Type, Union
+from collections.abc import Callable
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -63,11 +63,11 @@ class BasicBlock(nn.Module):
         inplanes: int,
         planes: int,
         stride: int = 1,
-        downsample: Optional[nn.Module] = None,
+        downsample: nn.Module | None = None,
         groups: int = 1,
         base_width: int = 64,
         dilation: int = 1,
-        norm_layer: Optional[nn.Module] = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
     ):
         super().__init__()
         if norm_layer is None:
@@ -133,11 +133,11 @@ class Bottleneck(nn.Module):
         inplanes: int,
         planes: int,
         stride: int = 1,
-        downsample: Optional[nn.Module] = None,
+        downsample: nn.Module | None = None,
         groups: int = 1,
         base_width: int = 64,
         dilation: int = 1,
-        norm_layer: Optional[nn.Module] = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
     ) -> None:
         super().__init__()
         if norm_layer is None:
@@ -199,13 +199,13 @@ class ResNet(nn.Module):
 
     def __init__(
         self,
-        block: Union[Type[BasicBlock], Type[Bottleneck]],
-        layers: List[int],
+        block: type[BasicBlock] | type[Bottleneck],
+        layers: list[int],
         num_classes: int = 1000,
         groups: int = 1,
         width_per_group: int = 64,
-        replace_stride_with_dilation: Optional[List[bool]] = None,
-        norm_layer: Optional[nn.Module] = None,
+        replace_stride_with_dilation: list[bool] | None = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
     ) -> None:
         super().__init__()
 
@@ -221,9 +221,7 @@ class ResNet(nn.Module):
             replace_stride_with_dilation = [False, False, False]
         if len(replace_stride_with_dilation) != 3:
             raise ValueError(
-                "replace_stride_with_dilation should be None or a 3-element tuple, got {}".format(
-                    replace_stride_with_dilation
-                )
+                f"replace_stride_with_dilation should be None or a 3-element tuple, got {replace_stride_with_dilation}"
             )
         self.groups = groups
         self.base_width = width_per_group
@@ -250,7 +248,7 @@ class ResNet(nn.Module):
 
     def _make_layer(
         self,
-        block: Union[Type[BasicBlock], Type[Bottleneck]],
+        block: type[BasicBlock] | type[Bottleneck],
         planes: int,
         blocks: int,
         stride: int = 1,
