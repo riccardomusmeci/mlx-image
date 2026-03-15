@@ -42,7 +42,7 @@ class Trainer:
         device: mx.DeviceType | mx.Device = mx.gpu,
         max_epochs: int = 10,
         model_checkpoint: ModelCheckpoint | None = None,
-        top_k: tuple[int, int] = (1, 5),
+        top_k: tuple[int, ...] = (1, 5),
     ) -> None:
         mx.set_default_device(mx.Device(device) if isinstance(device, mx.DeviceType) else device)
 
