@@ -1,7 +1,7 @@
 import mlx.core as mx
 
 
-def _default_collate_fn(batch: list[tuple[mx.array, int]]) -> tuple[mx.array, mx.array] | mx.array:
+def _default_collate_fn(batch: list[tuple[mx.array, int]] | list[mx.array]) -> tuple[mx.array, mx.array] | mx.array:
     """Default collate function for the DataLoader.
 
     Args:
@@ -16,4 +16,5 @@ def _default_collate_fn(batch: list[tuple[mx.array, int]]) -> tuple[mx.array, mx
         targets = [item[1] for item in batch]
         return mx.stack(inputs), mx.array(targets)
     elif isinstance(batch[0], mx.array):
-        return mx.stack(batch)
+        arrays: list[mx.array] = [item for item in batch if isinstance(item, mx.array)]
+        return mx.stack(arrays)

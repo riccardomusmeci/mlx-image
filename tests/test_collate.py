@@ -18,4 +18,5 @@ def test_collate_with_labels():
 def test_collate_without_labels():
     batch = [mx.ones((3, 3, 3)), mx.ones((3, 3, 3))]
     result = _default_collate_fn(batch)
+    assert isinstance(result, mx.array)
     assert result.shape == (2, 3, 3, 3)
