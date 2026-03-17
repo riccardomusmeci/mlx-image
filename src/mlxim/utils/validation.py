@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass
+from pathlib import Path
 
 import pandas as pd
 
@@ -8,10 +9,10 @@ class ValidationResults:
     """Store and update the results of the validation experiments.
 
     Args:
-        path (str, optional): path to the csv file to store the results. Defaults to "results/results-imagenet-1k.csv".
+        path (str | Path, optional): path to the csv file to store the results. Defaults to "results/results-imagenet-1k.csv".
     """
 
-    def __init__(self, path: str = "results/results-imagenet-1k.csv") -> None:
+    def __init__(self, path: str | Path = "results/results-imagenet-1k.csv") -> None:
         self.path = path
         self.results = pd.read_csv(self.path, index_col=None)
 

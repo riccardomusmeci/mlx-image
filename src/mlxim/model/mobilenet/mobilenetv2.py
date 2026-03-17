@@ -151,7 +151,7 @@ class MobileNetV2(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.he_uniform(m.weight)
-            elif isinstance(m, (nn.BatchNorm, nn.GroupNorm)):
+            elif isinstance(m, nn.BatchNorm | nn.GroupNorm):
                 nn.init.constant(1, m.weight)
             elif isinstance(m, nn.Linear):
                 nn.init.he_uniform(m.weight)

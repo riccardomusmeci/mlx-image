@@ -84,7 +84,7 @@ class LabelFolderDataset(Dataset):
     def __init__(
         self,
         root_dir: Path | str,
-        class_map: dict[int, str | list[str]] | str | Path,
+        class_map: dict[int, str | list[str]] | dict[int, str] | str | Path,
         transform: Callable | None = None,
         engine: str = "pil",
         verbose: bool = True,

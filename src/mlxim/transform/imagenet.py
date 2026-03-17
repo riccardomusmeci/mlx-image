@@ -44,7 +44,7 @@ class ImageNetTransform:
         std: tuple[float, ...] = IMAGENET_DEFAULT_STD,
     ):
         assert crop_mode in {"center", "squash", "border"}
-        self.img_size = img_size if isinstance(img_size, (tuple, list)) else (img_size, img_size)
+        self.img_size = img_size if isinstance(img_size, tuple | list) else (img_size, img_size)
         self.scale = scale
         self.ratio = ratio
         self.crop_mode = crop_mode
@@ -99,7 +99,7 @@ class ImageNetTransform:
         if self.auto_augment is not None:
             pass
         if self.color_jitter is not None and not disable_color_jitter:
-            if isinstance(self.color_jitter, (tuple, list)):
+            if isinstance(self.color_jitter, tuple | list):
                 assert len(self.color_jitter) == 4
             else:
                 self.color_jitter = (self.color_jitter,) * 4
@@ -154,7 +154,7 @@ class ImageNetTransform:
             A.Compose: composition of transforms
         """
         # TODO: verify scaled_img_size
-        if isinstance(self.img_size, (tuple, list)):
+        if isinstance(self.img_size, tuple | list):
             assert len(self.img_size) == 2
             scaled_img_size = tuple([math.floor(x / self.crop_pct) for x in self.img_size])
         else:

@@ -243,7 +243,7 @@ class ResNet(nn.Module):
             if isinstance(m, nn.Conv2d):
                 nn.init.he_uniform(m.weight)
                 # nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            elif isinstance(m, (nn.BatchNorm, nn.GroupNorm)):
+            elif isinstance(m, nn.BatchNorm | nn.GroupNorm):
                 nn.init.constant(1, m.weight)
 
     def _make_layer(

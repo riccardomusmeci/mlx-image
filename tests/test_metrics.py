@@ -31,6 +31,26 @@ def test_accuracy_at_k_zero():
     assert acc[1] == 0.0
 
 
+def test_accuracy_at_k_no_cross_contamination():
+    """Predictions matching OTHER samples' targets must not count as correct.
+
+    Sample 0: predicts class 1, target is class 0 → wrong
+    Sample 1: predicts class 0, target is class 1 → wrong
+
+    The old np.isin bug would mark both correct since {0,1} are both in the
+    flattened target array. With the fix, both are correctly marked wrong.
+    """
+    logits = mx.array(
+        [
+            [0.0, 1.0, 0.0],  # predicts class 1
+            [1.0, 0.0, 0.0],  # predicts class 0
+        ]
+    )
+    targets = mx.array([0, 1])  # sample 0 wants 0, sample 1 wants 1
+    acc = accuracy_at_k(logits, targets, top_k=(1,))
+    assert acc[1] == 0.0, f"Cross-contamination detected: expected 0.0, got {acc[1]}"
+
+
 def test_accuracy_update_and_compute():
     acc = Accuracy(top_k=(1,))
     # Batch 1: 2/2 correct — preds [9, 8], targets [9, 8]
@@ -44,7 +64,6 @@ def test_accuracy_update_and_compute():
     acc.update(logits1, targets1)
 
     # Batch 2: 1/2 correct — preds [9, 0], targets [9, 5]
-    # pred=0 is NOT in {9, 5} → wrong. pred=9 IS in {9, 5} → correct.
     logits2 = mx.array(
         [
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
@@ -55,8 +74,34 @@ def test_accuracy_update_and_compute():
     acc.update(logits2, targets2)
 
     result = acc.compute()
-    # Average of 1.0 and 0.5 = 0.75
+    # 3 correct out of 4 total = 0.75
     assert np.isclose(result["acc@1"], 0.75), f"Expected 0.75, got {result['acc@1']}"
+
+
+def test_accuracy_unequal_batch_sizes():
+    """Unequal batch sizes must be weighted by sample count, not averaged per-batch."""
+    acc = Accuracy(top_k=(1,))
+
+    # Batch 1: 1 sample, correct
+    logits1 = mx.array([[0.0, 0.0, 1.0]])
+    targets1 = mx.array([2])
+    acc.update(logits1, targets1)
+
+    # Batch 2: 3 samples, all wrong
+    logits2 = mx.array(
+        [
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+        ]
+    )
+    targets2 = mx.array([0, 0, 0])
+    acc.update(logits2, targets2)
+
+    result = acc.compute()
+    # 1 correct out of 4 total = 0.25
+    # Old bug: mean of [1.0, 0.0] = 0.5
+    assert np.isclose(result["acc@1"], 0.25), f"Expected 0.25, got {result['acc@1']}"
 
 
 def test_accuracy_reset():
@@ -64,9 +109,11 @@ def test_accuracy_reset():
     logits = mx.array([[0.0, 1.0]])
     targets = mx.array([1])
     acc.update(logits, targets)
-    assert len(acc.data) == 1
+    assert acc.total == 1
+    assert acc.correct[1] == 1
     acc.reset()
-    assert len(acc.data) == 0
+    assert acc.total == 0
+    assert acc.correct[1] == 0
 
 
 def test_accuracy_as_dict():
@@ -75,8 +122,14 @@ def test_accuracy_as_dict():
     targets = mx.array([2])
     acc.update(logits, targets)
     result = acc.as_dict()
-    assert "acc@acc@1" in result or "acc@1" in result
-    # The as_dict method wraps compute() keys with another acc@ prefix
-    # compute returns {"acc@1": ..., "acc@5": ...}
-    # as_dict returns {f"acc@{k}": v for k, v in accuracy.items()} where keys are already "acc@1"
-    assert any("1" in k for k in result.keys())
+    assert "acc@1" in result, f"Expected 'acc@1' key, got {list(result.keys())}"
+    assert "acc@5" in result, f"Expected 'acc@5' key, got {list(result.keys())}"
+    # No double-prefix
+    assert "acc@acc@1" not in result, "Double-prefix bug: 'acc@acc@1' found"
+
+
+def test_accuracy_compute_empty():
+    acc = Accuracy(top_k=(1, 5))
+    result = acc.compute()
+    assert result["acc@1"] == 0.0
+    assert result["acc@5"] == 0.0

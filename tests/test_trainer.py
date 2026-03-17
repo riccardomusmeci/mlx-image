@@ -5,6 +5,7 @@ import mlx.nn as nn
 import mlx.optimizers as optim
 
 from mlxim.data import DataLoader
+from mlxim.data._base import Dataset
 from mlxim.trainer.trainer import Trainer
 
 
@@ -19,7 +20,7 @@ class _TinyModel(nn.Module):
         return self.fc(x)
 
 
-class _FakeDataset:
+class _FakeDataset(Dataset):
     """Minimal dataset that returns (features, labels)."""
 
     def __init__(self, n=16, in_features=8, num_classes=4):
@@ -28,8 +29,8 @@ class _FakeDataset:
     def __len__(self):
         return len(self.data)
 
-    def __getitem__(self, idx):
-        return self.data[idx]
+    def __getitem__(self, index: int):
+        return self.data[index]
 
 
 def _make_trainer(with_val=False, max_epochs=1):

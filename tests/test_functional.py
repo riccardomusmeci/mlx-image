@@ -67,7 +67,7 @@ def test_dropout_training_true():
     x = mx.ones((100, 100))
     result = dropout(x, p=0.5, training=True)
     # Some values should be zero
-    num_zeros = mx.sum(result == 0).item()
+    num_zeros = mx.sum(mx.array(result == 0)).item()
     assert num_zeros > 0, "Expected some values to be zeroed by dropout"
     # Non-zero values should be scaled by 1/(1-p) = 2.0
     non_zero_mask = result > 0

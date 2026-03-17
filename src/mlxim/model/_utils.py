@@ -9,7 +9,7 @@ from ._registry import MODEL_CONFIG
 
 
 def num_params(model: nn.Module) -> int:
-    nparams = sum(x.size for k, x in tree_flatten(model.parameters()))
+    nparams = sum(x.size for k, x in tree_flatten(model.parameters()))  # ty: ignore[unresolved-attribute]
     return nparams
 
 
