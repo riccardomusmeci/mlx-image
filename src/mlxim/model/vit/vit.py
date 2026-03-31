@@ -10,16 +10,22 @@ from mlx.core import array
 
 
 class Attention(nn.Module):
-    """Multi-head attention module.
+    """Multi-head attention with fused QKV projection.
+
+    Uses a single (3*dims, dims) linear for Q/K/V instead of three separate
+    projections. Reduces kernel dispatch from 3 matmuls to 1 per layer.
+
+    Backward compatible: accepts checkpoints with either fused (qkv_proj) or
+    separate (query_proj/key_proj/value_proj) weight formats via sanitize().
 
     Args:
         dims (int): input dimensions
         num_heads (int): number of heads
-        query_input_dims (Optional[int], optional): query input dimensions. Defaults to None.
-        key_input_dims (Optional[int], optional): key input dimensions. Defaults to None.
-        value_input_dims (Optional[int], optional): value input dimensions. Defaults to None.
-        value_dims (Optional[int], optional): value dimensions. Defaults to None.
-        value_output_dims (Optional[int], optional): value output dimensions. Defaults to None.
+        query_input_dims: ignored, kept for API compatibility
+        key_input_dims: ignored, kept for API compatibility
+        value_input_dims: ignored, kept for API compatibility
+        value_dims: ignored, kept for API compatibility
+        value_output_dims: ignored, kept for API compatibility
         bias (bool, optional): attention bias. Defaults to False.
     """
 
@@ -41,55 +47,82 @@ class Attention(nn.Module):
                 f"The input feature dimensions should be divisible by the number of heads ({dims} % {num_heads}) != 0"
             )
 
-        query_input_dims = query_input_dims or dims
-        key_input_dims = key_input_dims or dims
-        value_input_dims = value_input_dims or key_input_dims
-        value_dims = value_dims or dims
-        value_output_dims = value_output_dims or dims
-
+        self.dims = dims
         self.num_heads = num_heads
-        self.query_proj = nn.Linear(query_input_dims, dims, bias=bias)
-        self.key_proj = nn.Linear(key_input_dims, dims, bias=bias)
-        self.value_proj = nn.Linear(value_input_dims, value_dims, bias=bias)
-        self.out_proj = nn.Linear(value_dims, value_output_dims, bias=bias)
+        self.head_dim = dims // num_heads
+        self.scale = math.sqrt(1 / self.head_dim)
+
+        # Fused QKV: single matmul (3*dims, dims) instead of three separate ones
+        self.qkv_proj = nn.Linear(dims, 3 * dims, bias=bias)
+        self.out_proj = nn.Linear(dims, dims, bias=bias)
+
+    @staticmethod
+    def sanitize(weights):
+        """Fuse separate Q/K/V weights into qkv_proj on load.
+
+        Accepts checkpoints with separate query_proj/key_proj/value_proj
+        and concatenates them into a single qkv_proj. Passes through
+        checkpoints that already have fused qkv_proj.
+        """
+        import re
+        sanitized = {}
+        qkv_groups = {}
+
+        for k, v in weights.items():
+            m = re.match(r'(.*)\.self_attention\.(query|key|value)_proj\.(weight|bias)', k)
+            if m:
+                prefix, qkv, wb = m.groups()
+                full_prefix = f"{prefix}.self_attention"
+                if full_prefix not in qkv_groups:
+                    qkv_groups[full_prefix] = {}
+                qkv_groups[full_prefix][f"{qkv}_{wb}"] = v
+            else:
+                sanitized[k] = v
+
+        for prefix, parts in qkv_groups.items():
+            if "query_weight" in parts:
+                fused_w = mx.concatenate(
+                    [parts["query_weight"], parts["key_weight"], parts["value_weight"]], axis=0
+                )
+                sanitized[f"{prefix}.qkv_proj.weight"] = fused_w
+            if "query_bias" in parts:
+                fused_b = mx.concatenate(
+                    [parts["query_bias"], parts["key_bias"], parts["value_bias"]], axis=0
+                )
+                sanitized[f"{prefix}.qkv_proj.bias"] = fused_b
+
+        return sanitized
 
     def __call__(
         self, queries: mx.array, keys: mx.array, values: mx.array, mask: mx.array | None = None
     ) -> tuple[mx.array, mx.array]:
-        """Forward pass
+        """Forward pass.
 
         Args:
-            queries (mx.array): attention queries
-            keys (mx.array): attention keys
-            values (mx.array): attention values
-            mask (Optional[mx.array], optional): attention mask. Defaults to None.
+            queries: input tensor (B, L, dims). keys/values ignored (self-attention).
+            mask: optional attention mask.
 
         Returns:
-            Tuple[mx.array, mx.array]: attention output and attention mask
+            Tuple of attention output (B, L, dims) and attention weights.
         """
-        # compute queries, keys and values
-        queries = self.query_proj(queries)
-        keys = self.key_proj(keys)
-        values = self.value_proj(values)
+        B, L, _ = queries.shape
 
-        num_heads = self.num_heads
-        B, L, D = queries.shape
-        _, S, _ = keys.shape
+        # Single fused QKV matmul
+        qkv = self.qkv_proj(queries)
+        qkv = qkv.reshape(B, L, 3, self.num_heads, self.head_dim)
+        q, k, v = qkv[:, :, 0], qkv[:, :, 1], qkv[:, :, 2]
 
-        # reshape queries, keys and values
-        queries = queries.reshape(B, L, num_heads, -1).transpose(0, 2, 1, 3)
-        keys = keys.reshape(B, S, num_heads, -1).transpose(0, 2, 3, 1)
-        values = values.reshape(B, S, num_heads, -1).transpose(0, 2, 1, 3)
+        q = q.transpose(0, 2, 1, 3)
+        k = k.transpose(0, 2, 3, 1)
+        v = v.transpose(0, 2, 1, 3)
 
-        # define scale
-        scale = math.sqrt(1 / queries.shape[-1])
-        attn = (queries * scale) @ keys
+        attn = (q * self.scale) @ k
         if mask is not None:
             attn = attn + mask.astype(attn.dtype)
         attn = mx.softmax(attn, axis=-1)
-        values_hat = (attn @ values).transpose(0, 2, 1, 3).reshape(B, L, -1)
+        out = (attn @ v).transpose(0, 2, 1, 3).reshape(B, L, -1)
 
-        return self.out_proj(values_hat), attn
+        return self.out_proj(out), attn
 
 
 class MLPBlock(nn.Module):
