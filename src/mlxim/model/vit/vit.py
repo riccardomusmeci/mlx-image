@@ -127,6 +127,26 @@ class MLPBlock(nn.Module):
         return x
 
 
+class LayerScale(nn.Module):
+    """Per-channel learned scaling applied before residual addition.
+
+    Used by DINOv2, DeiT-III, and CaiT to stabilize training with
+    deeper architectures. Each channel gets an independent learned
+    scalar (gamma) that controls its contribution to the residual.
+
+    Args:
+        dim (int): number of channels
+        init_values (float): initial value for all gamma entries
+    """
+
+    def __init__(self, dim: int, init_values: float = 1e-5):
+        super().__init__()
+        self.gamma = mx.ones((dim,)) * init_values
+
+    def __call__(self, x: mx.array) -> mx.array:
+        return x * self.gamma
+
+
 class EncoderBlock(nn.Module):
     """Transformer encoder block.
 
@@ -136,6 +156,7 @@ class EncoderBlock(nn.Module):
         mlp_dim (int): mlp dimension
         dropout (float): dropout
         init_values (Optional[float]): initial values for layer scale. Defaults to None.
+            When set, enables LayerScale (ls1/ls2) on the attention and MLP residuals.
         norm_layer (Callable[..., nn.Module], optional): normalization layer. Defaults to nn.LayerNorm.
         bias (bool, optional): attention bias. Defaults to True.
     """
@@ -162,6 +183,14 @@ class EncoderBlock(nn.Module):
         self.ln_2 = norm_layer(hidden_dim)
         self.mlp = MLPBlock(hidden_dim, mlp_dim, dropout)
 
+        # Layer Scale (DINOv2, DeiT-III, CaiT)
+        if init_values is not None:
+            self.ls1 = LayerScale(hidden_dim, init_values)
+            self.ls2 = LayerScale(hidden_dim, init_values)
+        else:
+            self.ls1 = None
+            self.ls2 = None
+
     def __call__(self, x: mx.array) -> tuple[mx.array, mx.array]:
         """Forward pass
 
@@ -176,10 +205,14 @@ class EncoderBlock(nn.Module):
         x = self.ln_1(_x)
         x, attn_mask = self.self_attention(x, x, x)
         x = self.dropout(x)
+        if self.ls1 is not None:
+            x = self.ls1(x)
         x = x + _x
 
         y = self.ln_2(x)
         y = self.mlp(y)
+        if self.ls2 is not None:
+            y = self.ls2(y)
         return x + y, attn_mask
 
 
