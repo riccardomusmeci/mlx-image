@@ -277,6 +277,7 @@ def vit_small_patch14_518_dinov2(num_classes: int = 1000) -> VisionTransformer:
         hidden_dim=384,
         mlp_dim=1536,
         num_classes=num_classes,
+        init_values=1e-5,
     )
 
 
@@ -290,6 +291,7 @@ def vit_base_patch14_518_dinov2(num_classes: int = 1000) -> VisionTransformer:
         hidden_dim=768,
         mlp_dim=3072,
         num_classes=0,
+        init_values=1e-5,
     )
 
 
@@ -303,4 +305,5 @@ def vit_large_patch14_518_dinov2(num_classes: int = 1000) -> VisionTransformer:
         hidden_dim=1024,
         mlp_dim=4096,
         num_classes=num_classes,
+        init_values=1e-5,
     )
