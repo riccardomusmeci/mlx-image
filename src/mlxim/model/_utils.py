@@ -128,11 +128,21 @@ def load_weights(model: nn.Module, weights: str, strict: bool = True, verbose: b
     return model
 
 
-def download_from_hf(model_name: str, repo_id: str | None = None, filename: str | None = None) -> str:
+def download_from_hf(
+    model_name: str,
+    repo_id: str | None = None,
+    filename: str | None = None,
+    revision: str = "main",
+) -> str:
     """Download weights from HuggingFace Hub.
 
     Args:
         model_name (str): model name
+        repo_id (str | None): override repo_id from MODEL_CONFIG
+        filename (str | None): override filename from MODEL_CONFIG
+        revision (str): HF Hub revision (branch, tag, or commit SHA) to pin
+            the download. Defaults to "main" — pass an explicit commit SHA
+            for reproducible model loads.
 
     Returns:
         str: path to downloaded weights
@@ -145,7 +155,7 @@ def download_from_hf(model_name: str, repo_id: str | None = None, filename: str 
     assert filename is not None, f"filename required for {model_name}"
     print(f"Downloading weights for {model_name} from HuggingFace Hub.")
     try:
-        weights_path = hf_hub_download(repo_id=repo_id, repo_type="model", filename=filename)
+        weights_path = hf_hub_download(repo_id=repo_id, repo_type="model", filename=filename, revision=revision)
     except Exception as e:
         raise RuntimeError(f"Downloading weights from HuggingFace Hub failed for {model_name}: {e}") from e
 
